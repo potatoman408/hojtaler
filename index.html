@@ -4244,7 +4244,7 @@ if ("serviceWorker" in navigator) {
       ["quick-lyrics","Sangtekst","M4 4h16v12H7l-3 3V4Zm3 3v2h10V7H7Zm0 4v2h7v-2H7Z"],
       ["quick-history","Historik","M13 3a9 9 0 1 0 8.5 12h-2.2A7 7 0 1 1 13 5c2.1 0 4 1 5.3 2.5L15 11h7V4l-2.2 2.2A8.96 8.96 0 0 0 13 3Zm-1 4v6l5 3 1-1.7-4-2.3V7h-2Z"],
       ["quick-party","Party mode","M4 4h7v7H4V4Zm2 2v3h3V6H6Zm7-2h7v7h-7V4Zm2 2v3h3V6h-3ZM4 13h7v7H4v-7Zm2 2v3h3v-3H6Zm8-2h2v2h-2v-2Zm3 0h3v2h-1v2h-2v-4Z"],
-      ["quick-system","System","M4 5h16v11H4V5Zm2 2v7h12V7H6Zm3 11h6v2H9v-2Z"],
+      ["quick-system","Enhed","M4 5h16v11H4V5Zm2 2v7h12V7H6Zm3 11h6v2H9v-2Z"],
       ["quick-bass","Bass mode","M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18Zm0 3a3 3 0 1 1 0 6 3 3 0 0 1 0-6Zm0 13a4 4 0 1 1 0-8 4 4 0 0 1 0 8Z"]
     ];
     items.forEach(([id,label,path])=>{
@@ -4294,19 +4294,21 @@ if ("serviceWorker" in navigator) {
       <div id="party-link"></div>
       <button class="settings-button" id="copy-party-link">Kopiér link</button>
       <div class="hardware-state" style="margin-top:16px">
-        <strong>Guest queue:</strong> Interfacet er klar. For at gæster kan lægge sange i din kø uden dit Spotify-login, skal Raspberry Pi'en køre en lille lokal backend.
+        <strong>Party mode virker uden Raspberry Pi.</strong>
+        På denne enhed kan I bruge Søg og Kø sammen. QR-koden åbner Speakerfy på en anden telefon; den telefon skal selv logge ind på Spotify for at kunne styre afspilningen.
       </div>
     </div>
   `);
 
-  v6Screen("screen-system","Speakerfy System",`
+  v6Screen("screen-system","Enhed & Spotify",`
     <button class="feature-action" id="system-refresh" style="margin-bottom:18px">Opdater</button>
     <div class="system-grid">
       <div class="system-card"><span>Wi-Fi</span><strong id="sys-wifi">—</strong></div>
       <div class="system-card"><span>Forbindelse</span><strong id="sys-network">—</strong></div>
-      <div class="system-card"><span>CPU temperatur</span><strong id="sys-temp">—</strong></div>
-      <div class="system-card"><span>CPU</span><strong id="sys-cpu">—</strong></div>
-      <div class="system-card"><span>RAM</span><strong id="sys-ram">—</strong></div>
+      <div class="system-card"><span>App-status</span><strong id="sys-appmode">—</strong></div>
+      <div class="system-card"><span>Skærm</span><strong id="sys-temp">—</strong></div>
+      <div class="system-card"><span>CPU tråde</span><strong id="sys-cpu">—</strong></div>
+      <div class="system-card"><span>RAM info</span><strong id="sys-ram">—</strong></div>
       <div class="system-card"><span>Batteri</span><strong id="sys-battery">—</strong></div>
       <div class="system-card"><span>Estimeret tid</span><strong id="sys-battery-time">—</strong></div>
       <div class="system-card"><span>Spotify</span><strong id="sys-spotify">—</strong></div>
@@ -4316,8 +4318,8 @@ if ("serviceWorker" in navigator) {
       <div><h3 id="profile-name">Spotify profil</h3><p id="profile-email">—</p></div>
     </div>
     <div class="hardware-state">
-      Raspberry Pi kan sende CPU/RAM/temperatur fra <strong>/api/system</strong>.
-      Hvis endpointet ikke findes, viser Speakerfy browserens egne oplysninger.
+      <strong>Ingen Raspberry Pi nødvendig.</strong>
+      Den her side bruger kun oplysninger som din telefon, tablet eller browser selv kan give Speakerfy.
     </div>
   `);
 
@@ -4647,6 +4649,11 @@ if ("serviceWorker" in navigator) {
     $("sys-wifi").textContent=conn?.type==="wifi"?"Forbundet":(navigator.onLine?"Netværk OK":"Offline");
     $("sys-spotify").textContent=deviceId?"Tilsluttet":"Ikke klar";
 
+    if(!v6.battery){
+      $("sys-battery").textContent="Ikke understøttet";
+      $("sys-battery-time").textContent="Ikke understøttet";
+    }
+
     if(v6.battery){
       const p=Math.round(v6.battery.level*100);
       $("sys-battery").textContent=`${p}%${v6.battery.charging?" · oplader":""}`;
@@ -4664,19 +4671,20 @@ if ("serviceWorker" in navigator) {
       }
     }catch{}
 
-    try{
-      const r=await fetch("/api/system",{cache:"no-store"});
-      if(!r.ok) throw Error();
-      const d=await r.json();
-      if(d.ssid) $("sys-wifi").textContent=d.ssid;
-      if(d.cpuTemp!=null) $("sys-temp").textContent=`${d.cpuTemp} °C`;
-      if(d.cpu!=null) $("sys-cpu").textContent=`${d.cpu}%`;
-      if(d.ram!=null) $("sys-ram").textContent=`${d.ram}%`;
-      if(d.battery!=null) $("sys-battery").textContent=`${d.battery}%`;
-    }catch{
-      $("sys-temp").textContent="Pi API mangler";
-      $("sys-cpu").textContent="Pi API mangler";
-      $("sys-ram").textContent="Pi API mangler";
+    $("sys-temp").textContent=`${screen.width}×${screen.height}`;
+    $("sys-cpu").textContent=navigator.hardwareConcurrency
+      ? `${navigator.hardwareConcurrency} tråde`
+      : "Ikke oplyst";
+    $("sys-ram").textContent=navigator.deviceMemory
+      ? `${navigator.deviceMemory} GB`
+      : "Ikke oplyst";
+
+    const standalone =
+      window.matchMedia?.("(display-mode: standalone)")?.matches ||
+      window.navigator.standalone === true;
+
+    if($("sys-appmode")){
+      $("sys-appmode").textContent=standalone ? "Installeret app" : "Browser";
     }
   }
   $("quick-system")?.addEventListener("click",()=>openV6("screen-system",loadSystem));
@@ -4898,6 +4906,131 @@ if ("serviceWorker" in navigator) {
   if(new URLSearchParams(location.search).get("party")==="1"){
     setTimeout(()=>openV6("screen-party",renderQR),1700);
   }
+})();
+</script>
+
+
+<script id="speakerfy-v7-navigation">
+(() => {
+  function allInternalScreens(){
+    return document.querySelectorAll(
+      "#screen-home,#screen-search,#screen-liked,#screen-queue,#screen-sound,#screen-settings,.v6-screen"
+    );
+  }
+
+  function hideAllInternalScreens(){
+    allInternalScreens().forEach(screen => screen.classList.remove("active"));
+    if(window.el?.overlay) el.overlay.classList.remove("open");
+  }
+
+  window.speakerfyGoHome = function(){
+    document.body.classList.remove("idle");
+    try{ clearTimeout(idleTimer); }catch{}
+
+    hideAllInternalScreens();
+
+    if(window.el?.screenHome){
+      el.screenHome.classList.add("active");
+    }
+
+    try{ loadSpotifyHome(); }catch{}
+  };
+
+  window.speakerfyGoSettings = function(){
+    document.body.classList.remove("idle");
+    try{ clearTimeout(idleTimer); }catch{}
+
+    hideAllInternalScreens();
+
+    if(window.el?.screenSettings){
+      el.screenSettings.classList.add("active");
+    }
+  };
+
+  window.speakerfyGoPlayer = function(){
+    hideAllInternalScreens();
+    document.body.classList.remove("idle");
+    try{ wakeScreen(); }catch{}
+  };
+
+  /*
+   * FIX: every visible back arrow always returns to Speakerfy Home.
+   * Capture phase prevents older click handlers from leaving another
+   * screen on top of Home.
+   */
+  document.addEventListener("click", event => {
+    if(event.target.closest(".screen-back")){
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      speakerfyGoHome();
+      return;
+    }
+
+    if(event.target.closest("#home-button")){
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      speakerfyGoHome();
+      return;
+    }
+
+    if(event.target.closest("#settings-button")){
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      speakerfyGoSettings();
+      return;
+    }
+  }, true);
+
+  /*
+   * Browser/Android back button:
+   * when an internal screen is open, go back to Home instead of
+   * making Speakerfy feel stuck or immediately leaving the app.
+   */
+  let pushedInternalState = false;
+
+  const openSelectors = [
+    "#home-search-button",
+    "#home-settings-button",
+    "#quick-liked",
+    "#quick-queue",
+    "#quick-sound",
+    "#quick-lyrics",
+    "#quick-history",
+    "#quick-party",
+    "#quick-system",
+    "#quick-bass",
+    "#home-all-playlists"
+  ];
+
+  document.addEventListener("click", event => {
+    if(openSelectors.some(selector => event.target.closest(selector))){
+      if(!pushedInternalState){
+        history.pushState({speakerfyInternal:true},"",location.href);
+        pushedInternalState = true;
+      }
+    }
+  }, true);
+
+  window.addEventListener("popstate", () => {
+    pushedInternalState = false;
+
+    const internalOpen =
+      document.querySelector(
+        "#screen-search.active,#screen-liked.active,#screen-queue.active,#screen-sound.active,#screen-settings.active,.v6-screen.active"
+      ) ||
+      window.el?.overlay?.classList.contains("open");
+
+    if(internalOpen){
+      speakerfyGoHome();
+    }
+  });
+
+  /* Fix dynamically-created v6 back buttons that call openHome(). */
+  try{
+    openHome = speakerfyGoHome;
+    openSettings = speakerfyGoSettings;
+    openPlayerScreen = speakerfyGoPlayer;
+  }catch{}
 })();
 </script>
 
