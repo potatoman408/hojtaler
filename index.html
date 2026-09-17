@@ -1224,6 +1224,852 @@ body.animations-off *::after{
   }
 }
 
+
+/* ---------- Spotify-style Home v4 ---------- */
+#screen-home{
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb,var(--accent) 23%,#111 77%) 0,
+      #101010 310px,
+      #090909 620px
+    );
+}
+
+.home-shell{
+  padding-bottom:34px;
+}
+
+.home-top{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:18px;
+  margin-bottom:22px;
+}
+
+.home-greeting{
+  margin:0;
+  font-size:clamp(28px,4vw,42px);
+  font-weight:700;
+  letter-spacing:-1px;
+}
+
+.home-top-actions{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.home-pill{
+  height:42px;
+  border:1px solid rgba(255,255,255,.11);
+  border-radius:999px;
+  background:rgba(0,0,0,.34);
+  padding:0 16px;
+  display:flex;
+  align-items:center;
+  gap:9px;
+  font-weight:600;
+  cursor:pointer;
+}
+
+.home-pill svg{
+  width:19px;
+  height:19px;
+  fill:currentColor;
+}
+
+.quick-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+  margin-bottom:30px;
+}
+
+.quick-card{
+  min-height:72px;
+  border-radius:8px;
+  overflow:hidden;
+  background:rgba(255,255,255,.095);
+  display:flex;
+  align-items:center;
+  cursor:pointer;
+  transition:background .16s ease,transform .16s ease;
+}
+
+.quick-card:hover,
+.quick-card:active{
+  background:rgba(255,255,255,.145);
+  transform:translateY(-1px);
+}
+
+.quick-card img,
+.quick-icon-box{
+  width:72px;
+  height:72px;
+  flex:none;
+  object-fit:cover;
+  background:#262626;
+}
+
+.quick-icon-box{
+  display:grid;
+  place-items:center;
+  background:linear-gradient(135deg,#4928c8,#a8e5d1);
+}
+
+.quick-icon-box svg{
+  width:31px;
+  height:31px;
+  fill:white;
+}
+
+.quick-card-title{
+  min-width:0;
+  padding:0 14px;
+  font-size:14px;
+  font-weight:700;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.home-section{
+  margin-top:26px;
+}
+
+.home-section-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:14px;
+}
+
+.home-section h2{
+  margin:0;
+  font-size:23px;
+  letter-spacing:-.5px;
+}
+
+.home-see-all{
+  border:0;
+  background:transparent;
+  color:rgba(255,255,255,.62);
+  font-size:12px;
+  font-weight:700;
+  cursor:pointer;
+}
+
+.spotify-card-row{
+  display:grid;
+  grid-template-columns:repeat(5,minmax(0,1fr));
+  gap:16px;
+}
+
+.spotify-card{
+  min-width:0;
+  border-radius:12px;
+  padding:12px;
+  background:#171717;
+  cursor:pointer;
+  transition:background .17s ease,transform .17s ease;
+}
+
+.spotify-card:hover,
+.spotify-card:active{
+  background:#252525;
+  transform:translateY(-2px);
+}
+
+.spotify-card img,
+.spotify-card-art{
+  width:100%;
+  aspect-ratio:1;
+  border-radius:8px;
+  object-fit:cover;
+  background:#262626;
+  box-shadow:0 12px 30px rgba(0,0,0,.28);
+}
+
+.spotify-card-title{
+  margin-top:10px;
+  font-size:14px;
+  font-weight:700;
+  overflow:hidden;
+  white-space:nowrap;
+  text-overflow:ellipsis;
+}
+
+.spotify-card-sub{
+  margin-top:4px;
+  min-height:32px;
+  color:rgba(255,255,255,.56);
+  font-size:12px;
+  line-height:1.35;
+  display:-webkit-box;
+  -webkit-line-clamp:2;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+}
+
+.liked-art{
+  width:100%;
+  aspect-ratio:1;
+  border-radius:8px;
+  background:linear-gradient(135deg,#3f16d7 0%,#7e62ff 55%,#b8f5e3 100%);
+  display:grid;
+  place-items:center;
+}
+
+.liked-art svg{
+  width:34%;
+  height:34%;
+  fill:white;
+}
+
+/* ---------- Search screen ---------- */
+#screen-search{
+  position:fixed;
+  inset:0;
+  z-index:19;
+  display:none;
+  overflow:auto;
+  padding:
+    calc(76px + env(safe-area-inset-top))
+    clamp(18px,4vw,48px)
+    calc(32px + env(safe-area-inset-bottom));
+  background:
+    linear-gradient(180deg,#242424 0,#111 260px,#090909 520px);
+}
+
+#screen-search.active{
+  display:block;
+}
+
+.search-shell{
+  width:min(980px,100%);
+  margin:0 auto;
+}
+
+.search-heading{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin-bottom:20px;
+}
+
+.search-heading h2{
+  margin:0;
+  font-size:30px;
+}
+
+.search-box{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  width:100%;
+  min-height:58px;
+  border-radius:10px;
+  background:white;
+  color:#111;
+  padding:0 17px;
+  box-shadow:0 16px 35px rgba(0,0,0,.20);
+}
+
+.search-box svg{
+  width:23px;
+  height:23px;
+  fill:#111;
+  flex:none;
+}
+
+#song-search-input{
+  flex:1;
+  border:0;
+  outline:0;
+  background:transparent;
+  color:#111;
+  font:600 16px "Space Grotesk",sans-serif;
+}
+
+#song-search-input::placeholder{
+  color:#555;
+}
+
+#search-status{
+  margin:18px 2px;
+  color:var(--muted);
+  font-size:13px;
+}
+
+#search-results,
+#liked-tracks{
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+}
+
+.search-track{
+  min-height:68px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:8px 10px;
+  border-radius:10px;
+  cursor:pointer;
+}
+
+.search-track:hover,
+.search-track:active{
+  background:rgba(255,255,255,.08);
+}
+
+.search-track img{
+  width:52px;
+  height:52px;
+  border-radius:6px;
+  object-fit:cover;
+  flex:none;
+  background:#242424;
+}
+
+.search-track-meta{
+  min-width:0;
+  flex:1;
+}
+
+.search-track-title,
+.search-track-artist{
+  display:block;
+  overflow:hidden;
+  white-space:nowrap;
+  text-overflow:ellipsis;
+}
+
+.search-track-title{
+  font-size:14px;
+  font-weight:600;
+}
+
+.search-track-artist{
+  margin-top:3px;
+  color:var(--muted);
+  font-size:12px;
+}
+
+.track-play-circle{
+  width:38px;
+  height:38px;
+  flex:none;
+  border:0;
+  border-radius:50%;
+  background:var(--accent);
+  color:#07110a;
+  display:grid;
+  place-items:center;
+}
+
+.track-play-circle svg{
+  width:19px;
+  height:19px;
+  fill:currentColor;
+}
+
+/* ---------- Liked songs screen ---------- */
+#screen-liked{
+  position:fixed;
+  inset:0;
+  z-index:19;
+  display:none;
+  overflow:auto;
+  padding:
+    calc(76px + env(safe-area-inset-top))
+    clamp(18px,4vw,48px)
+    calc(32px + env(safe-area-inset-bottom));
+  background:
+    linear-gradient(180deg,#4027a3 0,#21175b 270px,#0a0a0a 540px);
+}
+
+#screen-liked.active{
+  display:block;
+}
+
+.liked-shell{
+  width:min(980px,100%);
+  margin:0 auto;
+}
+
+.liked-hero{
+  display:flex;
+  align-items:flex-end;
+  gap:24px;
+  margin-bottom:26px;
+}
+
+.liked-hero-art{
+  width:190px;
+  height:190px;
+  border-radius:12px;
+  background:linear-gradient(135deg,#3f16d7,#7e62ff 55%,#b8f5e3);
+  display:grid;
+  place-items:center;
+  box-shadow:0 25px 55px rgba(0,0,0,.35);
+  flex:none;
+}
+
+.liked-hero-art svg{
+  width:64px;
+  height:64px;
+  fill:white;
+}
+
+.liked-hero-copy small{
+  display:block;
+  font-size:12px;
+  font-weight:700;
+  text-transform:uppercase;
+}
+
+.liked-hero-copy h1{
+  margin:7px 0 10px;
+  font-size:clamp(34px,6vw,64px);
+  letter-spacing:-2px;
+}
+
+.liked-hero-copy p{
+  margin:0;
+  color:rgba(255,255,255,.67);
+  font-size:13px;
+}
+
+.liked-actions{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin:22px 0 12px;
+}
+
+.liked-play-all{
+  width:56px;
+  height:56px;
+  border:0;
+  border-radius:50%;
+  background:var(--accent);
+  color:#07110a;
+  display:grid;
+  place-items:center;
+}
+
+.liked-play-all svg{
+  width:26px;
+  height:26px;
+  fill:currentColor;
+}
+
+@media(max-width:850px){
+  .spotify-card-row{
+    grid-template-columns:repeat(3,minmax(0,1fr));
+  }
+}
+
+@media(max-width:650px){
+  .quick-grid{
+    grid-template-columns:1fr;
+  }
+
+  .spotify-card-row{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:11px;
+  }
+
+  .spotify-card{
+    padding:10px;
+  }
+
+  .liked-hero{
+    align-items:center;
+    flex-direction:column;
+    text-align:center;
+  }
+
+  .liked-hero-art{
+    width:160px;
+    height:160px;
+  }
+
+  .home-top{
+    align-items:flex-start;
+    flex-direction:column;
+  }
+
+  .home-top-actions{
+    width:100%;
+  }
+
+  .home-pill{
+    flex:1;
+    justify-content:center;
+  }
+}
+
+
+/* ---------- v5 Playback controls ---------- */
+#controls{
+  gap:22px;
+}
+
+.mode-btn{
+  width:42px;
+  height:42px;
+  padding:0;
+  color:rgba(255,255,255,.62);
+}
+
+.mode-btn.active-control{
+  color:var(--accent);
+  background:color-mix(in srgb,var(--accent) 12%,transparent);
+}
+
+.player-extra-actions{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  margin-top:10px;
+  flex-wrap:wrap;
+}
+
+.player-extra-button{
+  border:0;
+  border-radius:999px;
+  padding:9px 13px;
+  background:rgba(255,255,255,.065);
+  color:rgba(255,255,255,.78);
+  font-size:12px;
+  cursor:pointer;
+}
+
+.player-extra-button:hover,
+.player-extra-button:active{
+  background:rgba(255,255,255,.11);
+}
+
+/* ---------- Battery ---------- */
+#top-status{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:10px;
+}
+
+#battery-status{
+  display:flex;
+  align-items:center;
+  gap:5px;
+  color:var(--muted);
+  font:11px "Space Mono",monospace;
+}
+
+#battery-icon{
+  position:relative;
+  width:22px;
+  height:11px;
+  border:1.5px solid currentColor;
+  border-radius:3px;
+  overflow:visible;
+}
+
+#battery-icon::after{
+  content:"";
+  position:absolute;
+  right:-4px;
+  top:2px;
+  width:2px;
+  height:5px;
+  border-radius:0 2px 2px 0;
+  background:currentColor;
+}
+
+#battery-fill{
+  position:absolute;
+  left:1px;
+  top:1px;
+  bottom:1px;
+  width:0%;
+  max-width:18px;
+  border-radius:1px;
+  background:var(--accent);
+}
+
+/* ---------- Queue + Sound screens ---------- */
+#screen-queue,
+#screen-sound{
+  position:fixed;
+  inset:0;
+  z-index:19;
+  display:none;
+  overflow:auto;
+  padding:
+    calc(76px + env(safe-area-inset-top))
+    clamp(18px,4vw,48px)
+    calc(32px + env(safe-area-inset-bottom));
+  background:
+    radial-gradient(circle at 20% 0%,color-mix(in srgb,var(--accent) 16%,transparent),transparent 32%),
+    linear-gradient(180deg,#181818,#090909 520px);
+}
+
+#screen-queue.active,
+#screen-sound.active{
+  display:block;
+}
+
+.feature-shell{
+  width:min(980px,100%);
+  margin:0 auto;
+}
+
+.feature-heading{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin-bottom:22px;
+}
+
+.feature-heading h2{
+  margin:0;
+  flex:1;
+  font-size:30px;
+}
+
+.feature-action{
+  border:1px solid var(--border);
+  border-radius:999px;
+  background:rgba(255,255,255,.06);
+  padding:9px 13px;
+  cursor:pointer;
+}
+
+.queue-now{
+  padding:16px;
+  border:1px solid var(--border);
+  border-radius:20px;
+  background:rgba(255,255,255,.055);
+  margin-bottom:22px;
+}
+
+.queue-label{
+  margin-bottom:10px;
+  color:var(--muted);
+  font-size:11px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:1px;
+}
+
+.queue-row{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  min-height:66px;
+  padding:8px;
+  border-radius:12px;
+  cursor:pointer;
+}
+
+.queue-row:hover,
+.queue-row:active{
+  background:rgba(255,255,255,.06);
+}
+
+.queue-row img{
+  width:50px;
+  height:50px;
+  object-fit:cover;
+  border-radius:7px;
+  background:#222;
+  flex:none;
+}
+
+.queue-meta{
+  flex:1;
+  min-width:0;
+}
+
+.queue-title,
+.queue-artist{
+  display:block;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.queue-title{
+  font-size:14px;
+  font-weight:600;
+}
+
+.queue-artist{
+  margin-top:3px;
+  color:var(--muted);
+  font-size:12px;
+}
+
+.queue-index{
+  width:24px;
+  color:var(--muted);
+  text-align:center;
+  font:11px "Space Mono",monospace;
+}
+
+#queue-list{
+  display:flex;
+  flex-direction:column;
+  gap:3px;
+}
+
+.queue-empty{
+  color:var(--muted);
+  padding:18px 4px;
+}
+
+/* Add-to-queue button inside search/liked rows */
+.queue-add-button{
+  width:36px;
+  height:36px;
+  flex:none;
+  border:1px solid rgba(255,255,255,.10);
+  border-radius:50%;
+  background:rgba(255,255,255,.055);
+  display:grid;
+  place-items:center;
+  cursor:pointer;
+}
+
+.queue-add-button svg{
+  width:18px;
+  height:18px;
+  fill:currentColor;
+}
+
+/* ---------- Sound profile / EQ ---------- */
+.sound-hero{
+  margin-bottom:18px;
+  padding:20px;
+  border:1px solid var(--border);
+  border-radius:24px;
+  background:
+    linear-gradient(135deg,color-mix(in srgb,var(--accent) 18%,#171717),#121212);
+}
+
+.sound-hero h3{
+  margin:0 0 7px;
+  font-size:22px;
+}
+
+.sound-hero p{
+  margin:0;
+  max-width:700px;
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.5;
+}
+
+.sound-presets{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin:18px 0 22px;
+}
+
+.sound-preset{
+  border:1px solid var(--border);
+  border-radius:999px;
+  background:rgba(255,255,255,.055);
+  padding:9px 14px;
+  cursor:pointer;
+}
+
+.sound-preset.active{
+  background:var(--accent);
+  color:#07110a;
+  border-color:var(--accent);
+  font-weight:700;
+}
+
+.eq-card{
+  padding:20px;
+  border:1px solid var(--border);
+  border-radius:24px;
+  background:rgba(18,18,18,.72);
+}
+
+.eq-row{
+  display:grid;
+  grid-template-columns:100px 1fr 62px;
+  align-items:center;
+  gap:14px;
+  min-height:62px;
+  border-top:1px solid rgba(255,255,255,.06);
+}
+
+.eq-row:first-child{
+  border-top:0;
+}
+
+.eq-name{
+  font-weight:600;
+}
+
+.eq-value{
+  color:var(--muted);
+  text-align:right;
+  font:12px "Space Mono",monospace;
+}
+
+.eq-slider{
+  width:100%;
+  accent-color:var(--accent);
+}
+
+.hardware-state{
+  margin-top:16px;
+  padding:12px 14px;
+  border-radius:14px;
+  background:rgba(255,255,255,.045);
+  color:var(--muted);
+  font-size:12px;
+}
+
+.hardware-state strong{
+  color:var(--text);
+}
+
+@media(max-width:650px){
+  #top-status{
+    gap:7px;
+  }
+
+  #battery-text{
+    display:none;
+  }
+
+  #controls{
+    gap:12px;
+  }
+
+  .mode-btn{
+    width:38px;
+    height:38px;
+  }
+
+  .eq-row{
+    grid-template-columns:70px 1fr 52px;
+    gap:10px;
+  }
+}
+
 </style>
 
 <link rel="manifest" href="manifest.webmanifest">
@@ -1261,7 +2107,13 @@ body.animations-off *::after{
 
 <div id="topbar">
   <div id="brand"><span id="brand-dot"></span>Speakerfy</div>
-  <div id="clock">--:--</div>
+  <div id="top-status">
+    <div id="battery-status">
+      <div id="battery-icon"><div id="battery-fill"></div></div>
+      <span id="battery-text">—</span>
+    </div>
+    <div id="clock">--:--</div>
+  </div>
 </div>
 
 <div id="top-actions">
@@ -1297,6 +2149,10 @@ body.animations-off *::after{
         </div>
 
         <div id="controls">
+          <button class="ctrl mode-btn" id="shuffle-button" aria-label="Shuffle">
+            <svg viewBox="0 0 24 24"><path d="M16 3h5v5h-2V6.41l-4.29 4.3-1.42-1.42L17.59 5H16V3ZM3 7h4.17l8.54 8.54L19 12.25V11h2v5h-5v-2h1.59l-1.88 1.88L6.34 9H3V7Zm0 10h3.34l2.95-2.95 1.42 1.42L7.17 19H3v-2Z"/></svg>
+          </button>
+
           <button class="ctrl" id="previous" aria-label="Forrige sang">
             <svg viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l10-6v12z"/></svg>
           </button>
@@ -1309,9 +2165,17 @@ body.animations-off *::after{
           <button class="ctrl" id="next" aria-label="Næste sang">
             <svg viewBox="0 0 24 24"><path d="M16 6h2v12h-2zM4.5 6l10 6-10 6z"/></svg>
           </button>
+
+          <button class="ctrl mode-btn" id="repeat-button" aria-label="Repeat">
+            <svg viewBox="0 0 24 24"><path d="M7 7h9v3l4-4-4-4v3H7a5 5 0 0 0-5 5v2h2v-2a3 3 0 0 1 3-3Zm13 5v2a3 3 0 0 1-3 3H8v-3l-4 4 4 4v-3h9a5 5 0 0 0 5-5v-2h-2Z"/></svg>
+          </button>
         </div>
 
-        <button id="playlist-button">☰ &nbsp; Vælg playliste</button>
+        <div class="player-extra-actions">
+          <button id="playlist-button" class="player-extra-button">☰ Playlister</button>
+          <button id="queue-button" class="player-extra-button">≡ Kø</button>
+          <button id="sound-button" class="player-extra-button">◉ Lyd</button>
+        </div>
       </div>
     </div>
   </div>
@@ -1333,48 +2197,207 @@ body.animations-off *::after{
 
 <div id="screen-home">
   <div class="home-shell">
-    <h1 class="home-title">Speakerfy</h1>
-    <p class="home-subtitle">Hvad vil du åbne?</p>
-
-    <div class="home-grid">
-      <div class="home-card" id="home-open-player">
-        <div class="home-card-icon">
-          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-        </div>
-        <div>
-          <h3>Afspiller</h3>
-          <p>Gå tilbage til cover, sang og afspilningsknapper.</p>
-        </div>
+    <div class="home-top">
+      <div>
+        <h1 class="home-greeting" id="home-greeting">God aften</h1>
       </div>
 
-      <div class="home-card" id="home-open-playlists">
-        <div class="home-card-icon">
-          <svg viewBox="0 0 24 24"><path d="M4 5h12v2H4V5zm0 6h12v2H4v-2zm0 6h8v2H4v-2zm14-7v8.15A3 3 0 1 1 16 15.3V10h2zm0 0 4-1v2l-4 1v-2z"/></svg>
-        </div>
-        <div>
-          <h3>Playlister</h3>
-          <p>Find dine playlister og vælg den sang du vil høre.</p>
-        </div>
-      </div>
+      <div class="home-top-actions">
+        <button class="home-pill" id="home-search-button">
+          <svg viewBox="0 0 24 24"><path d="M9.5 3a6.5 6.5 0 1 0 4.08 11.56L19 20l1-1-5.42-5.44A6.5 6.5 0 0 0 9.5 3Zm0 2A4.5 4.5 0 1 1 5 9.5 4.5 4.5 0 0 1 9.5 5Z"/></svg>
+          Søg
+        </button>
 
-      <div class="home-card" id="home-open-settings">
-        <div class="home-card-icon">
+        <button class="home-pill" id="home-settings-button">
           <svg viewBox="0 0 24 24"><path d="M19.14 12.94a7.8 7.8 0 0 0 .06-.94 7.8 7.8 0 0 0-.06-.94l2.03-1.58-1.92-3.32-2.39.96a7.25 7.25 0 0 0-1.62-.94L14.88 3h-3.84l-.36 3.18a7.3 7.3 0 0 0-1.62.94l-2.39-.96-1.92 3.32 2.03 1.58A7.8 7.8 0 0 0 6.72 12c0 .32.02.63.06.94l-2.03 1.58 1.92 3.32 2.39-.96c.5.39 1.04.71 1.62.94l.36 3.18h3.84l.36-3.18c.58-.23 1.12-.55 1.62-.94l2.39.96 1.92-3.32-2.03-1.58ZM12 15.5A3.5 3.5 0 1 1 12 8a3.5 3.5 0 0 1 0 7.5Z"/></svg>
-        </div>
-        <div>
-          <h3>Indstillinger</h3>
-          <p>Tema, standby, animationer og Spotify-konto.</p>
-        </div>
+          Indstillinger
+        </button>
       </div>
     </div>
 
-    <div id="home-now-playing">
-      <img id="home-now-art" alt="">
-      <div id="home-now-meta">
-        <div id="home-now-title">Ingen sang endnu</div>
-        <div id="home-now-artist">Åbn afspilleren for at starte.</div>
+    <div class="quick-grid" id="home-quick-grid">
+      <div class="quick-card" id="quick-liked">
+        <div class="quick-icon-box">
+          <svg viewBox="0 0 24 24"><path d="M12 21.35 10.55 20C5.4 15.36 2 12.28 2 8.5A5.5 5.5 0 0 1 7.5 3 5.98 5.98 0 0 1 12 5.09 5.98 5.98 0 0 1 16.5 3 5.5 5.5 0 0 1 22 8.5c0 3.78-3.4 6.86-8.55 11.51L12 21.35Z"/></svg>
+        </div>
+        <div class="quick-card-title">Synes godt om</div>
       </div>
-      <span>›</span>
+      <div class="quick-card" id="quick-queue">
+        <div class="quick-icon-box">
+          <svg viewBox="0 0 24 24"><path d="M4 6h11v2H4V6Zm0 5h11v2H4v-2Zm0 5h7v2H4v-2Zm13-5v8.1a3 3 0 1 1-2-2.83V11h2Zm0 0 4-1v2l-4 1v-2Z"/></svg>
+        </div>
+        <div class="quick-card-title">Kø</div>
+      </div>
+
+      <div class="quick-card" id="quick-sound">
+        <div class="quick-icon-box">
+          <svg viewBox="0 0 24 24"><path d="M4 4h2v16H4V4Zm7 4h2v8h-2V8Zm7-5h2v18h-2V3Z"/></svg>
+        </div>
+        <div class="quick-card-title">Lyd</div>
+      </div>
+    </div>
+
+    <section class="home-section">
+      <div class="home-section-head">
+        <h2>Dine playlister</h2>
+        <button class="home-see-all" id="home-all-playlists">VIS ALLE</button>
+      </div>
+      <div class="spotify-card-row" id="home-playlists-row">
+        <div class="spotify-card">
+          <div class="spotify-card-art"></div>
+          <div class="spotify-card-title">Henter...</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="home-section">
+      <div class="home-section-head">
+        <h2>Senest afspillet</h2>
+      </div>
+      <div class="spotify-card-row" id="home-recent-row">
+        <div class="spotify-card">
+          <div class="spotify-card-art"></div>
+          <div class="spotify-card-title">Henter...</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="home-section">
+      <div class="home-section-head">
+        <h2>Din musik</h2>
+      </div>
+      <div class="spotify-card-row">
+        <div class="spotify-card" id="home-liked-card">
+          <div class="liked-art">
+            <svg viewBox="0 0 24 24"><path d="M12 21.35 10.55 20C5.4 15.36 2 12.28 2 8.5A5.5 5.5 0 0 1 7.5 3 5.98 5.98 0 0 1 12 5.09 5.98 5.98 0 0 1 16.5 3 5.5 5.5 0 0 1 22 8.5c0 3.78-3.4 6.86-8.55 11.51L12 21.35Z"/></svg>
+          </div>
+          <div class="spotify-card-title">Synes godt om</div>
+          <div class="spotify-card-sub">Dine gemte sange på Spotify</div>
+        </div>
+
+        <div class="spotify-card" id="home-player-card">
+          <img id="home-now-art" alt="">
+          <div class="spotify-card-title" id="home-now-title">Afspiller</div>
+          <div class="spotify-card-sub" id="home-now-artist">Åbn din nuværende sang</div>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+
+
+<div id="screen-search">
+  <div class="search-shell">
+    <div class="search-heading">
+      <button class="screen-back" id="search-back">‹</button>
+      <h2>Søg</h2>
+    </div>
+
+    <div class="search-box">
+      <svg viewBox="0 0 24 24"><path d="M9.5 3a6.5 6.5 0 1 0 4.08 11.56L19 20l1-1-5.42-5.44A6.5 6.5 0 0 0 9.5 3Zm0 2A4.5 4.5 0 1 1 5 9.5 4.5 4.5 0 0 1 9.5 5Z"/></svg>
+      <input id="song-search-input" type="search" autocomplete="off" placeholder="Hvad vil du høre?">
+    </div>
+
+    <div id="search-status">Søg efter en sang eller artist.</div>
+    <div id="search-results"></div>
+  </div>
+</div>
+
+<div id="screen-liked">
+  <div class="liked-shell">
+    <div class="search-heading">
+      <button class="screen-back" id="liked-back">‹</button>
+    </div>
+
+    <div class="liked-hero">
+      <div class="liked-hero-art">
+        <svg viewBox="0 0 24 24"><path d="M12 21.35 10.55 20C5.4 15.36 2 12.28 2 8.5A5.5 5.5 0 0 1 7.5 3 5.98 5.98 0 0 1 12 5.09 5.98 5.98 0 0 1 16.5 3 5.5 5.5 0 0 1 22 8.5c0 3.78-3.4 6.86-8.55 11.51L12 21.35Z"/></svg>
+      </div>
+      <div class="liked-hero-copy">
+        <small>Playliste</small>
+        <h1>Synes godt om</h1>
+        <p id="liked-count">Dine gemte sange</p>
+      </div>
+    </div>
+
+    <div class="liked-actions">
+      <button class="liked-play-all" id="liked-play-all" aria-label="Afspil">
+        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+      </button>
+    </div>
+
+    <div id="liked-tracks">
+      <p style="color:var(--muted)">Henter dine sange…</p>
+    </div>
+  </div>
+</div>
+
+
+<div id="screen-queue">
+  <div class="feature-shell">
+    <div class="feature-heading">
+      <button class="screen-back" id="queue-back">‹</button>
+      <h2>Afspilningskø</h2>
+      <button class="feature-action" id="queue-refresh">Opdater</button>
+    </div>
+
+    <div class="queue-now">
+      <div class="queue-label">Afspilles nu</div>
+      <div id="queue-current" class="queue-empty">Henter…</div>
+    </div>
+
+    <div class="queue-label">Næste i køen</div>
+    <div id="queue-list">
+      <div class="queue-empty">Henter kø…</div>
+    </div>
+  </div>
+</div>
+
+<div id="screen-sound">
+  <div class="feature-shell">
+    <div class="feature-heading">
+      <button class="screen-back" id="sound-back">‹</button>
+      <h2>Lyd</h2>
+    </div>
+
+    <div class="sound-hero">
+      <h3>Speakerfy Sound</h3>
+      <p>
+        Her kan du gemme din ønskede lydprofil til selve højtaleren.
+        Når Raspberry Pi/forstærkeren senere bliver koblet til Speakerfy,
+        kan de her værdier bruges til at styre hardware-DSP/EQ.
+      </p>
+    </div>
+
+    <div class="sound-presets">
+      <button class="sound-preset" data-preset="flat">Flat</button>
+      <button class="sound-preset" data-preset="bass">Bass+</button>
+      <button class="sound-preset" data-preset="vocal">Vocal</button>
+      <button class="sound-preset" data-preset="party">Party</button>
+    </div>
+
+    <div class="eq-card">
+      <div class="eq-row">
+        <span class="eq-name">Bass</span>
+        <input class="eq-slider" id="eq-bass" type="range" min="-12" max="12" value="0" step="1">
+        <span class="eq-value" id="eq-bass-value">0 dB</span>
+      </div>
+
+      <div class="eq-row">
+        <span class="eq-name">Mid</span>
+        <input class="eq-slider" id="eq-mid" type="range" min="-12" max="12" value="0" step="1">
+        <span class="eq-value" id="eq-mid-value">0 dB</span>
+      </div>
+
+      <div class="eq-row">
+        <span class="eq-name">Treble</span>
+        <input class="eq-slider" id="eq-treble" type="range" min="-12" max="12" value="0" step="1">
+        <span class="eq-value" id="eq-treble-value">0 dB</span>
+      </div>
+    </div>
+
+    <div class="hardware-state">
+      <strong>Hardware EQ:</strong> Ikke tilsluttet endnu · profilerne gemmes på enheden.
     </div>
   </div>
 </div>
@@ -1429,6 +2452,19 @@ body.animations-off *::after{
       </div>
 
       <div class="settings-card">
+        <h3>Højtaler</h3>
+        <p>Genvej til lydprofil og status.</p>
+        <div class="setting-row">
+          <span class="setting-label">Lydprofil</span>
+          <button class="settings-button" id="settings-sound">Åbn lyd</button>
+        </div>
+        <div class="setting-row">
+          <span class="setting-label">Batteri</span>
+          <span id="settings-battery" style="color:var(--muted)">—</span>
+        </div>
+      </div>
+
+      <div class="settings-card">
         <h3>Skærm</h3>
         <p>Prøv at åbne Speakerfy i fuld skærm.</p>
         <button class="settings-button" id="settings-fullscreen">Fuld skærm</button>
@@ -1469,7 +2505,9 @@ const SCOPES = [
   "user-read-playback-state",
   "user-read-currently-playing",
   "playlist-read-private",
-  "playlist-read-collaborative"
+  "playlist-read-collaborative",
+  "user-library-read",
+  "user-read-recently-played"
 ].join(" ");
 
 const $ = id => document.getElementById(id);
@@ -1504,6 +2542,10 @@ const el = {
   fullscreen: $("fullscreen"),
   fullscreenHelp: $("mobile-fullscreen-help"),
   screenHome: $("screen-home"),
+  screenSearch: $("screen-search"),
+  screenLiked: $("screen-liked"),
+  screenQueue: $("screen-queue"),
+  screenSound: $("screen-sound"),
   screenSettings: $("screen-settings"),
   homeButton: $("home-button"),
   settingsButton: $("settings-button"),
@@ -1659,6 +2701,7 @@ function setupSpotify(){
       deviceId = device_id;
       setStatus("Speakerfy klar");
       transferPlayback();
+      refreshPlaybackModes(true);
     });
 
     spotifyPlayer.addListener("not_ready", () => {
@@ -1734,6 +2777,7 @@ function updatePlayer(state){
   }
 
   updateProgress();
+  refreshPlaybackModes();
 
   clearInterval(progressTimer);
 
@@ -1844,6 +2888,10 @@ function scheduleIdle(){
   if(IDLE_DELAY <= 0) return;
   if(!el.overlay.classList.contains("open") &&
      !el.screenHome.classList.contains("active") &&
+     !el.screenSearch.classList.contains("active") &&
+     !el.screenLiked.classList.contains("active") &&
+     !el.screenQueue.classList.contains("active") &&
+     !el.screenSound.classList.contains("active") &&
      !el.screenSettings.classList.contains("active")){
     idleTimer = setTimeout(enterIdle, IDLE_DELAY);
   }
@@ -2135,6 +3183,10 @@ const THEMES = {
 
 function closeAppScreens(){
   el.screenHome.classList.remove("active");
+  el.screenSearch.classList.remove("active");
+  el.screenLiked.classList.remove("active");
+  el.screenQueue.classList.remove("active");
+  el.screenSound.classList.remove("active");
   el.screenSettings.classList.remove("active");
 }
 
@@ -2143,7 +3195,12 @@ function openHome(){
   clearTimeout(idleTimer);
   el.overlay.classList.remove("open");
   el.screenSettings.classList.remove("active");
+  el.screenSearch.classList.remove("active");
+  el.screenLiked.classList.remove("active");
+  el.screenQueue.classList.remove("active");
+  el.screenSound.classList.remove("active");
   el.screenHome.classList.add("active");
+  loadSpotifyHome();
 }
 
 function openSettings(){
@@ -2151,6 +3208,10 @@ function openSettings(){
   clearTimeout(idleTimer);
   el.overlay.classList.remove("open");
   el.screenHome.classList.remove("active");
+  el.screenSearch.classList.remove("active");
+  el.screenLiked.classList.remove("active");
+  el.screenQueue.classList.remove("active");
+  el.screenSound.classList.remove("active");
   el.screenSettings.classList.add("active");
 }
 
@@ -2162,6 +3223,7 @@ function openPlayerScreen(){
 el.homeButton.addEventListener("click", event => {
   event.stopPropagation();
   openHome();
+  loadSpotifyHome();
 });
 
 el.settingsButton.addEventListener("click", event => {
@@ -2169,20 +3231,16 @@ el.settingsButton.addEventListener("click", event => {
   openSettings();
 });
 
-$("home-open-player").addEventListener("click", openPlayerScreen);
 
-$("home-open-playlists").addEventListener("click", () => {
-  closeAppScreens();
-  el.overlay.classList.add("open");
-  document.body.classList.remove("idle");
-  clearTimeout(idleTimer);
-  showPlaylists();
-});
 
-$("home-open-settings").addEventListener("click", openSettings);
-$("home-now-playing").addEventListener("click", openPlayerScreen);
 
 $("settings-back").addEventListener("click", openHome);
+$("settings-sound").addEventListener("click", openSound);
+
+setInterval(() => {
+  const batteryText = $("battery-text")?.textContent || "—";
+  if($("settings-battery")) $("settings-battery").textContent = batteryText;
+},1000);
 
 function applyTheme(name){
   const accent = THEMES[name] || THEMES.green;
@@ -2251,6 +3309,653 @@ $("logout-button").addEventListener("click", async () => {
   location.reload();
 });
 
+
+
+/* ---------- v5 Queue / Shuffle / Repeat / Battery / Sound ---------- */
+let shuffleEnabled = false;
+let repeatMode = "off";
+let playbackModeRefreshAt = 0;
+
+function updateModeButtons(){
+  $("shuffle-button").classList.toggle("active-control", shuffleEnabled);
+  $("repeat-button").classList.toggle("active-control", repeatMode !== "off");
+
+  const repeatLabel =
+    repeatMode === "track" ? "Repeat sang" :
+    repeatMode === "context" ? "Repeat playliste" :
+    "Repeat fra";
+
+  $("repeat-button").setAttribute("aria-label", repeatLabel);
+  $("repeat-button").title = repeatLabel;
+  $("shuffle-button").title = shuffleEnabled ? "Shuffle til" : "Shuffle fra";
+}
+
+async function refreshPlaybackModes(force = false){
+  if(!force && Date.now() - playbackModeRefreshAt < 3500) return;
+  playbackModeRefreshAt = Date.now();
+
+  try{
+    const response = await spotifyFetch("https://api.spotify.com/v1/me/player");
+    if(response.status === 204) return;
+    if(!response.ok) return;
+
+    const state = await response.json();
+    shuffleEnabled = !!state.shuffle_state;
+    repeatMode = state.repeat_state || "off";
+    updateModeButtons();
+  }catch(e){}
+}
+
+$("shuffle-button").addEventListener("click", async event => {
+  event.stopPropagation();
+  const next = !shuffleEnabled;
+
+  try{
+    const response = await spotifyFetch(
+      "https://api.spotify.com/v1/me/player/shuffle?state=" +
+      encodeURIComponent(String(next)) +
+      (deviceId ? "&device_id=" + encodeURIComponent(deviceId) : ""),
+      {method:"PUT"}
+    );
+
+    if(response.ok){
+      shuffleEnabled = next;
+      updateModeButtons();
+    }
+  }catch{
+    setStatus("Kunne ikke ændre shuffle");
+  }
+});
+
+$("repeat-button").addEventListener("click", async event => {
+  event.stopPropagation();
+
+  const next =
+    repeatMode === "off" ? "context" :
+    repeatMode === "context" ? "track" :
+    "off";
+
+  try{
+    const response = await spotifyFetch(
+      "https://api.spotify.com/v1/me/player/repeat?state=" +
+      encodeURIComponent(next) +
+      (deviceId ? "&device_id=" + encodeURIComponent(deviceId) : ""),
+      {method:"PUT"}
+    );
+
+    if(response.ok){
+      repeatMode = next;
+      updateModeButtons();
+    }
+  }catch{
+    setStatus("Kunne ikke ændre repeat");
+  }
+});
+
+function queueTrackRow(track, index = null){
+  const row = document.createElement("div");
+  row.className = "queue-row";
+
+  const image =
+    track?.album?.images?.[track.album.images.length - 1]?.url ||
+    track?.album?.images?.[0]?.url ||
+    "";
+
+  row.innerHTML = `
+    ${index === null ? "" : `<span class="queue-index">${index}</span>`}
+    <img src="${image}" alt="">
+    <div class="queue-meta">
+      <span class="queue-title">${escapeHtml(track?.name || "Ukendt")}</span>
+      <span class="queue-artist">${escapeHtml((track?.artists || []).map(a => a.name).join(", "))}</span>
+    </div>
+  `;
+
+  if(track?.uri){
+    row.addEventListener("click", () => playSingleTrack(track.uri));
+  }
+
+  return row;
+}
+
+async function loadQueue(){
+  $("queue-current").innerHTML = '<div class="queue-empty">Henter…</div>';
+  $("queue-list").innerHTML = '<div class="queue-empty">Henter kø…</div>';
+
+  try{
+    const response = await spotifyFetch("https://api.spotify.com/v1/me/player/queue");
+
+    if(response.status === 204){
+      $("queue-current").innerHTML = '<div class="queue-empty">Intet afspilles lige nu.</div>';
+      $("queue-list").innerHTML = '<div class="queue-empty">Køen er tom.</div>';
+      return;
+    }
+
+    if(!response.ok) throw new Error();
+
+    const data = await response.json();
+
+    $("queue-current").innerHTML = "";
+    if(data.currently_playing){
+      $("queue-current").appendChild(queueTrackRow(data.currently_playing));
+    }else{
+      $("queue-current").innerHTML = '<div class="queue-empty">Intet afspilles lige nu.</div>';
+    }
+
+    $("queue-list").innerHTML = "";
+    const queue = data.queue || [];
+
+    if(!queue.length){
+      $("queue-list").innerHTML = '<div class="queue-empty">Køen er tom.</div>';
+      return;
+    }
+
+    queue.slice(0,50).forEach((track,index) => {
+      $("queue-list").appendChild(queueTrackRow(track,index + 1));
+    });
+  }catch{
+    $("queue-current").innerHTML = '<div class="queue-empty">Kunne ikke hente afspilningen.</div>';
+    $("queue-list").innerHTML = '<div class="queue-empty">Kunne ikke hente køen.</div>';
+  }
+}
+
+function openQueue(){
+  closeAppScreens();
+  document.body.classList.remove("idle");
+  clearTimeout(idleTimer);
+  el.overlay.classList.remove("open");
+  el.screenQueue.classList.add("active");
+  loadQueue();
+}
+
+function openSound(){
+  closeAppScreens();
+  document.body.classList.remove("idle");
+  clearTimeout(idleTimer);
+  el.overlay.classList.remove("open");
+  el.screenSound.classList.add("active");
+  renderSoundSettings();
+}
+
+$("queue-button").addEventListener("click", openQueue);
+$("sound-button").addEventListener("click", openSound);
+$("quick-queue").addEventListener("click", openQueue);
+$("quick-sound").addEventListener("click", openSound);
+$("queue-back").addEventListener("click", openHome);
+$("sound-back").addEventListener("click", openHome);
+$("queue-refresh").addEventListener("click", loadQueue);
+
+async function addTrackToQueue(trackUri){
+  if(!trackUri) return false;
+
+  try{
+    const params = new URLSearchParams({uri:trackUri});
+    if(deviceId) params.set("device_id",deviceId);
+
+    const response = await spotifyFetch(
+      "https://api.spotify.com/v1/me/player/queue?" + params.toString(),
+      {method:"POST"}
+    );
+
+    if(response.ok){
+      setStatus("Tilføjet til kø");
+      setTimeout(() => setStatus(""),1600);
+      return true;
+    }
+  }catch(e){}
+
+  setStatus("Kunne ikke tilføje til kø");
+  return false;
+}
+
+/* Sound profile only: stored locally, ready for future hardware integration */
+const SOUND_PRESETS = {
+  flat:{bass:0,mid:0,treble:0},
+  bass:{bass:7,mid:-1,treble:2},
+  vocal:{bass:-1,mid:5,treble:3},
+  party:{bass:6,mid:1,treble:5}
+};
+
+function getSoundSettings(){
+  try{
+    return JSON.parse(localStorage.getItem("speakerfy_sound_profile")) || {
+      bass:0,mid:0,treble:0,preset:"flat"
+    };
+  }catch{
+    return {bass:0,mid:0,treble:0,preset:"flat"};
+  }
+}
+
+function saveSoundSettings(settings){
+  localStorage.setItem("speakerfy_sound_profile",JSON.stringify(settings));
+}
+
+function renderSoundSettings(){
+  const s = getSoundSettings();
+
+  $("eq-bass").value = s.bass ?? 0;
+  $("eq-mid").value = s.mid ?? 0;
+  $("eq-treble").value = s.treble ?? 0;
+
+  $("eq-bass-value").textContent = `${Number($("eq-bass").value)} dB`;
+  $("eq-mid-value").textContent = `${Number($("eq-mid").value)} dB`;
+  $("eq-treble-value").textContent = `${Number($("eq-treble").value)} dB`;
+
+  document.querySelectorAll(".sound-preset").forEach(button => {
+    button.classList.toggle("active",button.dataset.preset === s.preset);
+  });
+}
+
+function saveCustomSound(){
+  const settings = {
+    bass:Number($("eq-bass").value),
+    mid:Number($("eq-mid").value),
+    treble:Number($("eq-treble").value),
+    preset:"custom"
+  };
+
+  saveSoundSettings(settings);
+  renderSoundSettings();
+}
+
+["eq-bass","eq-mid","eq-treble"].forEach(id => {
+  $(id).addEventListener("input", () => {
+    $(id + "-value").textContent = `${Number($(id).value)} dB`;
+  });
+  $(id).addEventListener("change",saveCustomSound);
+});
+
+document.querySelectorAll(".sound-preset").forEach(button => {
+  button.addEventListener("click", () => {
+    const presetName = button.dataset.preset;
+    const preset = SOUND_PRESETS[presetName];
+    if(!preset) return;
+
+    saveSoundSettings({...preset,preset:presetName});
+    renderSoundSettings();
+  });
+});
+
+renderSoundSettings();
+
+/* Battery Status API is not supported in every mobile browser. */
+async function setupBatteryStatus(){
+  if(!("getBattery" in navigator)){
+    $("battery-text").textContent = "—";
+    $("battery-fill").style.width = "0%";
+    return;
+  }
+
+  try{
+    const battery = await navigator.getBattery();
+
+    const update = () => {
+      const percent = Math.round(battery.level * 100);
+      $("battery-text").textContent = percent + "%";
+      $("battery-fill").style.width =
+        Math.max(0,Math.min(100,percent)) + "%";
+
+      $("battery-status").title =
+        `${percent}%${battery.charging ? " · oplader" : ""}`;
+    };
+
+    update();
+    battery.addEventListener("levelchange",update);
+    battery.addEventListener("chargingchange",update);
+  }catch{
+    $("battery-text").textContent = "—";
+  }
+}
+
+setupBatteryStatus();
+
+/* ---------- Spotify-style Home / Search / Liked Songs ---------- */
+let homeLoadedAt = 0;
+let likedTracksCache = [];
+let searchTimer = null;
+
+function setGreeting(){
+  const hour = new Date().getHours();
+  let text = "God aften";
+  if(hour < 12) text = "Godmorgen";
+  else if(hour < 18) text = "God eftermiddag";
+  $("home-greeting").textContent = text;
+}
+
+setGreeting();
+setInterval(setGreeting, 60000);
+
+function openSearch(){
+  closeAppScreens();
+  document.body.classList.remove("idle");
+  clearTimeout(idleTimer);
+  el.screenSearch.classList.add("active");
+  setTimeout(() => $("song-search-input").focus(), 120);
+}
+
+async function openLiked(){
+  closeAppScreens();
+  document.body.classList.remove("idle");
+  clearTimeout(idleTimer);
+  el.screenLiked.classList.add("active");
+  await loadLikedSongs();
+}
+
+$("home-search-button").addEventListener("click", openSearch);
+$("home-settings-button").addEventListener("click", openSettings);
+$("search-back").addEventListener("click", openHome);
+$("liked-back").addEventListener("click", openHome);
+$("quick-liked").addEventListener("click", openLiked);
+$("home-liked-card").addEventListener("click", openLiked);
+$("home-player-card").addEventListener("click", openPlayerScreen);
+
+$("home-all-playlists").addEventListener("click", () => {
+  closeAppScreens();
+  el.overlay.classList.add("open");
+  document.body.classList.remove("idle");
+  clearTimeout(idleTimer);
+  showPlaylists();
+});
+
+function songRow(track, onClick){
+  const row = document.createElement("div");
+  row.className = "search-track";
+
+  const image =
+    track.album?.images?.[track.album.images.length - 1]?.url ||
+    track.album?.images?.[0]?.url ||
+    "";
+
+  row.innerHTML = `
+    <img src="${image}" alt="">
+    <div class="search-track-meta">
+      <span class="search-track-title">${escapeHtml(track.name || "Ukendt sang")}</span>
+      <span class="search-track-artist">${escapeHtml((track.artists || []).map(a => a.name).join(", "))}</span>
+    </div>
+    <button class="queue-add-button" aria-label="Tilføj til kø" title="Tilføj til kø">
+      <svg viewBox="0 0 24 24"><path d="M11 5h2v6h6v2h-6v6h-2v-6H5v-2h6V5Z"/></svg>
+    </button>
+    <button class="track-play-circle" aria-label="Afspil">
+      <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+    </button>
+  `;
+
+  row.querySelector(".queue-add-button").addEventListener("click", async event => {
+    event.stopPropagation();
+    await addTrackToQueue(track.uri);
+  });
+
+  row.addEventListener("click", onClick);
+  return row;
+}
+
+async function playUris(uris, offsetUri = null){
+  if(!deviceId){
+    setStatus("Speakerfy er ikke klar endnu");
+    return false;
+  }
+
+  const body = {uris};
+  if(offsetUri){
+    const index = uris.indexOf(offsetUri);
+    if(index >= 0) body.offset = {position:index};
+  }
+
+  const response = await spotifyFetch(
+    "https://api.spotify.com/v1/me/player/play?device_id=" + encodeURIComponent(deviceId),
+    {
+      method:"PUT",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify(body)
+    }
+  );
+
+  return response.ok;
+}
+
+async function playSingleTrack(trackUri){
+  const ok = await playUris([trackUri]);
+  if(ok){
+    closeAppScreens();
+    wakeScreen();
+  }else{
+    setStatus("Kunne ikke starte sangen");
+  }
+}
+
+$("song-search-input").addEventListener("input", () => {
+  clearTimeout(searchTimer);
+  const query = $("song-search-input").value.trim();
+
+  if(!query){
+    $("search-status").textContent = "Søg efter en sang eller artist.";
+    $("search-results").innerHTML = "";
+    return;
+  }
+
+  $("search-status").textContent = "Søger…";
+
+  searchTimer = setTimeout(() => {
+    searchSongs(query);
+  }, 350);
+});
+
+async function searchSongs(query){
+  try{
+    const response = await spotifyFetch(
+      "https://api.spotify.com/v1/search?type=track&limit=25&q=" +
+      encodeURIComponent(query)
+    );
+
+    if(!response.ok) throw new Error();
+
+    const data = await response.json();
+    const results = data.tracks?.items || [];
+
+    $("search-results").innerHTML = "";
+    $("search-status").textContent =
+      results.length ? `${results.length} resultater` : "Ingen sange fundet.";
+
+    results.forEach(track => {
+      $("search-results").appendChild(
+        songRow(track, () => playSingleTrack(track.uri))
+      );
+    });
+  }catch{
+    $("search-status").textContent = "Kunne ikke søge lige nu.";
+  }
+}
+
+async function loadLikedSongs(force = false){
+  if(likedTracksCache.length && !force){
+    renderLikedSongs();
+    return;
+  }
+
+  $("liked-tracks").innerHTML =
+    '<p style="color:var(--muted)">Henter dine sange…</p>';
+
+  try{
+    const response = await spotifyFetch(
+      "https://api.spotify.com/v1/me/tracks?limit=50"
+    );
+
+    if(response.status === 403){
+      $("liked-tracks").innerHTML =
+        '<p style="color:var(--muted)">Log ud og ind igen én gang, så Spotify kan give Speakerfy adgang til dine likede sange.</p>';
+      return;
+    }
+
+    if(!response.ok) throw new Error();
+
+    const data = await response.json();
+    likedTracksCache = (data.items || [])
+      .map(item => item.track)
+      .filter(Boolean);
+
+    $("liked-count").textContent =
+      `${data.total || likedTracksCache.length} gemte sange`;
+
+    renderLikedSongs();
+  }catch{
+    $("liked-tracks").innerHTML =
+      '<p style="color:var(--muted)">Kunne ikke hente dine likede sange.</p>';
+  }
+}
+
+function renderLikedSongs(){
+  const container = $("liked-tracks");
+  container.innerHTML = "";
+
+  if(!likedTracksCache.length){
+    container.innerHTML =
+      '<p style="color:var(--muted)">Du har ingen gemte sange endnu.</p>';
+    return;
+  }
+
+  likedTracksCache.forEach(track => {
+    container.appendChild(
+      songRow(track, async () => {
+        const uris = likedTracksCache.map(t => t.uri);
+        const ok = await playUris(uris, track.uri);
+        if(ok){
+          closeAppScreens();
+          wakeScreen();
+        }
+      })
+    );
+  });
+}
+
+$("liked-play-all").addEventListener("click", async () => {
+  await loadLikedSongs();
+  if(!likedTracksCache.length) return;
+
+  const ok = await playUris(likedTracksCache.map(track => track.uri));
+  if(ok){
+    closeAppScreens();
+    wakeScreen();
+  }
+});
+
+async function loadSpotifyHome(force = false){
+  if(!force && Date.now() - homeLoadedAt < 30000) return;
+  homeLoadedAt = Date.now();
+
+  setGreeting();
+
+  await Promise.allSettled([
+    loadHomePlaylists(),
+    loadHomeRecent()
+  ]);
+}
+
+async function loadHomePlaylists(){
+  const row = $("home-playlists-row");
+
+  try{
+    const response = await spotifyFetch(
+      "https://api.spotify.com/v1/me/playlists?limit=10"
+    );
+
+    if(!response.ok) throw new Error();
+
+    const data = await response.json();
+    const playlists = data.items || [];
+    row.innerHTML = "";
+
+    const quick = $("home-quick-grid");
+    [...quick.querySelectorAll(".quick-card[data-home-playlist]")].forEach(n => n.remove());
+
+    playlists.slice(0,5).forEach((playlist,index) => {
+      const card = document.createElement("div");
+      card.className = "spotify-card";
+      card.innerHTML = `
+        <img src="${playlist.images?.[0]?.url || ""}" alt="">
+        <div class="spotify-card-title">${escapeHtml(playlist.name)}</div>
+        <div class="spotify-card-sub">${escapeHtml(playlist.owner?.display_name || "Spotify playliste")}</div>
+      `;
+      card.addEventListener("click", () => {
+        closeAppScreens();
+        el.overlay.classList.add("open");
+        openPlaylist(playlist);
+      });
+      row.appendChild(card);
+
+      if(index < 5){
+        const q = document.createElement("div");
+        q.className = "quick-card";
+        q.dataset.homePlaylist = playlist.id;
+        q.innerHTML = `
+          <img src="${playlist.images?.[0]?.url || ""}" alt="">
+          <div class="quick-card-title">${escapeHtml(playlist.name)}</div>
+        `;
+        q.addEventListener("click", () => {
+          closeAppScreens();
+          el.overlay.classList.add("open");
+          openPlaylist(playlist);
+        });
+        quick.appendChild(q);
+      }
+    });
+
+    if(!playlists.length){
+      row.innerHTML = '<p style="color:var(--muted)">Ingen playlister fundet.</p>';
+    }
+  }catch{
+    row.innerHTML = '<p style="color:var(--muted)">Kunne ikke hente playlister.</p>';
+  }
+}
+
+async function loadHomeRecent(){
+  const row = $("home-recent-row");
+
+  try{
+    const response = await spotifyFetch(
+      "https://api.spotify.com/v1/me/player/recently-played?limit=20"
+    );
+
+    if(response.status === 403){
+      row.innerHTML = '<p style="color:var(--muted)">Log ud og ind igen for at aktivere senest afspillet.</p>';
+      return;
+    }
+
+    if(!response.ok) throw new Error();
+
+    const data = await response.json();
+    const unique = [];
+    const seen = new Set();
+
+    for(const item of (data.items || [])){
+      const track = item.track;
+      if(!track || seen.has(track.id)) continue;
+      seen.add(track.id);
+      unique.push(track);
+      if(unique.length >= 5) break;
+    }
+
+    row.innerHTML = "";
+
+    unique.forEach(track => {
+      const card = document.createElement("div");
+      card.className = "spotify-card";
+      card.innerHTML = `
+        <img src="${track.album?.images?.[0]?.url || ""}" alt="">
+        <div class="spotify-card-title">${escapeHtml(track.name)}</div>
+        <div class="spotify-card-sub">${escapeHtml(track.artists.map(a => a.name).join(", "))}</div>
+      `;
+      card.addEventListener("click", () => playSingleTrack(track.uri));
+      row.appendChild(card);
+    });
+
+    if(!unique.length){
+      row.innerHTML = '<p style="color:var(--muted)">Ingen nylige sange endnu.</p>';
+    }
+  }catch{
+    row.innerHTML = '<p style="color:var(--muted)">Kunne ikke hente senest afspillet.</p>';
+  }
+}
+
+
 function loadSpeakerfySettings(){
   const theme = localStorage.getItem("speakerfy_theme") || "green";
   const animations = localStorage.getItem("speakerfy_animations") !== "0";
@@ -2311,6 +4016,7 @@ setTimeout(hideBootScreen, 3200);
     const startup = localStorage.getItem("speakerfy_startup") || "player";
     if(startup === "home"){
       openHome();
+      loadSpotifyHome(true);
     }
   }else{
     setStatus("Ikke logget ind");
