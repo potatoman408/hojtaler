@@ -48,7 +48,8 @@
     height:100%; width:100%;
     display:flex; flex-direction:column;
     align-items:center; justify-content:center;
-    padding: 6vh 6vw;
+    padding: 5vh 6vw;
+    overflow-y: auto;
   }
 
   /* ---- Login screen ---- */
@@ -70,9 +71,11 @@
 
   /* ---- Now playing ---- */
   #player{ display:none; flex-direction:column; align-items:center; width:100%; max-width:520px; }
+  #info-col{ display:flex; flex-direction:column; align-items:center; width:100%; }
   #art-wrap{
     position:relative; width:min(58vw, 56vh); height:min(58vw,56vh);
     border-radius: 32px; overflow:hidden;
+    flex-shrink:0;
     box-shadow:
       0 40px 100px -30px rgba(0,0,0,0.65),
       0 10px 40px -10px rgba(0,0,0,0.4),
@@ -92,6 +95,31 @@
     color:var(--fg-dim); font-weight:400;
     white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
   }
+
+  /* Landscape phones / short viewports: art on the left, info+controls on the right */
+  @media (orientation: landscape) and (max-height: 620px){
+    #app{ padding: 3vh 4vw 3vh 4vw; }
+    #player{ flex-direction:row; align-items:center; max-width:none; width:100%; gap:4vw; justify-content:center; }
+    #art-wrap{ width:min(30vh, 30vw); height:min(30vh,30vw); border-radius:22px; }
+    #info-col{ width:auto; flex:1; max-width:440px; }
+    #meta{ margin-top:0; }
+    #title, #artist{ white-space:nowrap; }
+    #glass-panel{ margin-top:16px; padding:16px 20px 14px; }
+    #controls{ margin-top:14px; gap:24px; }
+    #play-pause{ width:52px; height:52px; }
+    #volume-side{ height:70vh; max-height:220px; width:40px; right:10px; }
+  }
+
+  #btn-fullscreen{
+    position: fixed; top: 18px; right: 18px; z-index:4;
+    width:38px; height:38px; border-radius:50%;
+    background: var(--glass-bg); border:1px solid var(--glass-border);
+    backdrop-filter: blur(20px);
+    color: var(--fg); display:flex; align-items:center; justify-content:center;
+    cursor:pointer; opacity: var(--control-alpha);
+    transition: opacity 0.7s var(--ease);
+  }
+  #btn-fullscreen:active{ background: rgba(255,255,255,0.12); }
 
   #glass-panel{
     width:100%; margin-top:30px;
@@ -208,13 +236,13 @@
   }
   #playlist-overlay.open #playlist-panel{ transform: translateY(0); }
   #playlist-header{
-    display:flex; align-items:center; justify-content:space-between;
+    display:flex; align-items:center; gap:10px;
     margin-bottom:18px;
   }
-  #playlist-header h2{ font-size:18px; font-weight:600; margin:0; }
-  #close-playlists{
+  #playlist-header h2{ font-size:18px; font-weight:600; margin:0; flex:1; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  #back-playlists, #close-playlists{
     background: rgba(255,255,255,0.08); border:none; color:var(--fg);
-    width:34px; height:34px; border-radius:50%; cursor:pointer;
+    width:34px; height:34px; border-radius:50%; cursor:pointer; flex-shrink:0;
     font-size:16px; display:flex; align-items:center; justify-content:center;
   }
   #playlist-grid{
@@ -235,6 +263,24 @@
     display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
   }
   .pl-item.playing span{ color:var(--fg); }
+
+  #track-list{ display:flex; flex-direction:column; gap:2px; }
+  .play-all-btn{
+    display:flex; align-items:center; gap:8px; align-self:flex-start;
+    background: var(--spotify-green); color:#06120a; border:none;
+    border-radius:999px; padding:11px 20px; font-weight:600; font-size:13px;
+    font-family:'Space Grotesk',sans-serif; cursor:pointer; margin-bottom:16px;
+  }
+  .play-all-btn:active{ opacity:0.85; }
+  .track-row{
+    display:flex; align-items:center; gap:12px; padding:9px 6px;
+    border-radius:14px; cursor:pointer; transition: background 0.2s var(--ease);
+  }
+  .track-row:active{ background: rgba(255,255,255,0.07); }
+  .track-row img{ width:46px; height:46px; border-radius:8px; object-fit:cover; flex-shrink:0; }
+  .track-row .t-meta{ display:flex; flex-direction:column; min-width:0; flex:1; }
+  .track-row .t-title{ font-size:14px; font-weight:500; color:var(--fg); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .track-row .t-artist{ font-size:12px; color:var(--fg-dim); margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 
   #status{
     position:fixed; bottom:18px; left:0; width:100%; text-align:center;
@@ -259,40 +305,47 @@
 
   <div id="player">
     <div id="art-wrap"><img id="art" src="" alt=""></div>
-    <div id="meta">
-      <div id="title">—</div>
-      <div id="artist">—</div>
-    </div>
-
-    <div id="glass-panel">
-      <div id="progress-row">
-        <span id="time-cur">0:00</span>
-        <div id="bar"><div id="bar-fill"></div></div>
-        <span id="time-dur">0:00</span>
+    <div id="info-col">
+      <div id="meta">
+        <div id="title">—</div>
+        <div id="artist">—</div>
       </div>
 
-      <div id="controls">
-        <button class="ctrl-btn" id="btn-prev" aria-label="Forrige">
-          <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6l10-6v12z"/></svg>
-        </button>
-        <button class="ctrl-btn" id="play-pause" aria-label="Afspil/pause">
-          <svg id="icon-play" width="30" height="30" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-          <svg id="icon-pause" width="30" height="30" viewBox="0 0 24 24" fill="currentColor" style="display:none"><path d="M6 5h4v14H6zm8 0h4v14h-4z"/></svg>
-        </button>
-        <button class="ctrl-btn" id="btn-next" aria-label="Næste">
-          <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><path d="M16 6h2v12h-2zM4.5 6l10 6-10 6z"/></svg>
-        </button>
-      </div>
+      <div id="glass-panel">
+        <div id="progress-row">
+          <span id="time-cur">0:00</span>
+          <div id="bar"><div id="bar-fill"></div></div>
+          <span id="time-dur">0:00</span>
+        </div>
 
-      <div id="panel-footer">
-        <button id="btn-playlists">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M4 6h16v2H4zm0 5h16v2H4zm0 5h10v2H4z"/></svg>
-          Vælg playliste
-        </button>
+        <div id="controls">
+          <button class="ctrl-btn" id="btn-prev" aria-label="Forrige">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6l10-6v12z"/></svg>
+          </button>
+          <button class="ctrl-btn" id="play-pause" aria-label="Afspil/pause">
+            <svg id="icon-play" width="30" height="30" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+            <svg id="icon-pause" width="30" height="30" viewBox="0 0 24 24" fill="currentColor" style="display:none"><path d="M6 5h4v14H6zm8 0h4v14h-4z"/></svg>
+          </button>
+          <button class="ctrl-btn" id="btn-next" aria-label="Næste">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><path d="M16 6h2v12h-2zM4.5 6l10 6-10 6z"/></svg>
+          </button>
+        </div>
+
+        <div id="panel-footer">
+          <button id="btn-playlists">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M4 6h16v2H4zm0 5h16v2H4zm0 5h10v2H4z"/></svg>
+            Vælg playliste
+          </button>
+        </div>
       </div>
     </div>
   </div>
 </div>
+
+<button id="btn-fullscreen" aria-label="Fuld skærm">
+  <svg id="icon-fs-enter" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M4 9V4h5v2H6v3H4zm16 0h-2V6h-3V4h5v5zM4 15h2v3h3v2H4v-5zm16 0v5h-5v-2h3v-3h2z"/></svg>
+  <svg id="icon-fs-exit" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="display:none"><path d="M6 6h4V4H4v6h2V6zm10 0v4h2V4h-6v2h4zM6 14H4v6h6v-2H6v-4zm14 0h-2v4h-4v2h6v-6z"/></svg>
+</button>
 
 <div id="volume-side">
   <div id="vol-side-fill"></div>
@@ -302,10 +355,14 @@
 <div id="playlist-overlay">
   <div id="playlist-panel">
     <div id="playlist-header">
-      <h2>Dine playlister</h2>
+      <button id="back-playlists" aria-label="Tilbage" style="display:none;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M15.5 4.5L8 12l7.5 7.5 1.4-1.4L10.8 12l6.1-6.1z"/></svg>
+      </button>
+      <h2 id="playlist-title">Dine playlister</h2>
       <button id="close-playlists">✕</button>
     </div>
     <div id="playlist-grid"></div>
+    <div id="track-list" style="display:none;"></div>
   </div>
 </div>
 
@@ -618,16 +675,28 @@ els.volSide.addEventListener('pointercancel', () => { draggingVolume = false; })
 /* ---------------- Playlists ---------------- */
 const playlistOverlay = document.getElementById('playlist-overlay');
 const playlistGrid = document.getElementById('playlist-grid');
+const trackList = document.getElementById('track-list');
+const playlistTitle = document.getElementById('playlist-title');
+const backPlaylistsBtn = document.getElementById('back-playlists');
 document.getElementById('btn-playlists').addEventListener('click', openPlaylists);
 document.getElementById('close-playlists').addEventListener('click', closePlaylists);
+backPlaylistsBtn.addEventListener('click', showPlaylistsView);
 playlistOverlay.addEventListener('click', e => { if (e.target === playlistOverlay) closePlaylists(); });
 
 function openPlaylists(){
   playlistOverlay.classList.add('open');
-  loadPlaylists();
+  showPlaylistsView();
 }
 function closePlaylists(){
   playlistOverlay.classList.remove('open');
+}
+
+function showPlaylistsView(){
+  playlistTitle.textContent = 'Dine playlister';
+  backPlaylistsBtn.style.display = 'none';
+  trackList.style.display = 'none';
+  playlistGrid.style.display = 'grid';
+  loadPlaylists();
 }
 
 let playlistsLoaded = false;
@@ -662,25 +731,86 @@ function renderPlaylists(items){
     const div = document.createElement('div');
     div.className = 'pl-item';
     div.innerHTML = `<img src="${img}" alt=""><span>${pl.name}</span>`;
-    div.addEventListener('click', () => playPlaylist(pl.uri, div));
+    div.addEventListener('click', () => openPlaylistTracks(pl));
     playlistGrid.appendChild(div);
   });
 }
 
-async function playPlaylist(uri, el){
-  document.querySelectorAll('.pl-item.playing').forEach(n => n.classList.remove('playing'));
-  el.classList.add('playing');
+async function openPlaylistTracks(pl){
+  playlistTitle.textContent = pl.name;
+  backPlaylistsBtn.style.display = 'flex';
+  playlistGrid.style.display = 'none';
+  trackList.style.display = 'flex';
+  trackList.innerHTML = '<span style="color:var(--fg-dim); font-size:14px;">Henter sange…</span>';
+
   const token = await getValidAccessToken();
+  try {
+    const res = await fetch(`https://api.spotify.com/v1/playlists/${pl.id}/tracks?limit=50`, {
+      headers: { 'Authorization': 'Bearer ' + token },
+    });
+    const data = await res.json();
+    renderTracks(pl, data.items || []);
+  } catch (e) {
+    trackList.innerHTML = '<span style="color:var(--fg-dim); font-size:14px;">Kunne ikke hente sange</span>';
+  }
+}
+
+function renderTracks(pl, items){
+  trackList.innerHTML = '';
+
+  const playAllBtn = document.createElement('button');
+  playAllBtn.className = 'play-all-btn';
+  playAllBtn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg> Afspil hele playlisten';
+  playAllBtn.addEventListener('click', () => playInContext(pl.uri, null));
+  trackList.appendChild(playAllBtn);
+
+  items.forEach(it => {
+    const track = it.track;
+    if (!track) return;
+    const img = track.album?.images?.slice(-1)[0]?.url || track.album?.images?.[0]?.url || '';
+    const row = document.createElement('div');
+    row.className = 'track-row';
+    row.innerHTML = `<img src="${img}" alt=""><div class="t-meta"><span class="t-title">${track.name}</span><span class="t-artist">${track.artists.map(a => a.name).join(', ')}</span></div>`;
+    row.addEventListener('click', () => playInContext(pl.uri, track.uri));
+    trackList.appendChild(row);
+  });
+}
+
+async function playInContext(contextUri, trackUri){
+  const token = await getValidAccessToken();
+  const body = { context_uri: contextUri };
+  if (trackUri) body.offset = { uri: trackUri };
   try {
     await fetch('https://api.spotify.com/v1/me/player/play' + (currentDeviceId ? '?device_id=' + currentDeviceId : ''), {
       method: 'PUT',
       headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ context_uri: uri }),
+      body: JSON.stringify(body),
     });
     closePlaylists();
   } catch (e) {
-    els.status.textContent = 'Kunne ikke starte playliste';
+    els.status.textContent = 'Kunne ikke starte afspilning';
   }
+}
+
+/* ---------------- Fullscreen (desktop) ---------------- */
+const fsBtn = document.getElementById('btn-fullscreen');
+const iconFsEnter = document.getElementById('icon-fs-enter');
+const iconFsExit = document.getElementById('icon-fs-exit');
+if (!document.documentElement.requestFullscreen) {
+  fsBtn.style.display = 'none';
+} else {
+  fsBtn.addEventListener('click', () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch(() => {});
+    } else {
+      document.exitFullscreen().catch(() => {});
+    }
+  });
+  document.addEventListener('fullscreenchange', () => {
+    const isFs = !!document.fullscreenElement;
+    iconFsEnter.style.display = isFs ? 'none' : 'block';
+    iconFsExit.style.display = isFs ? 'block' : 'none';
+  });
 }
 
 /* ---------------- Auto-hide controls (ambient screen) ---------------- */
@@ -695,5 +825,6 @@ function showControls(){
 ['touchstart','mousedown','mousemove'].forEach(evt => document.addEventListener(evt, showControls));
 showControls();
 </script>
+
 </body>
 </html>
