@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+<title>Højtaler</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --accent: #6b6f76;
+    --accent-dim: #35373b;
+    --bg: #060606;
+    --fg: #f2f0eb;
+    --fg-dim: rgba(242,240,235,0.55);
+    --control-alpha: 1;
+  }
+  *{ box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html,body{
+    margin:0; padding:0; height:100%; width:100%;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: 'Space Grotesk', sans-serif;
+    overflow: hidden;
+    user-select: none;
+  }
+  #bg{
+    position:fixed; inset:-10%;
+    background-size: cover;
+    background-position:center;
+    filter: blur(60px) saturate(1.6) brightness(0.55);
+    transform: scale(1.15);
+    transition: background-image 0.6s ease;
+    z-index:0;
+  }
+  #tint{
+    position:fixed; inset:0;
+    background: radial-gradient(circle at 50% 30%, transparent 0%, var(--bg) 78%);
+    z-index:1;
+  }
+  #app{
+    position:relative; z-index:2;
+    height:100%; width:100%;
+    display:flex; flex-direction:column;
+    align-items:center; justify-content:center;
+    padding: 6vh 6vw;
+  }
+
+  /* ---- Login screen ---- */
+  #login{
+    display:flex; flex-direction:column; align-items:center; gap:28px;
+    text-align:center;
+  }
+  #login h1{
+    font-size: clamp(28px, 4vw, 44px);
+    font-weight:600; margin:0; letter-spacing:-0.01em;
+  }
+  #login p{ color:var(--fg-dim); font-size:16px; max-width:420px; margin:0; line-height:1.5;}
+  .btn-primary{
+    background: var(--fg); color:#111; border:none;
+    padding: 16px 34px; border-radius: 999px;
+    font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:16px;
+    cursor:pointer; letter-spacing:0.01em;
+  }
+
+  /* ---- Now playing ---- */
+  #player{ display:none; flex-direction:column; align-items:center; width:100%; max-width:520px; }
+  #art-wrap{
+    position:relative; width:min(58vw, 56vh); height:min(58vw,56vh);
+    border-radius: 18px; overflow:hidden;
+    box-shadow: 0 30px 80px -20px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.06);
+  }
+  #art{ width:100%; height:100%; object-fit:cover; display:block; background:#111; }
+
+  #meta{ margin-top: 34px; text-align:center; width:100%; }
+  #title{
+    font-size: clamp(20px, 2.6vw, 30px); font-weight:600;
+    line-height:1.25; letter-spacing:-0.01em;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  }
+  #artist{
+    margin-top:6px; font-size: clamp(14px, 1.6vw, 18px);
+    color:var(--fg-dim); font-weight:400;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  }
+
+  #progress-row{
+    width:100%; display:flex; align-items:center; gap:12px;
+    margin-top:28px; opacity:var(--control-alpha);
+    transition:opacity 0.4s ease;
+  }
+  #time-cur, #time-dur{
+    font-family:'Space Mono', monospace; font-size:12px; color:var(--fg-dim);
+    width:42px; flex-shrink:0;
+  }
+  #time-dur{ text-align:right; }
+  #bar{
+    flex:1; height:4px; background:rgba(255,255,255,0.16);
+    border-radius:4px; position:relative; cursor:pointer;
+  }
+  #bar-fill{
+    position:absolute; left:0; top:0; height:100%;
+    background: var(--fg); border-radius:4px; width:0%;
+  }
+
+  #controls{
+    display:flex; align-items:center; justify-content:center; gap:30px;
+    margin-top: 26px;
+    opacity:var(--control-alpha);
+    transition:opacity 0.4s ease;
+  }
+  .ctrl-btn{
+    background:none; border:none; color:var(--fg); cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    padding:10px; opacity:0.9;
+  }
+  .ctrl-btn:active{ opacity:0.5; }
+  #play-pause{ transform: scale(1.35); }
+
+  #volume-row{
+    display:flex; align-items:center; gap:10px; margin-top:22px; width:70%;
+    opacity:var(--control-alpha); transition:opacity 0.4s ease;
+  }
+  #vol-bar{
+    flex:1; height:3px; background:rgba(255,255,255,0.16); border-radius:3px; position:relative; cursor:pointer;
+  }
+  #vol-fill{ position:absolute; left:0; top:0; height:100%; background:var(--fg-dim); border-radius:3px; width:50%; }
+
+  #status{
+    position:fixed; bottom:18px; left:0; width:100%; text-align:center;
+    font-family:'Space Mono', monospace; font-size:11px; color:var(--fg-dim);
+    letter-spacing:0.02em; z-index:3; opacity:var(--control-alpha); transition:opacity 0.4s ease;
+  }
+
+  @media (prefers-color-scheme: light){ }
+</style>
+</head>
+<body>
+
+<div id="bg"></div>
+<div id="tint"></div>
+
+<div id="app">
+  <div id="login">
+    <h1>Din højtaler venter</h1>
+    <p>Log ind med Spotify for at gøre denne skærm til afspilningsenhed for højtaleren.</p>
+    <button class="btn-primary" id="login-btn">Log ind med Spotify</button>
+  </div>
+
+  <div id="player">
+    <div id="art-wrap"><img id="art" src="" alt=""></div>
+    <div id="meta">
+      <div id="title">—</div>
+      <div id="artist">—</div>
+    </div>
+
+    <div id="progress-row">
+      <span id="time-cur">0:00</span>
+      <div id="bar"><div id="bar-fill"></div></div>
+      <span id="time-dur">0:00</span>
+    </div>
+
+    <div id="controls">
+      <button class="ctrl-btn" id="btn-prev" aria-label="Forrige">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6l10-6v12z"/></svg>
+      </button>
+      <button class="ctrl-btn" id="play-pause" aria-label="Afspil/pause">
+        <svg id="icon-play" width="30" height="30" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        <svg id="icon-pause" width="30" height="30" viewBox="0 0 24 24" fill="currentColor" style="display:none"><path d="M6 5h4v14H6zm8 0h4v14h-4z"/></svg>
+      </button>
+      <button class="ctrl-btn" id="btn-next" aria-label="Næste">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><path d="M16 6h2v12h-2zM4.5 6l10 6-10 6z"/></svg>
+      </button>
+    </div>
+
+    <div id="volume-row">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="var(--fg-dim)"><path d="M3 10v4h4l5 5V5L7 10H3zm13.5 2a4.5 4.5 0 00-2.5-4.03v8.06A4.5 4.5 0 0016.5 12z"/></svg>
+      <div id="vol-bar"><div id="vol-fill"></div></div>
+    </div>
+  </div>
+</div>
+
+<div id="status">Forbinder…</div>
+
+<script src="https://sdk.scdn.co/spotify-player.js"></script>
+<script>
+/* =========================================================
+   OPSÆTNING — udfyld disse to linjer efter du har oprettet
+   din Spotify-app på developer.spotify.com/dashboard
+   ========================================================= */
+const CLIENT_ID = 'SÆT_DIT_CLIENT_ID_HER';
+const REDIRECT_URI = window.location.origin + window.location.pathname; // matcher automatisk denne sides adresse
+/* ========================================================= */
+
+const SCOPES = [
+  'streaming',
+  'user-read-email',
+  'user-read-private',
+  'user-modify-playback-state',
+  'user-read-playback-state',
+  'user-read-currently-playing'
+].join(' ');
+
+const els = {
+  login: document.getElementById('login'),
+  loginBtn: document.getElementById('login-btn'),
+  player: document.getElementById('player'),
+  art: document.getElementById('art'),
+  bg: document.getElementById('bg'),
+  title: document.getElementById('title'),
+  artist: document.getElementById('artist'),
+  bar: document.getElementById('bar'),
+  barFill: document.getElementById('bar-fill'),
+  timeCur: document.getElementById('time-cur'),
+  timeDur: document.getElementById('time-dur'),
+  playPause: document.getElementById('play-pause'),
+  iconPlay: document.getElementById('icon-play'),
+  iconPause: document.getElementById('icon-pause'),
+  btnPrev: document.getElementById('btn-prev'),
+  btnNext: document.getElementById('btn-next'),
+  volBar: document.getElementById('vol-bar'),
+  volFill: document.getElementById('vol-fill'),
+  status: document.getElementById('status'),
+};
+
+/* ---------------- PKCE helpers ---------------- */
+function randomString(len){
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let out = '';
+  const rnd = crypto.getRandomValues(new Uint8Array(len));
+  for (let i=0; i<len; i++) out += chars[rnd[i] % chars.length];
+  return out;
+}
+async function sha256(plain){
+  const data = new TextEncoder().encode(plain);
+  return crypto.subtle.digest('SHA-256', data);
+}
+function base64urlencode(buf){
+  return btoa(String.fromCharCode(...new Uint8Array(buf)))
+    .replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+}
+
+async function redirectToSpotifyLogin(){
+  const verifier = randomString(64);
+  sessionStorage.setItem('pkce_verifier', verifier);
+  const challenge = base64urlencode(await sha256(verifier));
+  const params = new URLSearchParams({
+    client_id: CLIENT_ID,
+    response_type: 'code',
+    redirect_uri: REDIRECT_URI,
+    scope: SCOPES,
+    code_challenge_method: 'S256',
+    code_challenge: challenge,
+  });
+  window.location = 'https://accounts.spotify.com/authorize?' + params.toString();
+}
+
+async function exchangeCodeForToken(code){
+  const verifier = sessionStorage.getItem('pkce_verifier');
+  const body = new URLSearchParams({
+    client_id: CLIENT_ID,
+    grant_type: 'authorization_code',
+    code,
+    redirect_uri: REDIRECT_URI,
+    code_verifier: verifier,
+  });
+  const res = await fetch('https://accounts.spotify.com/api/token', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body,
+  });
+  if (!res.ok) throw new Error('Token exchange fejlede');
+  return res.json();
+}
+
+async function refreshAccessToken(){
+  const refreshToken = localStorage.getItem('refresh_token');
+  if (!refreshToken) return null;
+  const body = new URLSearchParams({
+    client_id: CLIENT_ID,
+    grant_type: 'refresh_token',
+    refresh_token: refreshToken,
+  });
+  const res = await fetch('https://accounts.spotify.com/api/token', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body,
+  });
+  if (!res.ok) return null;
+  const data = await res.json();
+  storeTokens(data);
+  return data.access_token;
+}
+
+function storeTokens(data){
+  localStorage.setItem('access_token', data.access_token);
+  localStorage.setItem('expires_at', String(Date.now() + (data.expires_in - 60) * 1000));
+  if (data.refresh_token) localStorage.setItem('refresh_token', data.refresh_token);
+}
+
+async function getValidAccessToken(){
+  const expiresAt = Number(localStorage.getItem('expires_at') || 0);
+  if (Date.now() < expiresAt) return localStorage.getItem('access_token');
+  return await refreshAccessToken();
+}
+
+/* ---------------- Boot sequence ---------------- */
+els.loginBtn.addEventListener('click', redirectToSpotifyLogin);
+
+(async function init(){
+  const urlParams = new URLSearchParams(window.location.search);
+  const code = urlParams.get('code');
+
+  if (code) {
+    els.status.textContent = 'Logger ind…';
+    try {
+      const data = await exchangeCodeForToken(code);
+      storeTokens(data);
+      window.history.replaceState({}, document.title, REDIRECT_URI);
+    } catch (e) {
+      els.status.textContent = 'Login fejlede — prøv igen.';
+      return;
+    }
+  }
+
+  const token = await getValidAccessToken();
+  if (!token) {
+    els.login.style.display = 'flex';
+    els.status.textContent = 'Ikke logget ind';
+    return;
+  }
+
+  els.login.style.display = 'none';
+  els.player.style.display = 'flex';
+  els.status.textContent = 'Forbinder til Spotify…';
+  bootPlayer();
+})();
+
+/* ---------------- Web Playback SDK ---------------- */
+let spotifyPlayer = null;
+let currentDeviceId = null;
+let localPositionMs = 0;
+let localDurationMs = 0;
+let isPaused = true;
+let tickInterval = null;
+
+function bootPlayer(){
+  window.onSpotifyWebPlaybackSDKReady = () => {
+    spotifyPlayer = new Spotify.Player({
+      name: 'Højtaler-skærm',
+      getOAuthToken: cb => { getValidAccessToken().then(cb); },
+      volume: 0.6,
+    });
+
+    spotifyPlayer.addListener('ready', ({ device_id }) => {
+      currentDeviceId = device_id;
+      els.status.textContent = 'Klar — vælg denne enhed i Spotify hvis afspilning ikke starter automatisk';
+      transferPlaybackHere();
+    });
+
+    spotifyPlayer.addListener('not_ready', () => {
+      els.status.textContent = 'Enhed offline';
+    });
+
+    spotifyPlayer.addListener('initialization_error', ({message}) => { els.status.textContent = 'Fejl: ' + message; });
+    spotifyPlayer.addListener('authentication_error', ({message}) => { els.status.textContent = 'Login-fejl: ' + message; });
+    spotifyPlayer.addListener('account_error', ({message}) => { els.status.textContent = 'Kræver Spotify Premium'; });
+
+    spotifyPlayer.addListener('player_state_changed', state => {
+      if (!state) return;
+      updateFromState(state);
+      els.status.textContent = '';
+    });
+
+    spotifyPlayer.connect();
+  };
+
+  if (window.Spotify) window.onSpotifyWebPlaybackSDKReady();
+}
+
+async function transferPlaybackHere(){
+  const token = await getValidAccessToken();
+  try {
+    await fetch('https://api.spotify.com/v1/me/player', {
+      method: 'PUT',
+      headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ device_ids: [currentDeviceId], play: true }),
+    });
+  } catch (e) { /* stille fejl - bruger kan vælge enheden manuelt i Spotify-appen */ }
+}
+
+let lastArtUrl = '';
+function updateFromState(state){
+  const track = state.track_window.current_track;
+  isPaused = state.paused;
+  localPositionMs = state.position;
+  localDurationMs = state.duration;
+
+  els.title.textContent = track.name;
+  els.artist.textContent = track.artists.map(a => a.name).join(', ');
+
+  const artUrl = track.album.images[0]?.url || '';
+  if (artUrl && artUrl !== lastArtUrl){
+    lastArtUrl = artUrl;
+    els.art.src = artUrl;
+    els.bg.style.backgroundImage = `url(${artUrl})`;
+  }
+
+  els.iconPlay.style.display = isPaused ? 'block' : 'none';
+  els.iconPause.style.display = isPaused ? 'none' : 'block';
+
+  els.volFill.style.width = Math.round((state.device?.volume_percent ?? 60)) + '%';
+
+  updateProgressUI();
+  restartTicker();
+}
+
+function restartTicker(){
+  clearInterval(tickInterval);
+  if (isPaused) return;
+  const start = Date.now();
+  const base = localPositionMs;
+  tickInterval = setInterval(() => {
+    localPositionMs = base + (Date.now() - start);
+    if (localPositionMs > localDurationMs) localPositionMs = localDurationMs;
+    updateProgressUI();
+  }, 250);
+}
+
+function fmtTime(ms){
+  const s = Math.floor(ms / 1000);
+  const m = Math.floor(s / 60);
+  const r = s % 60;
+  return `${m}:${r < 10 ? '0' : ''}${r}`;
+}
+
+function updateProgressUI(){
+  els.timeCur.textContent = fmtTime(localPositionMs);
+  els.timeDur.textContent = fmtTime(localDurationMs);
+  const pct = localDurationMs ? (localPositionMs / localDurationMs) * 100 : 0;
+  els.barFill.style.width = pct + '%';
+}
+
+/* ---------------- Controls ---------------- */
+els.playPause.addEventListener('click', () => spotifyPlayer && spotifyPlayer.togglePlay());
+els.btnPrev.addEventListener('click', () => spotifyPlayer && spotifyPlayer.previousTrack());
+els.btnNext.addEventListener('click', () => spotifyPlayer && spotifyPlayer.nextTrack());
+
+function seekFromEvent(e, barEl, onSeek){
+  const rect = barEl.getBoundingClientRect();
+  const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+  const ratio = Math.min(1, Math.max(0, (clientX - rect.left) / rect.width));
+  onSeek(ratio);
+}
+els.bar.addEventListener('click', e => {
+  seekFromEvent(e, els.bar, ratio => {
+    const ms = Math.round(ratio * localDurationMs);
+    spotifyPlayer && spotifyPlayer.seek(ms);
+    localPositionMs = ms;
+    updateProgressUI();
+  });
+});
+els.volBar.addEventListener('click', e => {
+  seekFromEvent(e, els.volBar, ratio => {
+    els.volFill.style.width = (ratio * 100) + '%';
+    spotifyPlayer && spotifyPlayer.setVolume(ratio);
+  });
+});
+
+/* ---------------- Auto-hide controls (ambient screen) ---------------- */
+let hideTimer = null;
+function showControls(){
+  document.documentElement.style.setProperty('--control-alpha', '1');
+  clearTimeout(hideTimer);
+  hideTimer = setTimeout(() => {
+    document.documentElement.style.setProperty('--control-alpha', '0');
+  }, 6000);
+}
+['touchstart','mousedown','mousemove'].forEach(evt => document.addEventListener(evt, showControls));
+showControls();
+</script>
+</body>
+</html>
