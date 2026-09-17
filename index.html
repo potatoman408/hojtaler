@@ -3335,6 +3335,720 @@ button:active{
 }
 </style>
 
+
+<style id="speakerfy-v10-style">
+:root{
+  --app-bg:#0b0d10;
+  --app-bg-2:#12151a;
+  --app-surface:#171b21;
+  --app-surface-2:#1d222a;
+  --app-surface-3:#222833;
+  --app-border:rgba(255,255,255,.08);
+  --app-border-soft:rgba(255,255,255,.05);
+  --app-text:#f4f6f8;
+  --app-muted:rgba(244,246,248,.64);
+  --app-accent:#d9dde3;
+  --app-accent-dark:#11161c;
+  --app-shadow:0 18px 48px rgba(0,0,0,.28);
+}
+
+/* Base */
+html,body{
+  background:
+    radial-gradient(circle at top, rgba(255,255,255,.03), transparent 26%),
+    linear-gradient(180deg, #0b0d10 0%, #0f1217 100%) !important;
+  color:var(--app-text) !important;
+}
+
+#background{
+  filter:blur(92px) saturate(1.15) brightness(.20) !important;
+  opacity:.45 !important;
+}
+
+#shade{
+  background:
+    linear-gradient(180deg, rgba(11,13,16,.12), rgba(11,13,16,.72) 48%, rgba(11,13,16,.95) 100%) !important;
+}
+
+/* Hide visual noise */
+#visualizer-canvas,
+#player-eyebrow{
+  display:none !important;
+}
+
+/* App padding */
+#app{
+  padding:calc(74px + env(safe-area-inset-top)) clamp(16px,4vw,34px) calc(28px + env(safe-area-inset-bottom)) !important;
+}
+
+/* Top status bar */
+#topbar{
+  top:calc(16px + env(safe-area-inset-top)) !important;
+  left:50% !important;
+  transform:translateX(-50%);
+  width:auto !important;
+  min-width:180px;
+  max-width:42vw;
+  padding:10px 14px !important;
+  border-radius:16px !important;
+  background:rgba(18,21,26,.78) !important;
+  border:1px solid var(--app-border) !important;
+  box-shadow:none !important;
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+}
+
+#brand,
+#clock{
+  color:var(--app-text) !important;
+}
+
+#brand-dot{
+  background:#fff !important;
+  box-shadow:none !important;
+}
+
+/* Player screen */
+#player{
+  width:min(1020px, 100%) !important;
+  max-width:1020px !important;
+  gap:34px !important;
+  padding-bottom:86px !important;
+}
+
+#album-wrap{
+  border-radius:24px !important;
+  border:1px solid var(--app-border) !important;
+  box-shadow:var(--app-shadow) !important;
+  background:#111 !important;
+}
+
+#album-wrap::before,
+#album-wrap::after{
+  display:none !important;
+}
+
+#ui{
+  max-width:440px !important;
+}
+
+#title{
+  color:var(--app-text) !important;
+  font-size:clamp(30px,4vw,44px) !important;
+  line-height:1.05 !important;
+  font-weight:700 !important;
+  letter-spacing:-.04em !important;
+}
+
+#artist{
+  color:var(--app-muted) !important;
+  font-size:15px !important;
+  margin-top:8px !important;
+}
+
+#card{
+  margin-top:22px !important;
+  padding:20px !important;
+  border-radius:22px !important;
+  border:1px solid var(--app-border) !important;
+  background:rgba(23,27,33,.92) !important;
+  box-shadow:none !important;
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+}
+
+#progress{
+  height:6px !important;
+  border-radius:999px !important;
+  background:rgba(255,255,255,.08) !important;
+}
+
+#progress-fill{
+  background:#f1f3f5 !important;
+  box-shadow:none !important;
+}
+
+.time{
+  color:var(--app-muted) !important;
+}
+
+#controls{
+  margin-top:18px !important;
+  gap:12px !important;
+}
+
+.ctrl{
+  width:48px !important;
+  height:48px !important;
+  border-radius:16px !important;
+  border:1px solid var(--app-border-soft) !important;
+  background:rgba(255,255,255,.04) !important;
+  box-shadow:none !important;
+  color:var(--app-text) !important;
+}
+
+#play{
+  width:64px !important;
+  height:64px !important;
+  border-radius:18px !important;
+  background:#f1f3f5 !important;
+  color:#11161c !important;
+  border:none !important;
+  box-shadow:none !important;
+}
+
+.player-extra-actions{
+  display:grid !important;
+  grid-template-columns:repeat(2, minmax(0,1fr)) !important;
+  gap:8px !important;
+  margin-top:16px !important;
+}
+
+.player-extra-button,
+#playlist-button{
+  min-height:42px;
+  padding:0 12px !important;
+  border-radius:14px !important;
+  border:1px solid var(--app-border-soft) !important;
+  background:rgba(255,255,255,.04) !important;
+  color:var(--app-text) !important;
+  font-size:12px !important;
+  box-shadow:none !important;
+}
+
+#next-preview{
+  margin-top:14px !important;
+  padding-top:12px !important;
+  border-top:1px solid rgba(255,255,255,.08) !important;
+  background:transparent !important;
+  border-radius:0 !important;
+  border:none !important;
+}
+
+#next-preview strong{
+  color:var(--app-muted) !important;
+}
+
+/* Volume / fullscreen */
+#volume{
+  right:16px !important;
+  border-radius:18px !important;
+  background:rgba(18,21,26,.78) !important;
+  border:1px solid var(--app-border) !important;
+  box-shadow:none !important;
+}
+
+#volume-fill{
+  background:#f1f3f5 !important;
+}
+
+#fullscreen{
+  border-radius:14px !important;
+  background:rgba(18,21,26,.78) !important;
+  border:1px solid var(--app-border) !important;
+  box-shadow:none !important;
+}
+
+/* Home */
+#screen-home{
+  padding-bottom:108px !important;
+  background:
+    linear-gradient(180deg, #0b0d10 0%, #0f1217 100%) !important;
+}
+
+.home-shell{
+  width:min(1020px,100%) !important;
+  margin:0 auto !important;
+}
+
+.home-top{
+  margin-bottom:18px !important;
+}
+
+.home-greeting{
+  font-size:clamp(34px,4vw,50px) !important;
+  letter-spacing:-.05em !important;
+  font-weight:700 !important;
+  color:var(--app-text) !important;
+}
+
+.home-pill{
+  border-radius:999px !important;
+  background:rgba(255,255,255,.04) !important;
+  border:1px solid var(--app-border) !important;
+  color:var(--app-text) !important;
+  box-shadow:none !important;
+}
+
+/* Hero simplified */
+#speakerfy-hero{
+  display:grid !important;
+  grid-template-columns:1fr !important;
+  gap:14px !important;
+  padding:22px !important;
+  margin:8px 0 24px !important;
+  border-radius:24px !important;
+  border:1px solid var(--app-border) !important;
+  background:rgba(23,27,33,.9) !important;
+  box-shadow:none !important;
+}
+
+.speakerfy-kicker{
+  color:var(--app-muted) !important;
+  letter-spacing:.14em !important;
+}
+
+#speakerfy-hero h2{
+  margin:8px 0 8px !important;
+  font-size:clamp(28px,4vw,38px) !important;
+  line-height:1.04 !important;
+  letter-spacing:-.04em !important;
+  color:var(--app-text) !important;
+}
+
+#speakerfy-hero p{
+  color:var(--app-muted) !important;
+  max-width:38ch !important;
+}
+
+/* Hero stats minimal */
+.speakerfy-hero-stats{
+  display:grid !important;
+  grid-template-columns:repeat(3, minmax(0,1fr)) !important;
+  gap:10px !important;
+}
+
+.speakerfy-stat{
+  padding:14px !important;
+  border-radius:16px !important;
+  border:1px solid var(--app-border-soft) !important;
+  background:rgba(255,255,255,.03) !important;
+  box-shadow:none !important;
+}
+.speakerfy-stat span{
+  color:var(--app-muted) !important;
+  font-size:11px !important;
+}
+.speakerfy-stat strong{
+  font-size:15px !important;
+  color:var(--app-text) !important;
+}
+
+/* Sections */
+.home-section{
+  margin-top:24px !important;
+}
+.home-section h2,
+.home-section-title,
+.settings-title{
+  font-size:21px !important;
+  font-weight:700 !important;
+  letter-spacing:-.02em !important;
+  color:var(--app-text) !important;
+}
+
+/* Quick cards and playlist cards */
+#home-quick-grid{
+  grid-template-columns:repeat(4,minmax(0,1fr)) !important;
+  gap:12px !important;
+}
+
+.quick-card{
+  min-height:96px !important;
+  padding:16px !important;
+  border-radius:18px !important;
+  border:1px solid var(--app-border) !important;
+  background:rgba(23,27,33,.86) !important;
+  box-shadow:none !important;
+}
+
+.quick-card::after{
+  display:none !important;
+}
+
+.quick-icon-box{
+  width:40px !important;
+  height:40px !important;
+  border-radius:12px !important;
+  background:rgba(255,255,255,.05) !important;
+  color:var(--app-text) !important;
+}
+
+.quick-card-title{
+  margin-top:12px !important;
+  font-size:14px !important;
+  color:var(--app-text) !important;
+}
+
+.spotify-card{
+  padding:12px !important;
+  border-radius:18px !important;
+  border:1px solid var(--app-border) !important;
+  background:rgba(23,27,33,.86) !important;
+  box-shadow:none !important;
+}
+
+.spotify-card img{
+  border-radius:14px !important;
+}
+
+.spotify-card-title{
+  color:var(--app-text) !important;
+}
+.spotify-card-sub{
+  color:var(--app-muted) !important;
+}
+
+.pin-playlist{
+  background:rgba(18,21,26,.82) !important;
+  border:1px solid var(--app-border) !important;
+}
+
+/* Overlay / sheets */
+#overlay{
+  background:rgba(8,10,13,.7) !important;
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+}
+
+#sheet{
+  border-radius:24px 24px 0 0 !important;
+  border:1px solid var(--app-border) !important;
+  background:rgba(18,21,26,.98) !important;
+}
+
+.sheet-close,
+.feature-action,
+.settings-button{
+  border-radius:999px !important;
+  border:1px solid var(--app-border) !important;
+  background:rgba(255,255,255,.04) !important;
+  color:var(--app-text) !important;
+  box-shadow:none !important;
+}
+
+/* Internal pages */
+#screen-settings,
+#screen-search,
+#screen-liked,
+#screen-queue,
+#screen-sound,
+.v6-screen{
+  background:linear-gradient(180deg, #0b0d10 0%, #0f1217 100%) !important;
+  padding-bottom:108px !important;
+}
+
+.settings-card,
+.v6-settings-card,
+.sound-hero,
+.eq-card,
+.queue-now,
+.party-card,
+.system-card,
+.profile-card{
+  border-radius:20px !important;
+  border:1px solid var(--app-border) !important;
+  background:rgba(23,27,33,.9) !important;
+  box-shadow:none !important;
+}
+
+.search-box{
+  border-radius:16px !important;
+  border:1px solid var(--app-border) !important;
+  background:rgba(255,255,255,.04) !important;
+}
+
+.track-row,
+.queue-row{
+  border-radius:16px !important;
+  background:rgba(255,255,255,.03) !important;
+}
+
+.segmented{
+  border-radius:16px !important;
+  border:1px solid var(--app-border) !important;
+  background:rgba(255,255,255,.03) !important;
+}
+
+.segmented button{
+  border-radius:12px !important;
+}
+.segmented button.active{
+  background:#f1f3f5 !important;
+  color:#11161c !important;
+}
+
+.theme-dot{
+  box-shadow:none !important;
+}
+
+/* Global nav simplified */
+#global-nav{
+  width:min(380px, calc(100vw - 20px)) !important;
+  min-height:60px !important;
+  gap:4px !important;
+  padding:5px !important;
+  border-radius:20px !important;
+  background:rgba(18,21,26,.92) !important;
+  border:1px solid var(--app-border) !important;
+  box-shadow:var(--app-shadow) !important;
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+}
+
+#global-nav button{
+  min-height:50px !important;
+  border-radius:15px !important;
+  color:var(--app-muted) !important;
+  background:transparent !important;
+}
+
+#global-nav button.active{
+  color:var(--app-text) !important;
+  background:rgba(255,255,255,.05) !important;
+}
+
+#global-nav button.active::before{
+  display:none !important;
+}
+
+.nav-player-orb{
+  width:28px !important;
+  height:28px !important;
+  border-radius:10px !important;
+  background:#f1f3f5 !important;
+  color:#11161c !important;
+  box-shadow:none !important;
+}
+
+#global-nav button[data-route="player"].active .nav-player-orb{
+  transform:none !important;
+}
+
+/* Idle / fullscreen overlay simplified */
+#idle-wake-layer{
+  background:
+    linear-gradient(180deg, rgba(11,13,16,.10), rgba(11,13,16,.26)) !important;
+}
+
+.idle-signal{
+  width:58px !important;
+  height:58px !important;
+  background:#f1f3f5 !important;
+  box-shadow:none !important;
+}
+
+.idle-brand{
+  color:var(--app-text) !important;
+}
+.idle-sub{
+  color:var(--app-muted) !important;
+}
+
+#idle-dock{
+  width:min(400px, calc(100vw - 26px)) !important;
+  padding:6px !important;
+  border-radius:18px !important;
+  background:rgba(18,21,26,.9) !important;
+  border:1px solid var(--app-border) !important;
+  box-shadow:none !important;
+}
+
+.idle-dock-btn{
+  border-radius:13px !important;
+  background:rgba(255,255,255,.04) !important;
+  border:1px solid var(--app-border-soft) !important;
+  color:var(--app-text) !important;
+}
+.idle-dock-main{
+  background:#f1f3f5 !important;
+  color:#11161c !important;
+  border:none !important;
+}
+
+/* Home mini player */
+#home-mini-player{
+  bottom:78px !important;
+  border-radius:18px !important;
+  border:1px solid var(--app-border) !important;
+  background:rgba(18,21,26,.92) !important;
+  box-shadow:none !important;
+}
+
+/* Login */
+#login{
+  width:min(480px,100%) !important;
+  padding:30px 24px !important;
+  border-radius:28px !important;
+  border:1px solid var(--app-border) !important;
+  background:rgba(23,27,33,.92) !important;
+  box-shadow:none !important;
+}
+
+.primary{
+  background:#f1f3f5 !important;
+  color:#11161c !important;
+  border:none !important;
+}
+
+/* Responsive */
+@media(max-width:900px){
+  #home-quick-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+  }
+
+  .speakerfy-hero-stats{
+    grid-template-columns:1fr !important;
+  }
+}
+
+@media(max-width:760px){
+  #player{
+    gap:22px !important;
+    padding-bottom:92px !important;
+  }
+
+  .player-extra-actions{
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+  }
+
+  #title{
+    font-size:34px !important;
+  }
+
+  #topbar{
+    max-width:66vw;
+  }
+
+  #home-mini-player{
+    bottom:76px !important;
+  }
+}
+
+@media(max-width:520px){
+  #global-nav button span:not(.nav-player-orb){
+    display:none;
+  }
+
+  #speakerfy-hero{
+    padding:18px !important;
+  }
+
+  .speakerfy-hero-stats{
+    grid-template-columns:1fr !important;
+  }
+}
+</style>
+
+
+<style id="speakerfy-v11-standby">
+/* ===== Super simple standby ===== */
+
+/* Only album cover + song title */
+body.idle #topbar,
+body.idle #ui,
+body.idle #fullscreen,
+body.idle #volume,
+body.idle #global-nav,
+body.idle #status-bottom,
+body.idle #screensaver-info{
+  opacity:0 !important;
+  pointer-events:none !important;
+}
+
+/* Hide every visible item inside the wake layer */
+body.idle #idle-wake-inner{
+  opacity:0 !important;
+  pointer-events:none !important;
+}
+
+/* Keep invisible wake layer clickable */
+body.idle #idle-wake-layer{
+  opacity:1 !important;
+  pointer-events:auto !important;
+  background:transparent !important;
+}
+
+/* Album perfectly centered and slightly larger */
+body.idle #album-wrap{
+  position:fixed !important;
+  left:50% !important;
+  top:46% !important;
+  width:min(54vw,58vh) !important;
+  height:min(54vw,58vh) !important;
+  max-width:520px !important;
+  max-height:520px !important;
+  transform:translate(-50%,-50%) scale(1.04) !important;
+  filter:none !important;
+  border-radius:24px !important;
+  box-shadow:0 24px 65px rgba(0,0,0,.36) !important;
+  z-index:12 !important;
+}
+
+/* Song title only */
+#standby-title{
+  position:fixed;
+  left:50%;
+  top:calc(46% + min(27vw,29vh) + 34px);
+  transform:translateX(-50%);
+  z-index:13;
+  width:min(700px,82vw);
+  text-align:center;
+  color:#f4f6f8;
+  font-size:clamp(18px,2.6vw,28px);
+  font-weight:650;
+  letter-spacing:-.025em;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .32s ease;
+}
+
+body.idle #standby-title{
+  opacity:1;
+}
+
+/* Remove decorative standby stuff completely */
+#idle-signal,
+#idle-brand,
+#idle-sub,
+#idle-dock{
+  display:none !important;
+}
+
+/* Keep background very calm in standby */
+body.idle #background{
+  opacity:.30 !important;
+  filter:blur(105px) saturate(1.05) brightness(.16) !important;
+}
+
+body.idle #shade{
+  background:rgba(9,11,14,.54) !important;
+}
+
+/* Smooth return from standby */
+#album-wrap{
+  transition:
+    transform .58s cubic-bezier(.22,.72,.25,1),
+    filter .45s ease,
+    box-shadow .45s ease !important;
+}
+
+@media(max-width:760px){
+  body.idle #album-wrap{
+    width:min(70vw,52vh) !important;
+    height:min(70vw,52vh) !important;
+  }
+
+  #standby-title{
+    top:calc(46% + min(35vw,26vh) + 28px);
+    width:86vw;
+  }
+}
+</style>
+
 </head>
 
 <body>
@@ -3396,7 +4110,7 @@ button:active{
     </div>
 
     <div id="ui">
-      <div id="player-eyebrow"><span></span> SPEAKERFY LIVE</div>
+      <div id="player-eyebrow"><span></span> SPEAKERFY</div>
       <div id="title">—</div>
       <div id="artist">—</div>
 
@@ -3499,8 +4213,8 @@ button:active{
     <section id="speakerfy-hero">
       <div class="speakerfy-hero-copy">
         <div class="speakerfy-kicker">SPEAKERFY</div>
-        <h2>Dit lydrum</h2>
-        <p>Et roligt og lækkert musikdisplay til din højtaler — bygget til hurtig styring og god stemning.</p>
+        <h2>Musik til din højtaler</h2>
+        <p>Et enkelt og flot musikdisplay til din højtaler.</p>
       </div>
 
       <div class="speakerfy-hero-stats">
@@ -6181,6 +6895,7 @@ if ("serviceWorker" in navigator) {
 </script>
 
 
+<div id="standby-title">—</div>
 <div id="idle-wake-layer" aria-hidden="true">
   <div id="idle-wake-inner">
     <div class="idle-signal"></div>
@@ -6293,14 +7008,14 @@ if ("serviceWorker" in navigator) {
 
   /* Small copy cleanup */
   const cinemaButton = document.getElementById("cinema-button");
-  if(cinemaButton) cinemaButton.textContent = "Scene mode";
+  if(cinemaButton) cinemaButton.textContent = "Fullscreen";
 
   const appTitle = document.querySelector("#login h1");
   if(appTitle) appTitle.textContent = "Speakerfy";
 
   const appText = document.querySelector("#login p");
   if(appText){
-    appText.textContent = "Giv din højtaler et elegant musikdisplay med hurtig adgang til afspilning, playlister og stemning.";
+    appText.textContent = "Et enkelt musikdisplay til din højtaler med hurtig styring.";
   }
 })();
 </script>
@@ -6340,7 +7055,7 @@ if ("serviceWorker" in navigator) {
     const heroMode = $("hero-mode");
     if(heroMode){
       if(document.body.classList.contains("idle")){
-        heroMode.textContent = "Scene mode";
+        heroMode.textContent = "Fullscreen";
       }else if($("screen-home")?.classList.contains("active")){
         heroMode.textContent = "Home";
       }else if($("screen-settings")?.classList.contains("active")){
@@ -6412,6 +7127,97 @@ if ("serviceWorker" in navigator) {
       }
     },30);
   });
+})();
+</script>
+
+
+<script id="speakerfy-v10-script">
+(() => {
+  function $(id){ return document.getElementById(id); }
+
+  function simplifyHero(){
+    const track = $("hero-track");
+    const title = $("title")?.textContent?.trim();
+    if(track){
+      track.textContent = title && title !== "—" ? title : "Klar til musik";
+    }
+
+    const mode = $("hero-mode");
+    if(mode){
+      if(document.body.classList.contains("idle")) mode.textContent = "Fullscreen";
+      else if($("screen-settings")?.classList.contains("active")) mode.textContent = "Indstillinger";
+      else if($("screen-home")?.classList.contains("active")) mode.textContent = "Hjem";
+      else mode.textContent = "Afspiller";
+    }
+
+    const theme = $("hero-theme");
+    if(theme){
+      const special = localStorage.getItem("speakerfy_special_theme") || "normal";
+      const names = {
+        normal: "Standard",
+        soundboks: "Soundbox",
+        neon: "Neon",
+        mono: "Mono",
+        album: "Album"
+      };
+      theme.textContent = names[special] || "Standard";
+    }
+  }
+
+  setInterval(simplifyHero, 600);
+
+  const heroTitle = document.querySelector("#speakerfy-hero h2");
+  if(heroTitle) heroTitle.textContent = "Musik til din højtaler";
+
+  const heroText = document.querySelector("#speakerfy-hero p");
+  if(heroText) heroText.textContent = "Et enkelt og flot musikdisplay til din højtaler.";
+
+  const sceneBtn = document.getElementById("cinema-button");
+  if(sceneBtn) sceneBtn.textContent = "Fullscreen";
+})();
+</script>
+
+
+<script id="speakerfy-v11-script">
+(() => {
+  function updateStandbyTitle(){
+    const source = document.getElementById("title");
+    const target = document.getElementById("standby-title");
+    if(!target) return;
+
+    const value = source?.textContent?.trim();
+    target.textContent = value && value !== "—" ? value : "Speakerfy";
+  }
+
+  updateStandbyTitle();
+
+  const titleNode = document.getElementById("title");
+  if(titleNode){
+    const observer = new MutationObserver(updateStandbyTitle);
+    observer.observe(titleNode,{
+      childList:true,
+      characterData:true,
+      subtree:true
+    });
+  }
+
+  setInterval(updateStandbyTitle,1000);
+
+  /* Any tap on the clean standby wakes Speakerfy */
+  const wakeLayer = document.getElementById("idle-wake-layer");
+  if(wakeLayer){
+    wakeLayer.addEventListener("pointerdown", event => {
+      if(!document.body.classList.contains("idle")) return;
+      event.preventDefault();
+      event.stopImmediatePropagation();
+
+      try{
+        wakeScreen();
+      }catch{
+        document.body.classList.remove("idle");
+      }
+    }, true);
+  }
 })();
 </script>
 
