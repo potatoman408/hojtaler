@@ -1,6 +1,4 @@
-from pathlib import Path
-
-html = r'''<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="da">
 <head>
 <meta charset="UTF-8">
@@ -19,9 +17,9 @@ html = r'''<!DOCTYPE html>
 :root{
   --green:#1db954;
   --bg:#070707;
-  --text:#f6f6f6;
-  --muted:rgba(255,255,255,.60);
-  --glass:rgba(17,17,17,.68);
+  --text:#f5f5f5;
+  --muted:rgba(255,255,255,.62);
+  --glass:rgba(12,12,12,.72);
   --border:rgba(255,255,255,.10);
   --ease:cubic-bezier(.22,.61,.36,1);
 }
@@ -58,7 +56,7 @@ button{
   z-index:0;
   background-position:center;
   background-size:cover;
-  filter:blur(90px) saturate(1.35) brightness(.38);
+  filter:blur(90px) saturate(1.38) brightness(.36);
   transform:scale(1.22);
   transition:background-image .7s var(--ease);
 }
@@ -68,23 +66,23 @@ button{
   inset:0;
   z-index:1;
   background:
-    radial-gradient(circle at 50% 30%,rgba(255,255,255,.04),transparent 42%),
-    linear-gradient(180deg,rgba(0,0,0,.35),rgba(0,0,0,.76));
+    radial-gradient(circle at 50% 30%,rgba(255,255,255,.04),transparent 40%),
+    linear-gradient(180deg,rgba(0,0,0,.28),rgba(0,0,0,.78));
 }
 
 #topbar{
   position:fixed;
   top:max(10px,env(safe-area-inset-top));
   left:18px;
-  right:18px;
+  right:68px;
   z-index:8;
   display:flex;
   align-items:center;
   justify-content:space-between;
-  pointer-events:none;
   opacity:1;
   transform:translateY(0);
   transition:opacity .55s var(--ease),transform .55s var(--ease);
+  pointer-events:none;
 }
 
 #brand{
@@ -104,9 +102,9 @@ button{
   box-shadow:0 0 22px rgba(29,185,84,.65);
 }
 
-#status{
+#clock{
   color:var(--muted);
-  font:11px "Space Mono",monospace;
+  font:13px "Space Mono",monospace;
 }
 
 #app{
@@ -154,11 +152,17 @@ button{
 
 #player{
   width:100%;
-  max-width:1000px;
+  max-width:1080px;
   display:none;
   align-items:center;
   justify-content:center;
-  gap:clamp(26px,5.5vw,72px);
+  gap:clamp(28px,5vw,78px);
+  grid-template-columns:minmax(280px,500px) minmax(300px,520px);
+  transition:grid-template-columns .6s var(--ease),gap .6s var(--ease);
+}
+
+#player.player-grid{
+  display:grid;
 }
 
 #album-wrap{
@@ -166,11 +170,12 @@ button{
   height:min(43vw,58vh);
   max-width:500px;
   max-height:500px;
+  justify-self:end;
   flex:none;
   overflow:hidden;
   border-radius:30px;
   box-shadow:0 35px 85px rgba(0,0,0,.58);
-  transition:transform .55s var(--ease),opacity .55s var(--ease),filter .55s var(--ease);
+  transition:transform .6s var(--ease),opacity .55s var(--ease),filter .55s var(--ease),justify-self .6s var(--ease);
 }
 
 #album{
@@ -182,16 +187,15 @@ button{
 }
 
 #ui{
-  flex:1;
   min-width:0;
-  max-width:510px;
+  max-width:520px;
   opacity:1;
-  transform:translateY(0);
-  transition:opacity .55s var(--ease),transform .55s var(--ease);
+  transform:translateX(0);
+  transition:opacity .5s var(--ease),transform .6s var(--ease),max-width .6s var(--ease);
 }
 
 #title{
-  font-size:clamp(24px,3.3vw,40px);
+  font-size:clamp(24px,3.2vw,40px);
   font-weight:600;
   overflow:hidden;
   white-space:nowrap;
@@ -225,7 +229,7 @@ button{
 }
 
 .time{
-  width:40px;
+  width:42px;
   color:var(--muted);
   font:11px "Space Mono",monospace;
 }
@@ -277,8 +281,8 @@ button{
 }
 
 #play{
-  width:64px;
-  height:64px;
+  width:66px;
+  height:66px;
   padding:0;
   background:var(--green);
   color:#06110a;
@@ -328,32 +332,45 @@ button{
 
 #volume{
   position:fixed;
-  right:9px;
+  right:8px;
   top:50%;
-  z-index:7;
-  width:36px;
-  height:34vh;
-  min-height:150px;
-  max-height:245px;
+  z-index:9;
+  width:44px;
+  height:240px;
+  max-height:36vh;
+  min-height:160px;
   transform:translateY(-50%);
   display:flex;
-  align-items:flex-end;
-  justify-content:center;
+  flex-direction:column;
+  align-items:center;
+  justify-content:flex-start;
+  gap:10px;
   touch-action:none;
   opacity:1;
   transition:opacity .55s var(--ease),transform .55s var(--ease);
 }
 
+#volume-icon{
+  width:18px;
+  height:18px;
+  fill:rgba(255,255,255,.74);
+  flex:none;
+}
+
 #volume-track{
+  position:relative;
   width:6px;
-  height:100%;
+  flex:1;
   border-radius:999px;
   background:rgba(255,255,255,.11);
+  overflow:visible;
 }
 
 #volume-fill{
-  position:relative;
-  width:100%;
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
   height:60%;
   border-radius:999px;
   background:var(--green);
@@ -368,6 +385,7 @@ button{
   height:15px;
   border-radius:50%;
   background:#fff;
+  box-shadow:0 3px 10px rgba(0,0,0,.35);
   transform:translateX(-50%);
 }
 
@@ -384,7 +402,9 @@ body.idle #topbar{
 }
 
 body.idle #ui{
-  transform:translateY(14px);
+  transform:translateX(40px);
+  max-width:0;
+  overflow:hidden;
 }
 
 body.idle #fullscreen{
@@ -392,12 +412,30 @@ body.idle #fullscreen{
 }
 
 body.idle #volume{
-  transform:translateY(-50%) translateX(10px);
+  transform:translateY(-50%) translateX(12px);
+}
+
+body.idle #player{
+  gap:0;
+  grid-template-columns:minmax(280px,540px) 0px;
 }
 
 body.idle #album-wrap{
-  transform:scale(1.035);
+  justify-self:center;
+  transform:scale(1.13);
   filter:saturate(1.08);
+}
+
+#status-bottom{
+  position:fixed;
+  left:50%;
+  bottom:calc(12px + env(safe-area-inset-bottom));
+  z-index:6;
+  transform:translateX(-50%);
+  color:var(--muted);
+  font:11px "Space Mono",monospace;
+  opacity:.75;
+  pointer-events:none;
 }
 
 #overlay{
@@ -421,7 +459,7 @@ body.idle #album-wrap{
 
 #panel{
   width:100%;
-  max-width:800px;
+  max-width:820px;
   height:84dvh;
   margin:0 auto;
   padding:18px 22px calc(25px + env(safe-area-inset-bottom));
@@ -604,23 +642,29 @@ body.mobile-fill{
 }
 
 @media(max-width:700px){
+  #topbar{
+    right:74px;
+  }
+
   #app{
     padding:66px 24px 26px;
   }
 
   #player{
-    flex-direction:column;
-    gap:20px;
     max-width:520px;
+    grid-template-columns:1fr;
+    gap:20px;
   }
 
   #album-wrap{
     width:min(70vw,350px);
     height:min(70vw,350px);
+    justify-self:center;
   }
 
   #ui{
     width:100%;
+    max-width:none;
   }
 
   #title,
@@ -642,15 +686,29 @@ body.mobile-fill{
   }
 
   #volume{
-    right:3px;
-    height:27vh;
+    right:2px;
+    height:29vh;
+    min-height:130px;
+  }
+
+  body.idle #player{
+    grid-template-columns:1fr;
+  }
+
+  body.idle #ui{
+    transform:translateY(12px);
+    max-width:none;
+  }
+
+  body.idle #album-wrap{
+    transform:scale(1.10);
   }
 
   #playlist-grid{
     grid-template-columns:repeat(2,minmax(0,1fr));
   }
 
-  #status{
+  #status-bottom{
     display:none;
   }
 }
@@ -662,6 +720,7 @@ body.mobile-fill{
 
   #player{
     gap:5vw;
+    grid-template-columns:minmax(220px,420px) minmax(260px,520px);
   }
 
   #album-wrap{
@@ -693,7 +752,7 @@ body.mobile-fill{
 
 <div id="topbar">
   <div id="brand"><span id="brand-dot"></span>Speakerfy</div>
-  <div id="status">Ikke logget ind</div>
+  <div id="clock">--:--</div>
 </div>
 
 <div id="app">
@@ -741,6 +800,7 @@ body.mobile-fill{
 </div>
 
 <div id="volume">
+  <svg id="volume-icon" viewBox="0 0 24 24"><path d="M3 10v4h4l5 5V5L7 10H3zm13.5 2a4.5 4.5 0 00-2.5-4.03v8.06A4.5 4.5 0 0016.5 12z"/></svg>
   <div id="volume-track">
     <div id="volume-fill"></div>
   </div>
@@ -749,6 +809,8 @@ body.mobile-fill{
 <button id="fullscreen" aria-label="Fuld skærm">
   <svg viewBox="0 0 24 24"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zm-3-12v2h3v3h2V5h-5z"/></svg>
 </button>
+
+<div id="status-bottom"></div>
 
 <div id="overlay">
   <div id="panel">
@@ -798,7 +860,8 @@ const el = {
   pauseIcon: $("pause-icon"),
   previous: $("previous"),
   next: $("next"),
-  status: $("status"),
+  clock: $("clock"),
+  statusBottom: $("status-bottom"),
   volume: $("volume"),
   volumeFill: $("volume-fill"),
   overlay: $("overlay"),
@@ -809,6 +872,19 @@ const el = {
   fullscreen: $("fullscreen"),
   fullscreenHelp: $("mobile-fullscreen-help")
 };
+
+function setStatus(text){
+  el.statusBottom.textContent = text || "";
+}
+
+function updateClock(){
+  el.clock.textContent = new Date().toLocaleTimeString("da-DK", {
+    hour: "2-digit",
+    minute: "2-digit"
+  });
+}
+setInterval(updateClock, 1000);
+updateClock();
 
 function randomString(length){
   const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -942,24 +1018,24 @@ function setupSpotify(){
 
     spotifyPlayer.addListener("ready", ({device_id}) => {
       deviceId = device_id;
-      el.status.textContent = "Speakerfy klar";
+      setStatus("Speakerfy klar");
       transferPlayback();
     });
 
     spotifyPlayer.addListener("not_ready", () => {
-      el.status.textContent = "Speakerfy offline";
+      setStatus("Speakerfy offline");
     });
 
     spotifyPlayer.addListener("initialization_error", ({message}) => {
-      el.status.textContent = "Fejl: " + message;
+      setStatus("Fejl: " + message);
     });
 
     spotifyPlayer.addListener("authentication_error", ({message}) => {
-      el.status.textContent = "Login-fejl: " + message;
+      setStatus("Login-fejl: " + message);
     });
 
     spotifyPlayer.addListener("account_error", () => {
-      el.status.textContent = "Spotify Premium kræves";
+      setStatus("Spotify Premium kræves");
     });
 
     spotifyPlayer.addListener("player_state_changed", state => {
@@ -1073,13 +1149,14 @@ el.volume.addEventListener("pointercancel", () => {
 });
 
 function setVolumeFromY(y){
-  const rect = el.volume.getBoundingClientRect();
+  const track = $("volume-track");
+  const rect = track.getBoundingClientRect();
   const value = Math.max(0, Math.min(1, (rect.bottom - y) / rect.height));
   el.volumeFill.style.height = (value * 100) + "%";
   spotifyPlayer?.setVolume(value);
 }
 
-/* ---------- Fade efter 6 sekunder ---------- */
+/* Fade efter 6 sekunder */
 let idleTimer = null;
 const IDLE_DELAY = 6000;
 
@@ -1106,7 +1183,7 @@ function wakeScreen(){
 
 wakeScreen();
 
-/* ---------- Playlister ---------- */
+/* Playlister */
 $("playlist-button").addEventListener("click", () => {
   el.overlay.classList.add("open");
   document.body.classList.remove("idle");
@@ -1158,6 +1235,11 @@ async function showPlaylists(){
     el.grid.innerHTML = "";
     playlistsLoaded = true;
 
+    if(!data.items?.length){
+      el.grid.innerHTML = "<p>Ingen playlister fundet.</p>";
+      return;
+    }
+
     data.items.forEach(playlist => {
       const item = document.createElement("div");
       item.className = "playlist";
@@ -1185,7 +1267,7 @@ async function openPlaylist(playlist){
 
   try{
     const response = await spotifyFetch(
-      `https://api.spotify.com/v1/playlists/${playlist.id}/tracks?limit=50`
+      `https://api.spotify.com/v1/playlists/${playlist.id}/items?limit=100&additional_types=track`
     );
 
     if(!response.ok) throw new Error();
@@ -1199,16 +1281,22 @@ async function openPlaylist(playlist){
     playAll.addEventListener("click", () => playContext(playlist.uri));
     el.tracks.appendChild(playAll);
 
-    data.items.forEach((item,index) => {
-      const track = item.track;
-      if(!track) return;
+    const trackItems = (data.items || []).map(item => item.track || item.item).filter(track => track && track.type === "track");
 
+    if(!trackItems.length){
+      const message = document.createElement("p");
+      message.textContent = "Ingen sange fundet i den playliste.";
+      el.tracks.appendChild(message);
+      return;
+    }
+
+    trackItems.forEach((track,index) => {
       const row = document.createElement("div");
       row.className = "track";
 
       row.innerHTML = `
         <span class="track-number">${index + 1}</span>
-        <img src="${track.album?.images?.slice(-1)[0]?.url || ""}" alt="">
+        <img src="${track.album?.images?.slice(-1)[0]?.url || track.album?.images?.[0]?.url || ""}" alt="">
         <div class="track-meta">
           <span class="track-title">${escapeHtml(track.name)}</span>
           <span class="track-artist">${escapeHtml(track.artists.map(a => a.name).join(", "))}</span>
@@ -1226,7 +1314,7 @@ async function openPlaylist(playlist){
 
 async function playContext(contextUri, trackUri){
   if(!deviceId){
-    el.status.textContent = "Speakerfy er ikke klar endnu";
+    setStatus("Speakerfy er ikke klar endnu");
     return;
   }
 
@@ -1246,16 +1334,13 @@ async function playContext(contextUri, trackUri){
     el.overlay.classList.remove("open");
     wakeScreen();
   }else{
-    el.status.textContent = "Kunne ikke starte sangen";
+    setStatus("Kunne ikke starte sangen");
   }
 }
 
-/* ---------- Fullscreen til PC + mobil ---------- */
+/* Fullscreen PC + mobil */
 function isFullscreen(){
-  return !!(
-    document.fullscreenElement ||
-    document.webkitFullscreenElement
-  );
+  return !!(document.fullscreenElement || document.webkitFullscreenElement);
 }
 
 async function enterFullscreen(){
@@ -1266,7 +1351,6 @@ async function enterFullscreen(){
       await root.requestFullscreen({navigationUI:"hide"});
       return true;
     }
-
     if(root.webkitRequestFullscreen){
       root.webkitRequestFullscreen();
       return true;
@@ -1282,7 +1366,6 @@ async function exitFullscreen(){
       await document.exitFullscreen();
       return;
     }
-
     if(document.webkitExitFullscreen){
       document.webkitExitFullscreen();
       return;
@@ -1293,7 +1376,6 @@ async function exitFullscreen(){
 function showFullscreenHelp(message){
   el.fullscreenHelp.textContent = message;
   el.fullscreenHelp.classList.add("show");
-
   clearTimeout(showFullscreenHelp.timer);
   showFullscreenHelp.timer = setTimeout(() => {
     el.fullscreenHelp.classList.remove("show");
@@ -1313,21 +1395,15 @@ el.fullscreen.addEventListener("click", async event => {
   const success = await enterFullscreen();
 
   if(!success){
-    /* Safari/iPhone kan blokere normal browser-fullscreen.
-       Her går siden stadig helt ud til skærmkanterne. */
     document.body.classList.toggle("mobile-fill");
 
     const isiPhone = /iPhone|iPod/i.test(navigator.userAgent);
     const isiPad = /iPad/i.test(navigator.userAgent);
 
     if(isiPhone || isiPad){
-      showFullscreenHelp(
-        "På iPhone/iPad: vælg Del → Føj til hjemmeskærm og åbn Speakerfy derfra for den mest komplette fuldskærm."
-      );
+      showFullscreenHelp("På iPhone/iPad: vælg Del → Føj til hjemmeskærm og åbn Speakerfy derfra for bedst fuldskærm.");
     }else{
-      showFullscreenHelp(
-        "Din browser blokerede normal fullscreen. Speakerfy bruger skærmfyldning i stedet."
-      );
+      showFullscreenHelp("Browseren blokerede normal fullscreen. Speakerfy bruger skærmfyldning i stedet.");
     }
   }
 });
@@ -1335,7 +1411,7 @@ el.fullscreen.addEventListener("click", async event => {
 document.addEventListener("fullscreenchange", wakeScreen);
 document.addEventListener("webkitfullscreenchange", wakeScreen);
 
-/* ---------- Start ---------- */
+/* Start */
 (async function init(){
   const params = new URLSearchParams(location.search);
   const code = params.get("code");
@@ -1346,7 +1422,7 @@ document.addEventListener("webkitfullscreenchange", wakeScreen);
       saveToken(data);
       history.replaceState({}, document.title, REDIRECT_URI);
     }catch{
-      el.status.textContent = "Spotify-login fejlede";
+      setStatus("Spotify-login fejlede");
     }
   }
 
@@ -1354,20 +1430,14 @@ document.addEventListener("webkitfullscreenchange", wakeScreen);
 
   if(token){
     el.login.style.display = "none";
-    el.player.style.display = "flex";
-    el.status.textContent = "Forbinder…";
+    el.player.style.display = "grid";
+    el.player.classList.add("player-grid");
+    setStatus("Forbinder…");
     setupSpotify();
   }else{
-    el.status.textContent = "Ikke logget ind";
+    setStatus("Ikke logget ind");
   }
 })();
 </script>
 </body>
 </html>
-'''
-
-path = Path("/mnt/data/speakerfy.html")
-path.write_text(html, encoding="utf-8")
-
-print("Færdig:", path)
-print("Størrelse:", path.stat().st_size, "bytes")
