@@ -2077,6 +2077,155 @@ body.animations-off *::after{
 <link rel="apple-touch-icon" href="icon-192.png">
 <meta name="mobile-web-app-capable" content="yes">
 
+
+<style id="speakerfy-v6-style">
+/* ========================= Speakerfy v6 ========================= */
+
+#album-wrap{position:relative}
+#visualizer-canvas{
+  position:absolute;left:0;right:0;bottom:0;width:100%;height:29%;
+  pointer-events:none;opacity:.72;
+  mask-image:linear-gradient(to top,#000 20%,transparent 100%);
+  -webkit-mask-image:linear-gradient(to top,#000 20%,transparent 100%);
+}
+
+#next-preview{
+  display:flex;align-items:center;gap:8px;min-width:0;
+  margin-top:11px;color:var(--muted);font-size:11px
+}
+#next-preview strong{color:var(--accent);font:10px "Space Mono",monospace}
+#next-preview span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#like-button.liked{color:var(--accent);background:color-mix(in srgb,var(--accent) 17%,transparent)}
+
+#home-mini-player{
+  position:sticky;bottom:8px;z-index:8;margin-top:28px;
+  min-height:68px;padding:8px 10px;border:1px solid var(--border);
+  border-radius:16px;background:rgba(18,18,18,.94);
+  backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);
+  box-shadow:0 16px 40px rgba(0,0,0,.38);
+  display:flex;align-items:center;gap:10px
+}
+#mini-art{width:50px;height:50px;border-radius:9px;object-fit:cover;background:#222}
+#mini-meta{flex:1;min-width:0}
+#mini-title,#mini-artist{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#mini-title{font-size:14px;font-weight:600}
+#mini-artist{margin-top:3px;color:var(--muted);font-size:12px}
+.mini-control{width:34px;height:34px;border:0;border-radius:50%;background:transparent;cursor:pointer}
+.mini-main{background:var(--accent);color:#07110a}
+
+.v6-screen{
+  position:fixed;inset:0;z-index:19;display:none;overflow:auto;
+  padding:calc(76px + env(safe-area-inset-top)) clamp(18px,4vw,48px)
+          calc(32px + env(safe-area-inset-bottom));
+  background:
+    radial-gradient(circle at 20% 0%,color-mix(in srgb,var(--accent) 17%,transparent),transparent 34%),
+    linear-gradient(180deg,#181818,#090909 520px)
+}
+.v6-screen.active{display:block}
+
+#lyrics-head{display:flex;align-items:center;gap:16px;margin-bottom:24px}
+#lyrics-art{width:88px;height:88px;border-radius:13px;object-fit:cover;background:#222}
+#lyrics-head h3{margin:0 0 5px;font-size:23px}
+#lyrics-head p{margin:0;color:var(--muted)}
+#lyrics-content{
+  max-width:800px;white-space:pre-wrap;line-height:1.82;
+  font-size:clamp(17px,2.5vw,25px);font-weight:600;color:rgba(255,255,255,.92)
+}
+
+#history-list{display:flex;flex-direction:column;gap:4px}
+
+.party-card{
+  max-width:650px;margin:0 auto;padding:24px;border:1px solid var(--border);
+  border-radius:26px;background:rgba(18,18,18,.76);text-align:center
+}
+.party-card h3{margin:0 0 7px;font-size:25px}
+.party-card p{margin:0 0 18px;color:var(--muted)}
+#party-qr{
+  width:220px;height:220px;max-width:70vw;max-height:70vw;
+  padding:10px;background:#fff;border-radius:16px
+}
+#party-link{
+  margin:14px 0;color:var(--muted);font:11px "Space Mono",monospace;
+  word-break:break-all
+}
+
+.system-grid{
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px
+}
+.system-card{
+  min-height:105px;padding:16px;border:1px solid var(--border);border-radius:20px;
+  background:rgba(18,18,18,.72);display:flex;flex-direction:column;justify-content:space-between
+}
+.system-card span{color:var(--muted);font-size:12px}
+.system-card strong{font-size:20px}
+.profile-card{
+  margin-top:16px;padding:16px;border:1px solid var(--border);border-radius:20px;
+  background:rgba(18,18,18,.72);display:flex;align-items:center;gap:14px
+}
+#profile-photo{width:64px;height:64px;border-radius:50%;object-fit:cover;background:#222}
+.profile-card h3{margin:0 0 4px}.profile-card p{margin:0;color:var(--muted)}
+
+#screensaver-info{
+  position:fixed;left:50%;bottom:calc(28px + env(safe-area-inset-bottom));z-index:11;
+  transform:translate(-50%,18px);text-align:center;opacity:0;pointer-events:none;
+  transition:opacity .55s var(--ease),transform .55s var(--ease)
+}
+body.idle #screensaver-info{opacity:1;transform:translate(-50%,0)}
+#screensaver-clock{font:600 25px "Space Mono",monospace}
+#screensaver-track{
+  margin-top:6px;max-width:72vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  color:rgba(255,255,255,.80)
+}
+#screensaver-battery{margin-top:5px;color:var(--muted);font-size:11px}
+
+#brightness-overlay{
+  position:fixed;inset:0;z-index:9998;background:#000;opacity:0;
+  pointer-events:none;transition:opacity .5s ease
+}
+
+body.theme-soundboks{--accent:#ff5a00}
+body.theme-soundboks #card,
+body.theme-soundboks .settings-card,
+body.theme-soundboks .spotify-card{border-radius:8px}
+body.theme-neon{--accent:#00efff}
+body.theme-neon #card,
+body.theme-neon .spotify-card,
+body.theme-neon .settings-card{
+  box-shadow:0 0 28px color-mix(in srgb,var(--accent) 20%,transparent)
+}
+body.theme-mono{--accent:#f4f4f4}
+body.theme-mono #background{filter:grayscale(1) blur(90px) brightness(.29)}
+
+.pin-playlist{
+  position:absolute;top:17px;right:17px;z-index:4;width:35px;height:35px;
+  border:0;border-radius:50%;background:rgba(0,0,0,.68);color:#fff;
+  display:grid;place-items:center;font-size:19px;cursor:pointer
+}
+
+#advanced-settings-grid{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-bottom:18px
+}
+.v6-settings-card{
+  border:1px solid var(--border);border-radius:24px;background:rgba(18,18,18,.74);padding:20px
+}
+.v6-settings-card.full{grid-column:1/-1}
+.v6-settings-card h3{margin:0 0 6px;font-size:18px}
+.v6-settings-card p{margin:0 0 16px;color:var(--muted);font-size:13px;line-height:1.45}
+.v6-setting-row{
+  min-height:48px;padding:8px 0;border-top:1px solid rgba(255,255,255,.065);
+  display:flex;align-items:center;justify-content:space-between;gap:13px
+}
+.v6-setting-row:first-of-type{border-top:0}
+.v6-setting-row input[type="range"]{width:min(190px,38vw);accent-color:var(--accent)}
+.v6-setting-row .value{width:48px;text-align:right;color:var(--muted);font-size:12px}
+
+@media(max-width:760px){
+  .system-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  #advanced-settings-grid{grid-template-columns:1fr}
+  .v6-settings-card.full{grid-column:auto}
+}
+</style>
+
 </head>
 
 <body>
@@ -2507,6 +2656,7 @@ const SCOPES = [
   "playlist-read-private",
   "playlist-read-collaborative",
   "user-library-read",
+  "user-library-modify",
   "user-read-recently-played"
 ].join(" ");
 
@@ -2742,7 +2892,7 @@ async function transferPlayback(){
     headers:{"Content-Type":"application/json"},
     body:JSON.stringify({
       device_ids:[deviceId],
-      play:false
+      play:localStorage.getItem("speakerfy_auto_resume") === "1"
     })
   });
 }
@@ -2756,6 +2906,10 @@ function updatePlayer(state){
 
   el.title.textContent = track.name;
   el.artist.textContent = track.artists.map(a => a.name).join(", ");
+
+  if(window.speakerfyV6OnTrack){
+    window.speakerfyV6OnTrack(track, state);
+  }
 
   el.homeNowTitle.textContent = track.name;
   el.homeNowArtist.textContent = track.artists.map(a => a.name).join(", ");
@@ -4034,6 +4188,717 @@ if ("serviceWorker" in navigator) {
     });
   });
 }
+</script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
+<script id="speakerfy-v6">
+(() => {
+  const v6 = {
+    currentTrack:null,
+    currentState:null,
+    playing:false,
+    nextTimer:null,
+    sleepTimer:null,
+    sleepTicker:null,
+    sleepEndsAt:0,
+    battery:null,
+    visPhase:0
+  };
+
+  function v6Screen(id,title,body){
+    const screen=document.createElement("div");
+    screen.id=id;
+    screen.className="v6-screen";
+    screen.innerHTML=`
+      <div class="feature-shell">
+        <div class="feature-heading">
+          <button class="screen-back v6-back">‹</button>
+          <h2>${title}</h2>
+        </div>
+        ${body}
+      </div>`;
+    document.body.appendChild(screen);
+    screen.querySelector(".v6-back").addEventListener("click",()=>openHome());
+    return screen;
+  }
+
+  /* ---------- Dynamic UI ---------- */
+  const albumWrap=$("album-wrap");
+  if(albumWrap && !$("visualizer-canvas")){
+    albumWrap.insertAdjacentHTML("beforeend",'<canvas id="visualizer-canvas"></canvas>');
+  }
+
+  const extra=document.querySelector(".player-extra-actions");
+  if(extra && !$("like-button")){
+    extra.insertAdjacentHTML("afterbegin",'<button id="like-button" class="player-extra-button">♡ Like</button>');
+    extra.insertAdjacentHTML("beforeend",'<button id="cinema-button" class="player-extra-button">▣ Now Playing</button>');
+    extra.insertAdjacentHTML("afterend",`
+      <div id="next-preview"><strong>NÆSTE</strong><span id="next-preview-text">—</span></div>
+    `);
+  }
+
+  const quick=$("home-quick-grid");
+  if(quick){
+    const items=[
+      ["quick-lyrics","Sangtekst","M4 4h16v12H7l-3 3V4Zm3 3v2h10V7H7Zm0 4v2h7v-2H7Z"],
+      ["quick-history","Historik","M13 3a9 9 0 1 0 8.5 12h-2.2A7 7 0 1 1 13 5c2.1 0 4 1 5.3 2.5L15 11h7V4l-2.2 2.2A8.96 8.96 0 0 0 13 3Zm-1 4v6l5 3 1-1.7-4-2.3V7h-2Z"],
+      ["quick-party","Party mode","M4 4h7v7H4V4Zm2 2v3h3V6H6Zm7-2h7v7h-7V4Zm2 2v3h3V6h-3ZM4 13h7v7H4v-7Zm2 2v3h3v-3H6Zm8-2h2v2h-2v-2Zm3 0h3v2h-1v2h-2v-4Z"],
+      ["quick-system","System","M4 5h16v11H4V5Zm2 2v7h12V7H6Zm3 11h6v2H9v-2Z"],
+      ["quick-bass","Bass mode","M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18Zm0 3a3 3 0 1 1 0 6 3 3 0 0 1 0-6Zm0 13a4 4 0 1 1 0-8 4 4 0 0 1 0 8Z"]
+    ];
+    items.forEach(([id,label,path])=>{
+      if($(id)) return;
+      quick.insertAdjacentHTML("beforeend",`
+        <div class="quick-card" id="${id}">
+          <div class="quick-icon-box"><svg viewBox="0 0 24 24"><path d="${path}"/></svg></div>
+          <div class="quick-card-title">${label}</div>
+        </div>`);
+    });
+  }
+
+  const homeShell=document.querySelector("#screen-home .home-shell");
+  if(homeShell && !$("home-mini-player")){
+    homeShell.insertAdjacentHTML("beforeend",`
+      <div id="home-mini-player">
+        <img id="mini-art" alt="">
+        <div id="mini-meta">
+          <div id="mini-title">Ingen sang</div>
+          <div id="mini-artist">Speakerfy</div>
+        </div>
+        <button id="mini-prev" class="mini-control">⏮</button>
+        <button id="mini-play" class="mini-control mini-main">▶</button>
+        <button id="mini-next" class="mini-control">⏭</button>
+      </div>`);
+  }
+
+  v6Screen("screen-lyrics","Sangtekst",`
+    <div id="lyrics-head">
+      <img id="lyrics-art" alt="">
+      <div><h3 id="lyrics-title">Ingen sang</h3><p id="lyrics-artist">—</p></div>
+    </div>
+    <button class="feature-action" id="lyrics-refresh" style="margin-bottom:18px">Opdater sangtekst</button>
+    <div id="lyrics-content">Start en sang for at hente sangteksten.</div>
+  `);
+
+  v6Screen("screen-history","Historik",`
+    <button class="feature-action" id="history-refresh" style="margin-bottom:18px">Opdater</button>
+    <div id="history-list"><div class="queue-empty">Henter historik…</div></div>
+  `);
+
+  v6Screen("screen-party","Party mode",`
+    <div class="party-card">
+      <h3>Del Speakerfy</h3>
+      <p>Scan QR-koden for at åbne Speakerfy på en anden telefon.</p>
+      <canvas id="party-qr" width="220" height="220"></canvas>
+      <div id="party-link"></div>
+      <button class="settings-button" id="copy-party-link">Kopiér link</button>
+      <div class="hardware-state" style="margin-top:16px">
+        <strong>Guest queue:</strong> Interfacet er klar. For at gæster kan lægge sange i din kø uden dit Spotify-login, skal Raspberry Pi'en køre en lille lokal backend.
+      </div>
+    </div>
+  `);
+
+  v6Screen("screen-system","Speakerfy System",`
+    <button class="feature-action" id="system-refresh" style="margin-bottom:18px">Opdater</button>
+    <div class="system-grid">
+      <div class="system-card"><span>Wi-Fi</span><strong id="sys-wifi">—</strong></div>
+      <div class="system-card"><span>Forbindelse</span><strong id="sys-network">—</strong></div>
+      <div class="system-card"><span>CPU temperatur</span><strong id="sys-temp">—</strong></div>
+      <div class="system-card"><span>CPU</span><strong id="sys-cpu">—</strong></div>
+      <div class="system-card"><span>RAM</span><strong id="sys-ram">—</strong></div>
+      <div class="system-card"><span>Batteri</span><strong id="sys-battery">—</strong></div>
+      <div class="system-card"><span>Estimeret tid</span><strong id="sys-battery-time">—</strong></div>
+      <div class="system-card"><span>Spotify</span><strong id="sys-spotify">—</strong></div>
+    </div>
+    <div class="profile-card">
+      <img id="profile-photo" alt="">
+      <div><h3 id="profile-name">Spotify profil</h3><p id="profile-email">—</p></div>
+    </div>
+    <div class="hardware-state">
+      Raspberry Pi kan sende CPU/RAM/temperatur fra <strong>/api/system</strong>.
+      Hvis endpointet ikke findes, viser Speakerfy browserens egne oplysninger.
+    </div>
+  `);
+
+  if(!$("screensaver-info")){
+    document.body.insertAdjacentHTML("beforeend",`
+      <div id="screensaver-info">
+        <div id="screensaver-clock">--:--</div>
+        <div id="screensaver-track">—</div>
+        <div id="screensaver-battery">—</div>
+      </div>
+      <div id="brightness-overlay"></div>
+    `);
+  }
+
+  /* ---------- Advanced Settings ---------- */
+  const settingsGrid=document.querySelector("#screen-settings .settings-grid");
+  if(settingsGrid && !$("advanced-settings-grid")){
+    settingsGrid.insertAdjacentHTML("beforebegin",`
+      <div id="advanced-settings-grid">
+        <div class="v6-settings-card">
+          <h3>Sleep timer</h3>
+          <p>Stop musikken automatisk.</p>
+          <div class="segmented" id="sleep-options">
+            <button data-sleep="15">15 min</button>
+            <button data-sleep="30">30 min</button>
+            <button data-sleep="60">60 min</button>
+            <button data-sleep="0">Fra</button>
+          </div>
+          <div id="sleep-status" style="margin-top:10px;color:var(--muted);font-size:12px">Fra</div>
+        </div>
+
+        <div class="v6-settings-card">
+          <h3>Lys</h3>
+          <p>Automatisk dæmpning og night mode.</p>
+          <div class="v6-setting-row">
+            <span>Auto brightness</span>
+            <button class="switch" id="auto-brightness-switch"><span></span></button>
+          </div>
+          <div class="v6-setting-row">
+            <span>Night mode</span>
+            <button class="switch" id="night-mode-switch"><span></span></button>
+          </div>
+        </div>
+
+        <div class="v6-settings-card">
+          <h3>Volumen</h3>
+          <p>Start- og maksimal lydstyrke.</p>
+          <div class="v6-setting-row">
+            <span>Start</span>
+            <input id="start-volume" type="range" min="0" max="100" value="50">
+            <span class="value" id="start-volume-value">50%</span>
+          </div>
+          <div class="v6-setting-row">
+            <span>Maks</span>
+            <input id="max-volume" type="range" min="20" max="100" value="100">
+            <span class="value" id="max-volume-value">100%</span>
+          </div>
+        </div>
+
+        <div class="v6-settings-card">
+          <h3>Afspilning</h3>
+          <p>Fortsæt automatisk efter genstart.</p>
+          <div class="v6-setting-row">
+            <span>Auto resume</span>
+            <button class="switch" id="auto-resume-switch"><span></span></button>
+          </div>
+        </div>
+
+        <div class="v6-settings-card full">
+          <h3>Specialtemaer</h3>
+          <p>Ekstra design oven på dine normale farvetemaer.</p>
+          <div class="segmented" id="special-theme-options">
+            <button data-special="normal">Normal</button>
+            <button data-special="soundboks">Soundboks</button>
+            <button data-special="neon">Neon</button>
+            <button data-special="mono">Sort/hvid</button>
+            <button data-special="album">Album color</button>
+          </div>
+        </div>
+      </div>
+    `);
+  }
+
+  /* ---------- Screen navigation ---------- */
+  const oldClose=closeAppScreens;
+  closeAppScreens=function(){
+    oldClose();
+    document.querySelectorAll(".v6-screen").forEach(s=>s.classList.remove("active"));
+  };
+
+  const oldSchedule=scheduleIdle;
+  scheduleIdle=function(){
+    clearTimeout(idleTimer);
+    if(IDLE_DELAY<=0) return;
+    if(
+      !el.overlay.classList.contains("open") &&
+      !el.screenHome.classList.contains("active") &&
+      !el.screenSearch.classList.contains("active") &&
+      !el.screenLiked.classList.contains("active") &&
+      !el.screenQueue.classList.contains("active") &&
+      !el.screenSound.classList.contains("active") &&
+      !el.screenSettings.classList.contains("active") &&
+      !document.querySelector(".v6-screen.active")
+    ){
+      idleTimer=setTimeout(enterIdle,IDLE_DELAY);
+    }
+  };
+
+  function openV6(id,loader){
+    closeAppScreens();
+    document.body.classList.remove("idle");
+    clearTimeout(idleTimer);
+    const s=$(id);
+    if(s) s.classList.add("active");
+    if(loader) loader();
+  }
+
+  /* ---------- Player state / mini-player / screensaver ---------- */
+  window.speakerfyV6OnTrack=function(track,state){
+    v6.currentTrack=track;
+    v6.currentState=state;
+    v6.playing=!state.paused;
+
+    if($("mini-title")) $("mini-title").textContent=track.name;
+    if($("mini-artist")) $("mini-artist").textContent=track.artists.map(a=>a.name).join(", ");
+    if($("mini-art")) $("mini-art").src=track.album?.images?.[0]?.url||"";
+    if($("mini-play")) $("mini-play").textContent=state.paused?"▶":"Ⅱ";
+    if($("screensaver-track")) $("screensaver-track").textContent=
+      `${track.name} · ${track.artists.map(a=>a.name).join(", ")}`;
+
+    clearTimeout(v6.nextTimer);
+    v6.nextTimer=setTimeout(updateNextPreview,450);
+    updateLikeState(track.id);
+    updateAlbumColor(track.album?.images?.[0]?.url||"");
+  };
+
+  $("mini-play")?.addEventListener("click",e=>{e.stopPropagation();spotifyPlayer?.togglePlay()});
+  $("mini-prev")?.addEventListener("click",e=>{e.stopPropagation();spotifyPlayer?.previousTrack()});
+  $("mini-next")?.addEventListener("click",e=>{e.stopPropagation();spotifyPlayer?.nextTrack()});
+  $("home-mini-player")?.addEventListener("click",openPlayerScreen);
+
+  /* ---------- Swipe ---------- */
+  let sx=null,sy=null,st=0;
+  el.player.addEventListener("pointerdown",e=>{
+    if(e.target.closest("button")||e.target.closest("#progress")) return;
+    sx=e.clientX;sy=e.clientY;st=Date.now();
+  });
+  el.player.addEventListener("pointerup",e=>{
+    if(sx===null) return;
+    const dx=e.clientX-sx,dy=e.clientY-sy,elapsed=Date.now()-st;
+    sx=null;sy=null;
+    if(elapsed>800||Math.abs(dx)<75||Math.abs(dx)<Math.abs(dy)*1.4) return;
+    dx<0?spotifyPlayer?.nextTrack():spotifyPlayer?.previousTrack();
+  });
+
+  /* ---------- Like ---------- */
+  async function updateLikeState(id){
+    if(!id||!$("like-button")) return;
+    try{
+      const r=await spotifyFetch("https://api.spotify.com/v1/me/tracks/contains?ids="+encodeURIComponent(id));
+      if(!r.ok) return;
+      const liked=!!(await r.json())[0];
+      $("like-button").classList.toggle("liked",liked);
+      $("like-button").textContent=liked?"♥ Liked":"♡ Like";
+    }catch{}
+  }
+
+  $("like-button")?.addEventListener("click",async()=>{
+    if(!v6.currentTrack?.id) return;
+    const liked=$("like-button").classList.contains("liked");
+    try{
+      const r=await spotifyFetch(
+        "https://api.spotify.com/v1/me/tracks?ids="+encodeURIComponent(v6.currentTrack.id),
+        {method:liked?"DELETE":"PUT"}
+      );
+      if(r.ok){
+        $("like-button").classList.toggle("liked",!liked);
+        $("like-button").textContent=!liked?"♥ Liked":"♡ Like";
+        likedTracksCache=[];
+      }
+    }catch{setStatus("Kunne ikke ændre Like")}
+  });
+
+  /* ---------- Next preview ---------- */
+  async function updateNextPreview(){
+    if(!$("next-preview-text")) return;
+    try{
+      const r=await spotifyFetch("https://api.spotify.com/v1/me/player/queue");
+      if(!r.ok) return;
+      const d=await r.json(),n=d.queue?.[0];
+      $("next-preview-text").textContent=n?
+        `${n.name} · ${n.artists.map(a=>a.name).join(", ")}`:"Køen er tom";
+    }catch{$("next-preview-text").textContent="—"}
+  }
+
+  /* ---------- Full Now Playing ---------- */
+  $("cinema-button")?.addEventListener("click",()=>{
+    closeAppScreens();
+    el.overlay.classList.remove("open");
+    calculateIdleCoverPosition();
+    document.body.classList.add("idle");
+    clearTimeout(idleTimer);
+  });
+
+  /* ---------- Visualizer ---------- */
+  const canvas=$("visualizer-canvas"),ctx=canvas?.getContext("2d");
+  function resizeVis(){
+    if(!canvas||!ctx) return;
+    const r=canvas.getBoundingClientRect(),dpr=Math.min(devicePixelRatio||1,2);
+    canvas.width=Math.max(1,Math.round(r.width*dpr));
+    canvas.height=Math.max(1,Math.round(r.height*dpr));
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+  }
+  window.addEventListener("resize",resizeVis);
+  setTimeout(resizeVis,300);
+
+  function drawVis(){
+    if(canvas&&ctx){
+      const w=canvas.clientWidth,h=canvas.clientHeight;
+      ctx.clearRect(0,0,w,h);
+      if(v6.playing&&!document.body.classList.contains("animations-off")){
+        const bars=26,gap=3,bw=Math.max(2,(w-gap*(bars-1))/bars);
+        const accent=getComputedStyle(document.documentElement).getPropertyValue("--accent").trim()||"#1db954";
+        for(let i=0;i<bars;i++){
+          const a=(Math.sin(v6.visPhase+i*.73)+1)/2;
+          const b=(Math.sin(v6.visPhase*.57+i*1.19)+1)/2;
+          const bh=7+(a*.62+b*.38)*h*.82;
+          ctx.fillStyle=accent;ctx.globalAlpha=.42+a*.48;
+          ctx.fillRect(i*(bw+gap),h-bh,bw,bh);
+        }
+        ctx.globalAlpha=1;v6.visPhase+=.075;
+      }
+    }
+    requestAnimationFrame(drawVis);
+  }
+  drawVis();
+
+  /* ---------- Lyrics ---------- */
+  async function loadLyrics(){
+    if(!v6.currentTrack){
+      $("lyrics-content").textContent="Start en sang for at hente sangteksten.";
+      return;
+    }
+    const t=v6.currentTrack;
+    $("lyrics-title").textContent=t.name;
+    $("lyrics-artist").textContent=t.artists.map(a=>a.name).join(", ");
+    $("lyrics-art").src=t.album?.images?.[0]?.url||"";
+    $("lyrics-content").textContent="Henter sangtekst…";
+
+    try{
+      const params=new URLSearchParams({
+        artist_name:t.artists?.[0]?.name||"",
+        track_name:t.name,
+        album_name:t.album?.name||"",
+        duration:String(Math.round((t.duration_ms||0)/1000))
+      });
+      let r=await fetch("https://lrclib.net/api/get?"+params);
+      if(r.ok){
+        const d=await r.json();
+        $("lyrics-content").textContent=d.syncedLyrics||d.plainLyrics||"Ingen sangtekst fundet.";
+        return;
+      }
+      r=await fetch("https://lrclib.net/api/search?"+new URLSearchParams({q:`${t.artists?.[0]?.name||""} ${t.name}`}));
+      if(!r.ok) throw Error();
+      const d=await r.json(),f=d?.[0];
+      $("lyrics-content").textContent=f?.syncedLyrics||f?.plainLyrics||"Ingen sangtekst fundet.";
+    }catch{
+      $("lyrics-content").textContent="Der blev ikke fundet en sangtekst til den her sang.";
+    }
+  }
+  $("quick-lyrics")?.addEventListener("click",()=>openV6("screen-lyrics",loadLyrics));
+  $("lyrics-refresh")?.addEventListener("click",loadLyrics);
+
+  /* ---------- History ---------- */
+  async function loadHistory(){
+    const box=$("history-list");box.innerHTML='<div class="queue-empty">Henter historik…</div>';
+    try{
+      const r=await spotifyFetch("https://api.spotify.com/v1/me/player/recently-played?limit=50");
+      if(!r.ok) throw Error();
+      const d=await r.json();box.innerHTML="";
+      (d.items||[]).forEach(item=>{
+        const row=songRow(item.track,()=>playSingleTrack(item.track.uri));
+        const when=new Date(item.played_at).toLocaleString("da-DK",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"});
+        const artist=row.querySelector(".search-track-artist");
+        if(artist) artist.textContent+=` · ${when}`;
+        box.appendChild(row);
+      });
+      if(!(d.items||[]).length) box.innerHTML='<div class="queue-empty">Ingen historik endnu.</div>';
+    }catch{box.innerHTML='<div class="queue-empty">Kunne ikke hente historikken.</div>'}
+  }
+  $("quick-history")?.addEventListener("click",()=>openV6("screen-history",loadHistory));
+  $("history-refresh")?.addEventListener("click",loadHistory);
+
+  /* ---------- Party / QR ---------- */
+  function partyUrl(){
+    const u=new URL(location.href);u.searchParams.set("party","1");return u.toString();
+  }
+  function renderQR(){
+    const url=partyUrl();$("party-link").textContent=url;
+    const c=$("party-qr"),cx=c.getContext("2d");
+    cx.fillStyle="#fff";cx.fillRect(0,0,c.width,c.height);
+    if(window.QRCode?.toCanvas){
+      window.QRCode.toCanvas(c,url,{width:220,margin:1,color:{dark:"#000000",light:"#ffffff"}}).catch(()=>{});
+    }
+  }
+  $("quick-party")?.addEventListener("click",()=>openV6("screen-party",renderQR));
+  $("copy-party-link")?.addEventListener("click",async()=>{
+    try{
+      await navigator.clipboard.writeText(partyUrl());
+      $("copy-party-link").textContent="Kopieret ✓";
+      setTimeout(()=>$("copy-party-link").textContent="Kopiér link",1400);
+    }catch{}
+  });
+
+  /* ---------- System + profile ---------- */
+  function formatSecs(s){
+    if(!Number.isFinite(s)||s<=0||s===Infinity) return "—";
+    const h=Math.floor(s/3600),m=Math.floor((s%3600)/60);
+    return h?`${h} t ${m} min`:`${m} min`;
+  }
+
+  async function loadSystem(){
+    const conn=navigator.connection||navigator.mozConnection||navigator.webkitConnection;
+    $("sys-network").textContent=conn?
+      `${conn.effectiveType||conn.type||"online"}${conn.downlink?` · ${conn.downlink} Mbps`:""}`:
+      (navigator.onLine?"Online":"Offline");
+    $("sys-wifi").textContent=conn?.type==="wifi"?"Forbundet":(navigator.onLine?"Netværk OK":"Offline");
+    $("sys-spotify").textContent=deviceId?"Tilsluttet":"Ikke klar";
+
+    if(v6.battery){
+      const p=Math.round(v6.battery.level*100);
+      $("sys-battery").textContent=`${p}%${v6.battery.charging?" · oplader":""}`;
+      $("sys-battery-time").textContent=v6.battery.charging?
+        formatSecs(v6.battery.chargingTime):formatSecs(v6.battery.dischargingTime);
+    }
+
+    try{
+      const r=await spotifyFetch("https://api.spotify.com/v1/me");
+      if(r.ok){
+        const p=await r.json();
+        $("profile-name").textContent=p.display_name||p.id||"Spotify";
+        $("profile-email").textContent=p.email||"Spotify konto";
+        $("profile-photo").src=p.images?.[0]?.url||"";
+      }
+    }catch{}
+
+    try{
+      const r=await fetch("/api/system",{cache:"no-store"});
+      if(!r.ok) throw Error();
+      const d=await r.json();
+      if(d.ssid) $("sys-wifi").textContent=d.ssid;
+      if(d.cpuTemp!=null) $("sys-temp").textContent=`${d.cpuTemp} °C`;
+      if(d.cpu!=null) $("sys-cpu").textContent=`${d.cpu}%`;
+      if(d.ram!=null) $("sys-ram").textContent=`${d.ram}%`;
+      if(d.battery!=null) $("sys-battery").textContent=`${d.battery}%`;
+    }catch{
+      $("sys-temp").textContent="Pi API mangler";
+      $("sys-cpu").textContent="Pi API mangler";
+      $("sys-ram").textContent="Pi API mangler";
+    }
+  }
+  $("quick-system")?.addEventListener("click",()=>openV6("screen-system",loadSystem));
+  $("system-refresh")?.addEventListener("click",loadSystem);
+
+  /* ---------- Battery estimate + screensaver ---------- */
+  if("getBattery" in navigator){
+    navigator.getBattery().then(b=>{
+      v6.battery=b;
+      const update=()=>{
+        const p=Math.round(b.level*100);
+        if($("screensaver-battery")) $("screensaver-battery").textContent=`${p}%${b.charging?" · oplader":""}`;
+      };
+      update();b.addEventListener("levelchange",update);b.addEventListener("chargingchange",update);
+    }).catch(()=>{});
+  }
+  setInterval(()=>{
+    if($("screensaver-clock")) $("screensaver-clock").textContent=
+      new Date().toLocaleTimeString("da-DK",{hour:"2-digit",minute:"2-digit"});
+  },1000);
+
+  /* ---------- Bass mode + volume presets ---------- */
+  $("quick-bass")?.addEventListener("click",()=>{
+    saveSoundSettings({...SOUND_PRESETS.bass,preset:"bass"});
+    renderSoundSettings();openSound();
+  });
+
+  const soundPresets=document.querySelector(".sound-presets");
+  if(soundPresets&&!document.querySelector(".volume-presets")){
+    const box=document.createElement("div");
+    box.className="sound-presets volume-presets";
+    box.innerHTML=`
+      <button class="sound-preset" data-v=".25">Stille 25%</button>
+      <button class="sound-preset" data-v=".50">Normal 50%</button>
+      <button class="sound-preset" data-v=".80">Fest 80%</button>`;
+    soundPresets.after(box);
+    box.querySelectorAll("[data-v]").forEach(b=>b.addEventListener("click",()=>{
+      const max=Math.max(.2,Math.min(1,Number(localStorage.getItem("speakerfy_max_volume")||100)/100));
+      const v=Math.min(Number(b.dataset.v),max);
+      spotifyPlayer?.setVolume(v);el.volumeFill.style.height=`${v*100}%`;
+    }));
+  }
+
+  function maxVolume(){
+    return Math.max(.2,Math.min(1,Number(localStorage.getItem("speakerfy_max_volume")||100)/100));
+  }
+  setVolumeFromY=function(y){
+    const r=$("volume-track").getBoundingClientRect();
+    const raw=Math.max(0,Math.min(1,(r.bottom-y)/r.height));
+    const v=Math.min(raw,maxVolume());
+    el.volumeFill.style.height=`${v*100}%`;
+    spotifyPlayer?.setVolume(v);
+  };
+
+  const startInput=$("start-volume"),maxInput=$("max-volume");
+  startInput.value=localStorage.getItem("speakerfy_start_volume")||50;
+  maxInput.value=localStorage.getItem("speakerfy_max_volume")||100;
+  $("start-volume-value").textContent=`${startInput.value}%`;
+  $("max-volume-value").textContent=`${maxInput.value}%`;
+  startInput.addEventListener("input",()=> $("start-volume-value").textContent=`${startInput.value}%`);
+  startInput.addEventListener("change",()=>localStorage.setItem("speakerfy_start_volume",startInput.value));
+  maxInput.addEventListener("input",()=> $("max-volume-value").textContent=`${maxInput.value}%`);
+  maxInput.addEventListener("change",()=>localStorage.setItem("speakerfy_max_volume",maxInput.value));
+
+  const readyWatch=setInterval(()=>{
+    if(deviceId&&spotifyPlayer){
+      clearInterval(readyWatch);
+      const start=Math.min(Number(localStorage.getItem("speakerfy_start_volume")||50)/100,maxVolume());
+      spotifyPlayer.setVolume(start).catch(()=>{});
+    }
+  },500);
+
+  /* ---------- Sleep timer ---------- */
+  function clearSleep(){
+    clearTimeout(v6.sleepTimer);clearInterval(v6.sleepTicker);
+    v6.sleepTimer=null;v6.sleepTicker=null;v6.sleepEndsAt=0;
+    $("sleep-status").textContent="Fra";
+    document.querySelectorAll("#sleep-options button").forEach(b=>b.classList.toggle("active",b.dataset.sleep==="0"));
+  }
+  function setSleep(minutes){
+    clearTimeout(v6.sleepTimer);clearInterval(v6.sleepTicker);
+    if(!minutes){clearSleep();return}
+    v6.sleepEndsAt=Date.now()+minutes*60000;
+    v6.sleepTimer=setTimeout(async()=>{
+      try{await spotifyFetch("https://api.spotify.com/v1/me/player/pause",{method:"PUT"})}catch{}
+      clearSleep();
+    },minutes*60000);
+    v6.sleepTicker=setInterval(()=>{
+      $("sleep-status").textContent=`Stopper om ca. ${Math.ceil(Math.max(0,v6.sleepEndsAt-Date.now())/60000)} min`;
+    },1000);
+    document.querySelectorAll("#sleep-options button").forEach(b=>b.classList.toggle("active",Number(b.dataset.sleep)===minutes));
+  }
+  document.querySelectorAll("#sleep-options button").forEach(b=>b.addEventListener("click",()=>setSleep(Number(b.dataset.sleep))));
+
+  /* ---------- Brightness / night ---------- */
+  function updateBrightness(){
+    const auto=localStorage.getItem("speakerfy_auto_brightness")==="1";
+    const night=localStorage.getItem("speakerfy_night_mode")==="1";
+    let opacity=0;
+    if(auto){
+      const h=new Date().getHours();
+      if(h>=22||h<7) opacity=.36;
+      else if(h>=19||h<9) opacity=.18;
+    }
+    if(night) opacity=Math.max(opacity,.48);
+    $("brightness-overlay").style.opacity=String(opacity);
+  }
+  function wireSwitch(id,key){
+    const b=$(id),enabled=localStorage.getItem(key)==="1";
+    b.classList.toggle("on",enabled);
+    b.addEventListener("click",()=>{
+      const next=!b.classList.contains("on");
+      b.classList.toggle("on",next);localStorage.setItem(key,next?"1":"0");updateBrightness();
+    });
+  }
+  wireSwitch("auto-brightness-switch","speakerfy_auto_brightness");
+  wireSwitch("night-mode-switch","speakerfy_night_mode");
+  wireSwitch("auto-resume-switch","speakerfy_auto_resume");
+  updateBrightness();setInterval(updateBrightness,60000);
+
+  /* ---------- More themes + album color ---------- */
+  const originalApplyTheme=applyTheme;
+  const themeList=document.querySelector(".theme-list");
+  [["cyan","#00e5ff"],["red","#ff3b45"],["gold","#ffc43d"]].forEach(([name,color])=>{
+    if(THEMES[name]) return;
+    THEMES[name]=color;
+    const b=document.createElement("button");
+    b.className="theme-dot";b.dataset.theme=name;b.style.background=color;b.title=name;
+    b.addEventListener("click",()=>applyTheme(name));themeList?.appendChild(b);
+  });
+
+  function setSpecial(name){
+    document.body.classList.remove("theme-soundboks","theme-neon","theme-mono");
+    if(name==="soundboks") document.body.classList.add("theme-soundboks");
+    if(name==="neon") document.body.classList.add("theme-neon");
+    if(name==="mono") document.body.classList.add("theme-mono");
+    localStorage.setItem("speakerfy_special_theme",name);
+    document.querySelectorAll("#special-theme-options button").forEach(b=>b.classList.toggle("active",b.dataset.special===name));
+    if(name!=="album") originalApplyTheme(localStorage.getItem("speakerfy_theme")||"green");
+    else if(v6.currentTrack) updateAlbumColor(v6.currentTrack.album?.images?.[0]?.url||"");
+  }
+
+  document.querySelectorAll("#special-theme-options button").forEach(b=>b.addEventListener("click",()=>setSpecial(b.dataset.special)));
+  setSpecial(localStorage.getItem("speakerfy_special_theme")||"normal");
+
+  async function updateAlbumColor(url){
+    if(localStorage.getItem("speakerfy_special_theme")!=="album"||!url) return;
+    try{
+      const img=new Image();img.crossOrigin="anonymous";img.src=url;await img.decode();
+      const c=document.createElement("canvas");c.width=24;c.height=24;
+      const cx=c.getContext("2d",{willReadFrequently:true});cx.drawImage(img,0,0,24,24);
+      const data=cx.getImageData(0,0,24,24).data;
+      let r=0,g=0,b=0,n=0;
+      for(let i=0;i<data.length;i+=16){
+        if(data[i+3]<100) continue;r+=data[i];g+=data[i+1];b+=data[i+2];n++;
+      }
+      if(!n) return;
+      r=Math.round(r/n);g=Math.round(g/n);b=Math.round(b/n);
+      const max=Math.max(r,g,b);
+      if(max<115){
+        const f=115/Math.max(1,max);
+        r=Math.min(255,Math.round(r*f));g=Math.min(255,Math.round(g*f));b=Math.min(255,Math.round(b*f));
+      }
+      document.documentElement.style.setProperty("--accent",`rgb(${r},${g},${b})`);
+    }catch{}
+  }
+
+  /* ---------- Favorite/pinned playlists ---------- */
+  function pins(){
+    try{return JSON.parse(localStorage.getItem("speakerfy_pinned_playlists")||"[]")}catch{return[]}
+  }
+  function togglePin(id){
+    const p=pins();
+    const next=p.includes(id)?p.filter(x=>x!==id):[id,...p];
+    localStorage.setItem("speakerfy_pinned_playlists",JSON.stringify(next.slice(0,12)));
+    loadHomePlaylists();
+  }
+
+  loadHomePlaylists=async function(){
+    const row=$("home-playlists-row");
+    try{
+      const r=await spotifyFetch("https://api.spotify.com/v1/me/playlists?limit=20");
+      if(!r.ok) throw Error();
+      const d=await r.json(),p=pins();
+      const lists=(d.items||[]).slice().sort((a,b)=>{
+        const ai=p.indexOf(a.id),bi=p.indexOf(b.id);
+        if(ai>=0&&bi>=0) return ai-bi;if(ai>=0)return-1;if(bi>=0)return 1;return 0;
+      });
+
+      row.innerHTML="";
+      const q=$("home-quick-grid");
+      [...q.querySelectorAll(".quick-card[data-home-playlist]")].forEach(n=>n.remove());
+
+      lists.slice(0,8).forEach((pl,index)=>{
+        const card=document.createElement("div");
+        card.className="spotify-card";card.style.position="relative";
+        card.innerHTML=`
+          <img src="${pl.images?.[0]?.url||""}" alt="">
+          <button class="pin-playlist">${p.includes(pl.id)?"★":"☆"}</button>
+          <div class="spotify-card-title">${escapeHtml(pl.name)}</div>
+          <div class="spotify-card-sub">${escapeHtml(pl.owner?.display_name||"Spotify playliste")}</div>`;
+        card.querySelector(".pin-playlist").addEventListener("click",e=>{e.stopPropagation();togglePin(pl.id)});
+        card.addEventListener("click",()=>{closeAppScreens();el.overlay.classList.add("open");openPlaylist(pl)});
+        row.appendChild(card);
+
+        if(index<5){
+          const fast=document.createElement("div");
+          fast.className="quick-card";fast.dataset.homePlaylist=pl.id;
+          fast.innerHTML=`<img src="${pl.images?.[0]?.url||""}" alt=""><div class="quick-card-title">${escapeHtml(pl.name)}</div>`;
+          fast.addEventListener("click",()=>{closeAppScreens();el.overlay.classList.add("open");openPlaylist(pl)});
+          q.appendChild(fast);
+        }
+      });
+      if(!lists.length) row.innerHTML='<p style="color:var(--muted)">Ingen playlister fundet.</p>';
+    }catch{row.innerHTML='<p style="color:var(--muted)">Kunne ikke hente playlister.</p>'}
+  };
+
+  /* ---------- Party guest hint ---------- */
+  if(new URLSearchParams(location.search).get("party")==="1"){
+    setTimeout(()=>openV6("screen-party",renderQR),1700);
+  }
+})();
 </script>
 
 </body>
