@@ -16,6 +16,7 @@
 <style>
 :root{
   --green:#1db954;
+  --accent:#1db954;
   --bg:#070707;
   --text:#f5f5f5;
   --muted:rgba(255,255,255,.62);
@@ -98,8 +99,8 @@ button{
   width:11px;
   height:11px;
   border-radius:50%;
-  background:var(--green);
-  box-shadow:0 0 22px rgba(29,185,84,.65);
+  background:var(--accent);
+  box-shadow:0 0 22px color-mix(in srgb,var(--accent) 65%,transparent);
 }
 
 #clock{
@@ -142,7 +143,7 @@ button{
   margin-top:4px;
   border:0;
   border-radius:999px;
-  background:var(--green);
+  background:var(--accent);
   color:#06110a;
   padding:15px 30px;
   font-weight:700;
@@ -262,7 +263,7 @@ button{
   width:0%;
   height:100%;
   border-radius:999px;
-  background:var(--green);
+  background:var(--accent);
 }
 
 #controls{
@@ -294,9 +295,9 @@ button{
   width:66px;
   height:66px;
   padding:0;
-  background:var(--green);
+  background:var(--accent);
   color:#06110a;
-  box-shadow:0 10px 30px rgba(29,185,84,.30);
+  box-shadow:0 10px 30px color-mix(in srgb,var(--accent) 30%,transparent);
 }
 
 #play svg{
@@ -383,7 +384,7 @@ button{
   bottom:0;
   height:60%;
   border-radius:999px;
-  background:var(--green);
+  background:var(--accent);
 }
 
 #volume-fill::after{
@@ -555,7 +556,7 @@ body.idle #album-wrap{
   padding:11px 18px;
   border:0;
   border-radius:999px;
-  background:var(--green);
+  background:var(--accent);
   color:#06110a;
   font-weight:700;
   cursor:pointer;
@@ -817,7 +818,7 @@ body.mobile-fill{
   width:6px;
   height:6px;
   border-radius:50%;
-  background:var(--green);
+  background:var(--accent);
   opacity:.22;
   animation:bootDot 1.15s ease-in-out infinite;
 }
@@ -842,6 +843,385 @@ body.mobile-fill{
 
 @media(prefers-reduced-motion:reduce){
   #boot-logo,#boot-logo-glow,#boot-dots span{animation:none}
+}
+
+
+/* ---------- Speakerfy navigation / Home / Settings ---------- */
+#top-actions{
+  position:fixed;
+  top:max(10px,env(safe-area-inset-top));
+  right:16px;
+  z-index:14;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  opacity:1;
+  transition:opacity .45s var(--ease),transform .45s var(--ease);
+}
+
+.top-action{
+  width:42px;
+  height:42px;
+  border:1px solid var(--border);
+  border-radius:50%;
+  background:rgba(19,19,19,.72);
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+  display:grid;
+  place-items:center;
+  cursor:pointer;
+}
+
+.top-action svg{
+  width:20px;
+  height:20px;
+  fill:currentColor;
+}
+
+body.idle #top-actions{
+  opacity:0;
+  transform:translateY(-8px);
+  pointer-events:none;
+}
+
+#topbar{
+  right:118px;
+}
+
+#fullscreen{
+  display:none;
+}
+
+#screen-home,
+#screen-settings{
+  position:fixed;
+  inset:0;
+  z-index:18;
+  display:none;
+  overflow:auto;
+  padding:
+    calc(78px + env(safe-area-inset-top))
+    clamp(18px,4vw,48px)
+    calc(30px + env(safe-area-inset-bottom));
+  background:
+    radial-gradient(circle at 25% 10%,color-mix(in srgb,var(--accent) 14%,transparent),transparent 35%),
+    linear-gradient(180deg,rgba(7,7,7,.96),rgba(7,7,7,.99));
+}
+
+#screen-home.active,
+#screen-settings.active{
+  display:block;
+}
+
+.home-shell,
+.settings-shell{
+  width:min(980px,100%);
+  margin:0 auto;
+}
+
+.home-title{
+  font-size:clamp(32px,5vw,54px);
+  margin:0;
+  font-weight:700;
+  letter-spacing:-1.4px;
+}
+
+.home-subtitle{
+  margin:8px 0 28px;
+  color:var(--muted);
+  font-size:15px;
+}
+
+.home-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:18px;
+}
+
+.home-card{
+  min-height:210px;
+  padding:22px;
+  border:1px solid var(--border);
+  border-radius:28px;
+  background:rgba(18,18,18,.74);
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  cursor:pointer;
+  transition:transform .18s ease,border-color .18s ease,background .18s ease;
+}
+
+.home-card:hover,
+.home-card:active{
+  transform:translateY(-3px);
+  border-color:color-mix(in srgb,var(--accent) 55%,white 10%);
+  background:rgba(24,24,24,.88);
+}
+
+.home-card-icon{
+  width:54px;
+  height:54px;
+  border-radius:18px;
+  display:grid;
+  place-items:center;
+  background:color-mix(in srgb,var(--accent) 18%,rgba(255,255,255,.04));
+  color:var(--accent);
+}
+
+.home-card-icon svg{
+  width:28px;
+  height:28px;
+  fill:currentColor;
+}
+
+.home-card h3{
+  margin:24px 0 4px;
+  font-size:21px;
+}
+
+.home-card p{
+  margin:0;
+  color:var(--muted);
+  line-height:1.45;
+  font-size:13px;
+}
+
+#home-now-playing{
+  margin-top:20px;
+  padding:16px;
+  border:1px solid var(--border);
+  border-radius:22px;
+  background:rgba(18,18,18,.65);
+  display:flex;
+  align-items:center;
+  gap:14px;
+  cursor:pointer;
+}
+
+#home-now-art{
+  width:62px;
+  height:62px;
+  border-radius:14px;
+  object-fit:cover;
+  background:#1b1b1b;
+}
+
+#home-now-meta{
+  min-width:0;
+  flex:1;
+}
+
+#home-now-title,
+#home-now-artist{
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+#home-now-title{
+  font-weight:600;
+}
+
+#home-now-artist{
+  margin-top:4px;
+  font-size:13px;
+  color:var(--muted);
+}
+
+.screen-heading{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin-bottom:24px;
+}
+
+.screen-back{
+  width:42px;
+  height:42px;
+  border:0;
+  border-radius:50%;
+  background:rgba(255,255,255,.08);
+  cursor:pointer;
+}
+
+.screen-heading h2{
+  margin:0;
+  font-size:28px;
+}
+
+.settings-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:18px;
+}
+
+.settings-card{
+  border:1px solid var(--border);
+  border-radius:24px;
+  background:rgba(18,18,18,.74);
+  padding:20px;
+}
+
+.settings-card.full{
+  grid-column:1/-1;
+}
+
+.settings-card h3{
+  margin:0 0 6px;
+  font-size:18px;
+}
+
+.settings-card p{
+  margin:0 0 16px;
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.45;
+}
+
+.setting-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:18px;
+  min-height:48px;
+  padding:8px 0;
+  border-top:1px solid rgba(255,255,255,.065);
+}
+
+.setting-row:first-of-type{
+  border-top:0;
+}
+
+.setting-label{
+  font-size:14px;
+}
+
+.segmented{
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+}
+
+.segmented button,
+.theme-dot,
+.settings-button{
+  border:1px solid rgba(255,255,255,.10);
+  background:rgba(255,255,255,.055);
+  border-radius:999px;
+  padding:8px 12px;
+  cursor:pointer;
+}
+
+.segmented button.active{
+  color:#06110a;
+  background:var(--accent);
+  border-color:var(--accent);
+  font-weight:700;
+}
+
+.theme-list{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.theme-dot{
+  width:42px;
+  height:42px;
+  padding:0;
+  border-radius:50%;
+  position:relative;
+}
+
+.theme-dot.active::after{
+  content:"✓";
+  position:absolute;
+  inset:0;
+  display:grid;
+  place-items:center;
+  color:white;
+  font-weight:800;
+  text-shadow:0 2px 8px rgba(0,0,0,.7);
+}
+
+.switch{
+  width:48px;
+  height:28px;
+  border-radius:999px;
+  border:0;
+  background:#343434;
+  padding:3px;
+  cursor:pointer;
+  transition:.2s;
+}
+
+.switch span{
+  display:block;
+  width:22px;
+  height:22px;
+  border-radius:50%;
+  background:white;
+  transition:.2s;
+}
+
+.switch.on{
+  background:var(--accent);
+}
+
+.switch.on span{
+  transform:translateX(20px);
+}
+
+.settings-button{
+  border-radius:14px;
+  font-weight:600;
+}
+
+.settings-button.danger{
+  background:rgba(255,60,60,.10);
+  border-color:rgba(255,90,90,.18);
+  color:#ff8585;
+}
+
+.theme-green{background:#1db954}
+.theme-blue{background:#3c82f6}
+.theme-purple{background:#9b5cff}
+.theme-orange{background:#ff8a2a}
+.theme-pink{background:#ff4f9a}
+
+body.animations-off *,
+body.animations-off *::before,
+body.animations-off *::after{
+  transition:none !important;
+  animation:none !important;
+}
+
+@media(max-width:760px){
+  .home-grid,
+  .settings-grid{
+    grid-template-columns:1fr;
+  }
+
+  .settings-card.full{
+    grid-column:auto;
+  }
+
+  #screen-home,
+  #screen-settings{
+    padding-left:18px;
+    padding-right:18px;
+  }
+
+  .home-card{
+    min-height:170px;
+  }
+
+  #topbar{
+    right:116px;
+  }
 }
 
 </style>
@@ -882,6 +1262,15 @@ body.mobile-fill{
 <div id="topbar">
   <div id="brand"><span id="brand-dot"></span>Speakerfy</div>
   <div id="clock">--:--</div>
+</div>
+
+<div id="top-actions">
+  <button class="top-action" id="home-button" aria-label="Hjem">
+    <svg viewBox="0 0 24 24"><path d="M12 3 3 10v11h6v-7h6v7h6V10l-9-7z"/></svg>
+  </button>
+  <button class="top-action" id="settings-button" aria-label="Indstillinger">
+    <svg viewBox="0 0 24 24"><path d="M19.14 12.94a7.8 7.8 0 0 0 .06-.94 7.8 7.8 0 0 0-.06-.94l2.03-1.58-1.92-3.32-2.39.96a7.25 7.25 0 0 0-1.62-.94L14.88 3h-3.84l-.36 3.18a7.3 7.3 0 0 0-1.62.94l-2.39-.96-1.92 3.32 2.03 1.58A7.8 7.8 0 0 0 6.72 12c0 .32.02.63.06.94l-2.03 1.58 1.92 3.32 2.39-.96c.5.39 1.04.71 1.62.94l.36 3.18h3.84l.36-3.18c.58-.23 1.12-.55 1.62-.94l2.39.96 1.92-3.32-2.03-1.58ZM12 15.5A3.5 3.5 0 1 1 12 8a3.5 3.5 0 0 1 0 7.5Z"/></svg>
+  </button>
 </div>
 
 <div id="app">
@@ -940,6 +1329,119 @@ body.mobile-fill{
 </button>
 
 <div id="status-bottom"></div>
+
+
+<div id="screen-home">
+  <div class="home-shell">
+    <h1 class="home-title">Speakerfy</h1>
+    <p class="home-subtitle">Hvad vil du åbne?</p>
+
+    <div class="home-grid">
+      <div class="home-card" id="home-open-player">
+        <div class="home-card-icon">
+          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        </div>
+        <div>
+          <h3>Afspiller</h3>
+          <p>Gå tilbage til cover, sang og afspilningsknapper.</p>
+        </div>
+      </div>
+
+      <div class="home-card" id="home-open-playlists">
+        <div class="home-card-icon">
+          <svg viewBox="0 0 24 24"><path d="M4 5h12v2H4V5zm0 6h12v2H4v-2zm0 6h8v2H4v-2zm14-7v8.15A3 3 0 1 1 16 15.3V10h2zm0 0 4-1v2l-4 1v-2z"/></svg>
+        </div>
+        <div>
+          <h3>Playlister</h3>
+          <p>Find dine playlister og vælg den sang du vil høre.</p>
+        </div>
+      </div>
+
+      <div class="home-card" id="home-open-settings">
+        <div class="home-card-icon">
+          <svg viewBox="0 0 24 24"><path d="M19.14 12.94a7.8 7.8 0 0 0 .06-.94 7.8 7.8 0 0 0-.06-.94l2.03-1.58-1.92-3.32-2.39.96a7.25 7.25 0 0 0-1.62-.94L14.88 3h-3.84l-.36 3.18a7.3 7.3 0 0 0-1.62.94l-2.39-.96-1.92 3.32 2.03 1.58A7.8 7.8 0 0 0 6.72 12c0 .32.02.63.06.94l-2.03 1.58 1.92 3.32 2.39-.96c.5.39 1.04.71 1.62.94l.36 3.18h3.84l.36-3.18c.58-.23 1.12-.55 1.62-.94l2.39.96 1.92-3.32-2.03-1.58ZM12 15.5A3.5 3.5 0 1 1 12 8a3.5 3.5 0 0 1 0 7.5Z"/></svg>
+        </div>
+        <div>
+          <h3>Indstillinger</h3>
+          <p>Tema, standby, animationer og Spotify-konto.</p>
+        </div>
+      </div>
+    </div>
+
+    <div id="home-now-playing">
+      <img id="home-now-art" alt="">
+      <div id="home-now-meta">
+        <div id="home-now-title">Ingen sang endnu</div>
+        <div id="home-now-artist">Åbn afspilleren for at starte.</div>
+      </div>
+      <span>›</span>
+    </div>
+  </div>
+</div>
+
+<div id="screen-settings">
+  <div class="settings-shell">
+    <div class="screen-heading">
+      <button class="screen-back" id="settings-back">‹</button>
+      <h2>Indstillinger</h2>
+    </div>
+
+    <div class="settings-grid">
+      <div class="settings-card">
+        <h3>Tema</h3>
+        <p>Skift accentfarven i hele Speakerfy.</p>
+        <div class="theme-list">
+          <button class="theme-dot theme-green" data-theme="green" aria-label="Grøn"></button>
+          <button class="theme-dot theme-blue" data-theme="blue" aria-label="Blå"></button>
+          <button class="theme-dot theme-purple" data-theme="purple" aria-label="Lilla"></button>
+          <button class="theme-dot theme-orange" data-theme="orange" aria-label="Orange"></button>
+          <button class="theme-dot theme-pink" data-theme="pink" aria-label="Pink"></button>
+        </div>
+      </div>
+
+      <div class="settings-card">
+        <h3>Standby</h3>
+        <p>Hvor hurtigt coveret skal glide ind i midten.</p>
+        <div class="segmented" id="idle-options">
+          <button data-idle="3000">3 sek</button>
+          <button data-idle="6000">6 sek</button>
+          <button data-idle="10000">10 sek</button>
+          <button data-idle="0">Aldrig</button>
+        </div>
+      </div>
+
+      <div class="settings-card">
+        <h3>Animationer</h3>
+        <p>Slå bevægelser og fade-effekter til eller fra.</p>
+        <div class="setting-row">
+          <span class="setting-label">Animationer</span>
+          <button class="switch on" id="animations-switch" aria-label="Animationer"><span></span></button>
+        </div>
+      </div>
+
+      <div class="settings-card">
+        <h3>Startside</h3>
+        <p>Vælg hvad Speakerfy åbner på efter loading-skærmen.</p>
+        <div class="segmented" id="startup-options">
+          <button data-startup="player">Afspiller</button>
+          <button data-startup="home">Hjem</button>
+        </div>
+      </div>
+
+      <div class="settings-card">
+        <h3>Skærm</h3>
+        <p>Prøv at åbne Speakerfy i fuld skærm.</p>
+        <button class="settings-button" id="settings-fullscreen">Fuld skærm</button>
+      </div>
+
+      <div class="settings-card full">
+        <h3>Spotify-konto</h3>
+        <p>Log ud fjerner Speakerfy-login fra denne enhed. Næste gang skal du logge ind igen.</p>
+        <button class="settings-button danger" id="logout-button">Log ud af Spotify</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <div id="overlay">
   <div id="panel">
@@ -1000,7 +1502,14 @@ const el = {
   tracks: $("track-list"),
   back: $("back"),
   fullscreen: $("fullscreen"),
-  fullscreenHelp: $("mobile-fullscreen-help")
+  fullscreenHelp: $("mobile-fullscreen-help"),
+  screenHome: $("screen-home"),
+  screenSettings: $("screen-settings"),
+  homeButton: $("home-button"),
+  settingsButton: $("settings-button"),
+  homeNowArt: $("home-now-art"),
+  homeNowTitle: $("home-now-title"),
+  homeNowArtist: $("home-now-artist")
 };
 
 function setStatus(text){
@@ -1205,10 +1714,14 @@ function updatePlayer(state){
   el.title.textContent = track.name;
   el.artist.textContent = track.artists.map(a => a.name).join(", ");
 
+  el.homeNowTitle.textContent = track.name;
+  el.homeNowArtist.textContent = track.artists.map(a => a.name).join(", ");
+
   const art = track.album.images?.[0]?.url || "";
   if(art && art !== currentArt){
     currentArt = art;
     el.album.src = art;
+    el.homeNowArt.src = art;
     el.bg.style.backgroundImage = `url("${art}")`;
   }
 
@@ -1289,7 +1802,7 @@ function setVolumeFromY(y){
 /* ---------- Glat standby efter 6 sekunder ---------- */
 let idleTimer = null;
 let idleFrame = null;
-const IDLE_DELAY = 6000;
+let IDLE_DELAY = Number(localStorage.getItem("speakerfy_idle_delay") || 6000);
 
 function calculateIdleCoverPosition(){
   if(!el.albumWrap || el.player.style.display === "none") return;
@@ -1328,7 +1841,10 @@ function enterIdle(){
 
 function scheduleIdle(){
   clearTimeout(idleTimer);
-  if(!el.overlay.classList.contains("open")){
+  if(IDLE_DELAY <= 0) return;
+  if(!el.overlay.classList.contains("open") &&
+     !el.screenHome.classList.contains("active") &&
+     !el.screenSettings.classList.contains("active")){
     idleTimer = setTimeout(enterIdle, IDLE_DELAY);
   }
 }
@@ -1598,6 +2114,155 @@ el.fullscreen.addEventListener("click", async event => {
 document.addEventListener("fullscreenchange", wakeScreen);
 document.addEventListener("webkitfullscreenchange", wakeScreen);
 
+$("settings-fullscreen").addEventListener("click", async () => {
+  const success = await enterFullscreen();
+  if(!success){
+    document.body.classList.toggle("mobile-fill");
+    showFullscreenHelp("Browseren blokerede normal fullscreen. Speakerfy bruger skærmfyldning i stedet.");
+  }
+});
+
+
+
+/* ---------- Home + Settings ---------- */
+const THEMES = {
+  green:"#1db954",
+  blue:"#3c82f6",
+  purple:"#9b5cff",
+  orange:"#ff8a2a",
+  pink:"#ff4f9a"
+};
+
+function closeAppScreens(){
+  el.screenHome.classList.remove("active");
+  el.screenSettings.classList.remove("active");
+}
+
+function openHome(){
+  document.body.classList.remove("idle");
+  clearTimeout(idleTimer);
+  el.overlay.classList.remove("open");
+  el.screenSettings.classList.remove("active");
+  el.screenHome.classList.add("active");
+}
+
+function openSettings(){
+  document.body.classList.remove("idle");
+  clearTimeout(idleTimer);
+  el.overlay.classList.remove("open");
+  el.screenHome.classList.remove("active");
+  el.screenSettings.classList.add("active");
+}
+
+function openPlayerScreen(){
+  closeAppScreens();
+  wakeScreen();
+}
+
+el.homeButton.addEventListener("click", event => {
+  event.stopPropagation();
+  openHome();
+});
+
+el.settingsButton.addEventListener("click", event => {
+  event.stopPropagation();
+  openSettings();
+});
+
+$("home-open-player").addEventListener("click", openPlayerScreen);
+
+$("home-open-playlists").addEventListener("click", () => {
+  closeAppScreens();
+  el.overlay.classList.add("open");
+  document.body.classList.remove("idle");
+  clearTimeout(idleTimer);
+  showPlaylists();
+});
+
+$("home-open-settings").addEventListener("click", openSettings);
+$("home-now-playing").addEventListener("click", openPlayerScreen);
+
+$("settings-back").addEventListener("click", openHome);
+
+function applyTheme(name){
+  const accent = THEMES[name] || THEMES.green;
+  document.documentElement.style.setProperty("--accent", accent);
+  localStorage.setItem("speakerfy_theme", name);
+
+  document.querySelectorAll(".theme-dot").forEach(button => {
+    button.classList.toggle("active", button.dataset.theme === name);
+  });
+}
+
+document.querySelectorAll(".theme-dot").forEach(button => {
+  button.addEventListener("click", () => applyTheme(button.dataset.theme));
+});
+
+function applyIdleDelay(value){
+  IDLE_DELAY = Number(value);
+  localStorage.setItem("speakerfy_idle_delay", String(IDLE_DELAY));
+
+  document.querySelectorAll("#idle-options button").forEach(button => {
+    button.classList.toggle("active", Number(button.dataset.idle) === IDLE_DELAY);
+  });
+
+  document.body.classList.remove("idle");
+  scheduleIdle();
+}
+
+document.querySelectorAll("#idle-options button").forEach(button => {
+  button.addEventListener("click", () => applyIdleDelay(button.dataset.idle));
+});
+
+function applyAnimations(enabled){
+  localStorage.setItem("speakerfy_animations", enabled ? "1" : "0");
+  document.body.classList.toggle("animations-off", !enabled);
+  $("animations-switch").classList.toggle("on", enabled);
+}
+
+$("animations-switch").addEventListener("click", () => {
+  const next = !$("animations-switch").classList.contains("on");
+  applyAnimations(next);
+});
+
+function applyStartup(value){
+  localStorage.setItem("speakerfy_startup", value);
+  document.querySelectorAll("#startup-options button").forEach(button => {
+    button.classList.toggle("active", button.dataset.startup === value);
+  });
+}
+
+document.querySelectorAll("#startup-options button").forEach(button => {
+  button.addEventListener("click", () => applyStartup(button.dataset.startup));
+});
+
+$("logout-button").addEventListener("click", async () => {
+  try{
+    await spotifyPlayer?.disconnect();
+  }catch(e){}
+
+  [
+    "speakerfy_access_token",
+    "speakerfy_refresh_token",
+    "speakerfy_expires_at"
+  ].forEach(key => localStorage.removeItem(key));
+
+  sessionStorage.removeItem("speakerfy_pkce_verifier");
+  location.reload();
+});
+
+function loadSpeakerfySettings(){
+  const theme = localStorage.getItem("speakerfy_theme") || "green";
+  const animations = localStorage.getItem("speakerfy_animations") !== "0";
+  const startup = localStorage.getItem("speakerfy_startup") || "player";
+
+  applyTheme(theme);
+  applyAnimations(animations);
+  applyStartup(startup);
+  applyIdleDelay(Number(localStorage.getItem("speakerfy_idle_delay") || 6000));
+}
+
+loadSpeakerfySettings();
 
 /* ---------- Loading screen ---------- */
 const bootStartedAt = performance.now();
@@ -1642,6 +2307,11 @@ setTimeout(hideBootScreen, 3200);
     el.player.classList.add("player-grid");
     setStatus("Forbinder…");
     setupSpotify();
+
+    const startup = localStorage.getItem("speakerfy_startup") || "player";
+    if(startup === "home"){
+      openHome();
+    }
   }else{
     setStatus("Ikke logget ind");
   }
