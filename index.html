@@ -2226,6 +2226,562 @@ body.theme-mono #background{filter:grayscale(1) blur(90px) brightness(.29)}
 }
 </style>
 
+
+<style id="speakerfy-v8-style">
+:root{
+  --bg:#070b12;
+  --bg-2:#0d1220;
+  --panel:#10182a;
+  --panel-2:rgba(18,24,39,.82);
+  --panel-soft:rgba(255,255,255,.05);
+  --text:#f4f7fb;
+  --muted:rgba(228,236,248,.68);
+  --border:rgba(151,175,214,.14);
+  --accent:#7c5cff;
+  --accent-2:#5fd8ff;
+  --accent-3:#ffb25f;
+  --shadow:0 22px 60px rgba(0,0,0,.34);
+}
+
+/* Background and global tone */
+html,body{
+  background:
+    radial-gradient(circle at 14% 16%, rgba(124,92,255,.16), transparent 28%),
+    radial-gradient(circle at 86% 20%, rgba(95,216,255,.10), transparent 24%),
+    radial-gradient(circle at 52% 84%, rgba(255,178,95,.07), transparent 22%),
+    linear-gradient(180deg, #060911 0%, #0a1020 100%) !important;
+  color:var(--text) !important;
+}
+
+#background{
+  filter:blur(92px) saturate(1.35) brightness(.28) !important;
+  opacity:.92;
+}
+
+#shade{
+  background:
+    radial-gradient(circle at 50% 12%, rgba(255,255,255,.06), transparent 34%),
+    linear-gradient(180deg, rgba(6,9,17,.05), rgba(6,9,17,.72) 34%, rgba(6,9,17,.96) 100%) !important;
+}
+
+#app{
+  padding:calc(76px + env(safe-area-inset-top)) clamp(18px,4vw,48px) calc(30px + env(safe-area-inset-bottom)) !important;
+}
+
+/* Top bar */
+#topbar{
+  top:calc(18px + env(safe-area-inset-top)) !important;
+  left:50%;
+  transform:translateX(-50%);
+  width:min(980px, calc(100vw - 28px));
+  border-radius:999px !important;
+  border:1px solid var(--border) !important;
+  background:rgba(12,18,31,.72) !important;
+  backdrop-filter:blur(22px) saturate(1.15);
+  -webkit-backdrop-filter:blur(22px) saturate(1.15);
+  box-shadow:0 10px 32px rgba(0,0,0,.18);
+  padding:10px 12px !important;
+}
+
+.top-action,
+#home-button,
+#settings-button{
+  border-radius:999px !important;
+  background:rgba(255,255,255,.05) !important;
+  border:1px solid rgba(255,255,255,.06) !important;
+}
+
+#clock{
+  color:var(--text) !important;
+  letter-spacing:.06em;
+}
+
+/* Player */
+#player{
+  width:min(1120px, 100%) !important;
+  max-width:1120px !important;
+  margin:0 auto !important;
+  gap:28px !important;
+  align-items:center !important;
+}
+
+#album-wrap{
+  border-radius:34px !important;
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,.10) !important;
+  box-shadow:
+    0 30px 90px rgba(0,0,0,.40),
+    inset 0 1px 0 rgba(255,255,255,.05) !important;
+}
+
+#album-wrap::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.05), transparent 24%, transparent 76%, rgba(0,0,0,.20));
+}
+
+#ui{
+  max-width:460px !important;
+}
+
+#title{
+  font-size:clamp(28px,4vw,44px) !important;
+  letter-spacing:-.03em;
+  line-height:1.05;
+  font-weight:700 !important;
+}
+
+#artist{
+  margin-top:8px !important;
+  color:var(--muted) !important;
+  font-size:15px !important;
+}
+
+#card{
+  margin-top:18px !important;
+  border-radius:28px !important;
+  padding:22px 22px 18px !important;
+  border:1px solid var(--border) !important;
+  background:
+    linear-gradient(180deg, rgba(20,27,44,.90), rgba(15,20,34,.86)) !important;
+  box-shadow:var(--shadow) !important;
+  backdrop-filter:blur(28px) saturate(1.15);
+  -webkit-backdrop-filter:blur(28px) saturate(1.15);
+}
+
+#progress{
+  height:8px !important;
+  background:rgba(255,255,255,.08) !important;
+}
+#progress-fill{
+  background:linear-gradient(90deg, var(--accent), var(--accent-2)) !important;
+  border-radius:999px !important;
+}
+
+.time{
+  color:var(--muted) !important;
+}
+
+#controls{
+  margin-top:18px !important;
+  gap:16px !important;
+}
+
+.ctrl{
+  border-radius:20px !important;
+  background:rgba(255,255,255,.05) !important;
+  border:1px solid rgba(255,255,255,.06) !important;
+  box-shadow:none !important;
+}
+
+.ctrl svg{
+  width:24px;
+  height:24px;
+}
+
+#play{
+  width:74px !important;
+  height:74px !important;
+  border-radius:24px !important;
+  background:linear-gradient(135deg, var(--accent), var(--accent-2)) !important;
+  color:#081019 !important;
+  border:none !important;
+  box-shadow:0 16px 30px rgba(95,216,255,.18), 0 10px 26px rgba(124,92,255,.18) !important;
+}
+
+.mode-btn.active-control{
+  color:var(--accent-2) !important;
+  background:rgba(95,216,255,.10) !important;
+  border-color:rgba(95,216,255,.20) !important;
+}
+
+.player-extra-actions{
+  gap:10px !important;
+  margin-top:16px !important;
+  justify-content:flex-start !important;
+}
+
+.player-extra-button,
+#playlist-button{
+  border-radius:999px !important;
+  background:rgba(255,255,255,.055) !important;
+  border:1px solid rgba(255,255,255,.06) !important;
+  color:var(--text) !important;
+  padding:10px 14px !important;
+}
+
+#next-preview{
+  margin-top:14px !important;
+  padding-top:14px;
+  border-top:1px solid rgba(255,255,255,.08);
+}
+#next-preview strong{
+  color:var(--accent-3) !important;
+}
+
+/* Volume / fullscreen */
+#volume{
+  right:18px !important;
+  border-radius:999px !important;
+  background:rgba(12,18,31,.66) !important;
+  border:1px solid var(--border) !important;
+  padding:12px 10px !important;
+  backdrop-filter:blur(22px);
+}
+
+#volume-fill{
+  background:linear-gradient(180deg, var(--accent-2), var(--accent)) !important;
+}
+
+#fullscreen{
+  border-radius:999px !important;
+  border:1px solid var(--border) !important;
+  background:rgba(12,18,31,.66) !important;
+}
+
+/* Home styling */
+.home-shell{
+  width:min(1120px,100%) !important;
+  margin:0 auto !important;
+}
+
+.home-top{
+  margin-bottom:20px !important;
+  align-items:center;
+}
+
+.home-greeting{
+  font-size:clamp(30px,4vw,52px) !important;
+  letter-spacing:-.04em;
+  line-height:1;
+  margin:0 !important;
+}
+
+.home-pill{
+  border-radius:999px !important;
+  background:rgba(255,255,255,.05) !important;
+  border:1px solid rgba(255,255,255,.08) !important;
+  color:var(--text) !important;
+}
+
+#speakerfy-hero{
+  display:grid;
+  grid-template-columns:1.2fr .95fr;
+  gap:18px;
+  margin:8px 0 24px;
+  padding:24px;
+  border-radius:30px;
+  border:1px solid var(--border);
+  background:
+    radial-gradient(circle at top right, rgba(95,216,255,.14), transparent 30%),
+    radial-gradient(circle at bottom left, rgba(124,92,255,.18), transparent 32%),
+    linear-gradient(180deg, rgba(20,27,44,.92), rgba(12,17,30,.90));
+  box-shadow:var(--shadow);
+}
+
+.speakerfy-kicker{
+  color:var(--accent-2);
+  font:700 12px "Space Mono",monospace;
+  letter-spacing:.16em;
+}
+
+#speakerfy-hero h2{
+  margin:8px 0 10px;
+  font-size:clamp(28px,4vw,44px);
+  line-height:1.02;
+  letter-spacing:-.04em;
+}
+
+#speakerfy-hero p{
+  margin:0;
+  color:var(--muted);
+  max-width:42ch;
+  line-height:1.55;
+}
+
+.speakerfy-hero-stats{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:12px;
+}
+
+.speakerfy-stat{
+  padding:16px 18px;
+  border-radius:22px;
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.08);
+}
+.speakerfy-stat span{
+  display:block;
+  color:var(--muted);
+  font-size:12px;
+  margin-bottom:6px;
+}
+.speakerfy-stat strong{
+  display:block;
+  font-size:17px;
+  letter-spacing:-.01em;
+}
+
+/* Sections + cards */
+.home-section{
+  margin-top:26px !important;
+}
+
+.home-section-title,
+.settings-title{
+  font-size:22px !important;
+  letter-spacing:-.02em;
+  margin-bottom:14px !important;
+}
+
+#home-quick-grid{
+  gap:14px !important;
+}
+
+.quick-card,
+.spotify-card,
+.settings-card,
+.queue-now,
+.eq-card,
+.party-card,
+.system-card,
+.profile-card,
+.v6-settings-card,
+.sound-hero{
+  border-radius:24px !important;
+  border:1px solid var(--border) !important;
+  background:
+    linear-gradient(180deg, rgba(20,27,44,.85), rgba(13,17,29,.82)) !important;
+  box-shadow:var(--shadow);
+}
+
+.quick-card{
+  min-height:104px !important;
+  padding:18px !important;
+}
+.quick-card-title{
+  font-size:15px !important;
+}
+.quick-icon-box{
+  background:linear-gradient(135deg, rgba(124,92,255,.18), rgba(95,216,255,.16)) !important;
+  color:var(--accent-2) !important;
+}
+
+.spotify-card{
+  padding:14px !important;
+}
+.spotify-card img{
+  border-radius:18px !important;
+}
+.spotify-card-title{
+  margin-top:12px !important;
+  font-size:15px !important;
+}
+.spotify-card-sub{
+  color:var(--muted) !important;
+}
+
+/* Overlay / sheets */
+#overlay{
+  background:rgba(4,6,12,.72) !important;
+  backdrop-filter:blur(28px) saturate(1.15);
+}
+#sheet{
+  border-radius:28px 28px 0 0 !important;
+  border:1px solid var(--border) !important;
+  background:
+    linear-gradient(180deg, rgba(18,24,40,.98), rgba(9,13,22,.98)) !important;
+}
+.sheet-header h2{
+  letter-spacing:-.02em;
+}
+.sheet-close,
+.feature-action,
+.settings-button{
+  border-radius:999px !important;
+  border:1px solid rgba(255,255,255,.08) !important;
+  background:rgba(255,255,255,.05) !important;
+}
+
+/* Search, lists, queue rows */
+.search-box,
+.track-row,
+.queue-row{
+  border-radius:18px !important;
+}
+.search-box{
+  border:1px solid var(--border) !important;
+  background:rgba(255,255,255,.05) !important;
+}
+.track-row,
+.queue-row{
+  background:rgba(255,255,255,.03) !important;
+}
+.track-row:hover,
+.queue-row:hover{
+  background:rgba(255,255,255,.06) !important;
+}
+
+/* Settings + segmented */
+.segmented{
+  background:rgba(255,255,255,.04) !important;
+  border:1px solid rgba(255,255,255,.08) !important;
+  border-radius:18px !important;
+  padding:6px !important;
+}
+.segmented button{
+  border-radius:14px !important;
+}
+.segmented button.active{
+  background:linear-gradient(135deg, rgba(124,92,255,.95), rgba(95,216,255,.95)) !important;
+  color:#071019 !important;
+}
+
+/* Fullscreen / idle interaction */
+body.idle #idle-wake-layer{
+  opacity:1;
+  pointer-events:auto;
+}
+
+#idle-wake-layer{
+  position:fixed;
+  inset:0;
+  z-index:14;
+  display:grid;
+  place-items:center;
+  background:
+    radial-gradient(circle at center, rgba(124,92,255,.06), transparent 26%),
+    linear-gradient(180deg, rgba(0,0,0,.04), rgba(0,0,0,.18));
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .35s var(--ease);
+}
+
+#idle-wake-inner{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:10px;
+  text-align:center;
+  padding:18px;
+}
+
+.idle-signal{
+  width:64px;
+  height:64px;
+  border-radius:50%;
+  background:
+    radial-gradient(circle at 35% 35%, rgba(255,255,255,.26), transparent 20%),
+    linear-gradient(135deg, rgba(124,92,255,.95), rgba(95,216,255,.95));
+  box-shadow:0 16px 36px rgba(95,216,255,.18), 0 10px 26px rgba(124,92,255,.18);
+}
+
+.idle-brand{
+  font-size:28px;
+  font-weight:700;
+  letter-spacing:-.03em;
+}
+
+.idle-sub{
+  color:var(--muted);
+  max-width:32ch;
+}
+
+#idle-dock{
+  margin-top:12px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  justify-content:center;
+}
+
+.idle-dock-btn{
+  min-height:44px;
+  padding:0 16px;
+  border:none;
+  border-radius:999px;
+  background:rgba(12,18,31,.72);
+  color:var(--text);
+  border:1px solid rgba(255,255,255,.08);
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+}
+.idle-dock-main{
+  background:linear-gradient(135deg, var(--accent), var(--accent-2));
+  color:#081019;
+  font-weight:700;
+  border:none;
+}
+
+/* Login polish */
+#login{
+  width:min(520px,100%);
+  margin:0 auto;
+  padding:34px 28px;
+  border-radius:32px;
+  border:1px solid var(--border);
+  background:
+    radial-gradient(circle at top right, rgba(95,216,255,.10), transparent 32%),
+    radial-gradient(circle at bottom left, rgba(124,92,255,.14), transparent 36%),
+    linear-gradient(180deg, rgba(20,27,44,.92), rgba(12,17,30,.90));
+  box-shadow:var(--shadow);
+}
+.primary{
+  background:linear-gradient(135deg, var(--accent), var(--accent-2)) !important;
+  color:#081019 !important;
+  border:none !important;
+  border-radius:999px !important;
+}
+
+/* Responsive */
+@media(max-width:900px){
+  #speakerfy-hero{
+    grid-template-columns:1fr;
+  }
+}
+
+@media(max-width:760px){
+  #topbar{
+    width:calc(100vw - 18px);
+  }
+
+  #player{
+    gap:20px !important;
+  }
+
+  #title{
+    font-size:32px !important;
+  }
+
+  #card{
+    padding:18px !important;
+  }
+
+  #controls{
+    gap:12px !important;
+  }
+
+  .player-extra-actions{
+    gap:8px !important;
+  }
+
+  .player-extra-button,
+  #playlist-button{
+    padding:9px 12px !important;
+    font-size:12px !important;
+  }
+
+  #speakerfy-hero{
+    padding:20px;
+    border-radius:26px;
+  }
+}
+</style>
+
 </head>
 
 <body>
@@ -2385,6 +2941,29 @@ body.theme-mono #background{filter:grayscale(1) blur(90px) brightness(.29)}
         <div class="quick-card-title">Lyd</div>
       </div>
     </div>
+
+    <section id="speakerfy-hero">
+      <div class="speakerfy-hero-copy">
+        <div class="speakerfy-kicker">SPEAKERFY</div>
+        <h2>Dit lydrum</h2>
+        <p>Et roligt og lækkert musikdisplay til din højtaler — bygget til hurtig styring og god stemning.</p>
+      </div>
+
+      <div class="speakerfy-hero-stats">
+        <div class="speakerfy-stat">
+          <span>Spiller nu</span>
+          <strong id="hero-track">—</strong>
+        </div>
+        <div class="speakerfy-stat">
+          <span>Tema</span>
+          <strong id="hero-theme">Original</strong>
+        </div>
+        <div class="speakerfy-stat">
+          <span>Tilstand</span>
+          <strong id="hero-mode">Klar</strong>
+        </div>
+      </div>
+    </section>
 
     <section class="home-section">
       <div class="home-section-head">
@@ -5031,6 +5610,131 @@ if ("serviceWorker" in navigator) {
     openSettings = speakerfyGoSettings;
     openPlayerScreen = speakerfyGoPlayer;
   }catch{}
+})();
+</script>
+
+
+<div id="idle-wake-layer" aria-hidden="true">
+  <div id="idle-wake-inner">
+    <div class="idle-signal"></div>
+    <div class="idle-brand">Speakerfy</div>
+    <div class="idle-sub">Tryk hvor som helst for at åbne kontrollerne</div>
+
+    <div id="idle-dock">
+      <button class="idle-dock-btn" id="idle-home">Hjem</button>
+      <button class="idle-dock-btn idle-dock-main" id="idle-playpause">Afspil / pause</button>
+      <button class="idle-dock-btn" id="idle-next">Næste</button>
+    </div>
+  </div>
+</div>
+
+<script id="speakerfy-v8-script">
+(() => {
+  function setHeroValues(){
+    const title = document.getElementById("title")?.textContent?.trim() || "—";
+    const heroTrack = document.getElementById("hero-track");
+    if(heroTrack){
+      heroTrack.textContent = title && title !== "—" ? title : "Klar til musik";
+    }
+
+    const mode = document.body.classList.contains("idle")
+      ? "Fullscreen"
+      : (document.getElementById("screen-home")?.classList.contains("active")
+          ? "Hjem"
+          : "Afspiller");
+
+    const heroMode = document.getElementById("hero-mode");
+    if(heroMode){
+      heroMode.textContent = mode;
+    }
+
+    const special = localStorage.getItem("speakerfy_special_theme") || "normal";
+    const themeMap = {
+      normal:"Original",
+      soundboks:"Soundbox",
+      neon:"Neon",
+      mono:"Mono",
+      album:"Album color"
+    };
+    const heroTheme = document.getElementById("hero-theme");
+    if(heroTheme){
+      heroTheme.textContent = themeMap[special] || special;
+    }
+  }
+
+  setInterval(setHeroValues, 600);
+
+  function wakeAndStop(event){
+    if(!document.body.classList.contains("idle")) return;
+    event.preventDefault();
+    event.stopPropagation();
+    if(typeof wakeScreen === "function"){
+      wakeScreen();
+    }else{
+      document.body.classList.remove("idle");
+    }
+  }
+
+  const wakeLayer = document.getElementById("idle-wake-layer");
+  if(wakeLayer){
+    wakeLayer.addEventListener("pointerdown", wakeAndStop, true);
+    wakeLayer.addEventListener("click", wakeAndStop, true);
+  }
+
+  const idleHome = document.getElementById("idle-home");
+  if(idleHome){
+    idleHome.addEventListener("click", event => {
+      event.preventDefault();
+      event.stopPropagation();
+      if(typeof wakeScreen === "function") wakeScreen();
+      if(typeof speakerfyGoHome === "function") speakerfyGoHome();
+      else if(typeof openHome === "function") openHome();
+    });
+  }
+
+  const idlePlay = document.getElementById("idle-playpause");
+  if(idlePlay){
+    idlePlay.addEventListener("click", event => {
+      event.preventDefault();
+      event.stopPropagation();
+      if(typeof wakeScreen === "function") wakeScreen();
+      if(window.spotifyPlayer?.togglePlay){
+        spotifyPlayer.togglePlay();
+      }
+    });
+  }
+
+  const idleNext = document.getElementById("idle-next");
+  if(idleNext){
+    idleNext.addEventListener("click", event => {
+      event.preventDefault();
+      event.stopPropagation();
+      if(typeof wakeScreen === "function") wakeScreen();
+      if(window.spotifyPlayer?.nextTrack){
+        spotifyPlayer.nextTrack();
+      }
+    });
+  }
+
+  /* Make fullscreen/scene mode feel intentional and not locked. */
+  document.addEventListener("keydown", event => {
+    if(event.key === "Escape" && document.body.classList.contains("idle")){
+      event.preventDefault();
+      if(typeof wakeScreen === "function") wakeScreen();
+    }
+  });
+
+  /* Small copy cleanup */
+  const cinemaButton = document.getElementById("cinema-button");
+  if(cinemaButton) cinemaButton.textContent = "Scene mode";
+
+  const appTitle = document.querySelector("#login h1");
+  if(appTitle) appTitle.textContent = "Speakerfy";
+
+  const appText = document.querySelector("#login p");
+  if(appText){
+    appText.textContent = "Giv din højtaler et elegant musikdisplay med hurtig adgang til afspilning, playlister og stemning.";
+  }
 })();
 </script>
 
