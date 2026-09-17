@@ -18,6 +18,7 @@
     --glass-bg: rgba(255,255,255,0.07);
     --glass-border: rgba(255,255,255,0.10);
     --ease: cubic-bezier(0.25, 0.1, 0.25, 1);
+    --spotify-green: #1DB954;
   }
   *{ box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html,body{
@@ -118,7 +119,7 @@
   }
   #bar-fill{
     position:absolute; left:0; top:0; height:100%;
-    background: var(--fg); border-radius:8px; width:0%;
+    background: var(--spotify-green); border-radius:8px; width:0%;
     transition: width 0.2s linear;
   }
 
@@ -134,16 +135,40 @@
     transition: opacity 0.25s var(--ease), transform 0.25s var(--ease), background 0.25s var(--ease);
   }
   .ctrl-btn:active{ opacity:0.5; transform: scale(0.9); background: rgba(255,255,255,0.08); }
-  #play-pause{ transform: scale(1.35); }
-  #play-pause:active{ transform: scale(1.2); }
+  #play-pause{
+    background: var(--spotify-green);
+    color: #06120a;
+    width: 62px; height: 62px;
+    transform: scale(1);
+    box-shadow: 0 10px 24px -8px rgba(29,185,84,0.55);
+  }
+  #play-pause:active{ transform: scale(0.94); background: var(--spotify-green); }
 
-  #volume-row{
-    display:flex; align-items:center; gap:10px; margin-top:20px; width:100%;
+  #volume-side{
+    position: fixed; right: 16px; top: 50%; transform: translateY(-50%);
+    width: 48px; height: 42vh; max-height: 320px; min-height: 180px;
+    border-radius: 999px;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(24px) saturate(1.4);
+    -webkit-backdrop-filter: blur(24px) saturate(1.4);
+    display:flex; align-items:flex-end; justify-content:center;
+    padding: 14px 0;
+    z-index:4; cursor:pointer;
+    opacity: var(--control-alpha);
+    transition: opacity 0.7s var(--ease);
+    touch-action: none;
   }
-  #vol-bar{
-    flex:1; height:4px; background:rgba(255,255,255,0.14); border-radius:8px; position:relative; cursor:pointer;
+  #vol-side-fill{
+    position:absolute; left:6px; right:6px; bottom:6px;
+    height: 50%; border-radius: 999px;
+    background: linear-gradient(to top, var(--spotify-green), #7be89a);
+    transition: height 0.12s linear;
   }
-  #vol-fill{ position:absolute; left:0; top:0; height:100%; background:var(--fg-dim); border-radius:8px; width:50%; transition: width 0.2s linear; }
+  #vol-side-icon{
+    position:relative; color: var(--fg); opacity:0.9; margin-bottom: 6px;
+    pointer-events:none;
+  }
 
   #panel-footer{
     display:flex; align-items:center; justify-content:center;
@@ -259,11 +284,6 @@
         </button>
       </div>
 
-      <div id="volume-row">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="var(--fg-dim)"><path d="M3 10v4h4l5 5V5L7 10H3zm13.5 2a4.5 4.5 0 00-2.5-4.03v8.06A4.5 4.5 0 0016.5 12z"/></svg>
-        <div id="vol-bar"><div id="vol-fill"></div></div>
-      </div>
-
       <div id="panel-footer">
         <button id="btn-playlists">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M4 6h16v2H4zm0 5h16v2H4zm0 5h10v2H4z"/></svg>
@@ -272,6 +292,11 @@
       </div>
     </div>
   </div>
+</div>
+
+<div id="volume-side">
+  <div id="vol-side-fill"></div>
+  <svg id="vol-side-icon" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M3 10v4h4l5 5V5L7 10H3zm13.5 2a4.5 4.5 0 00-2.5-4.03v8.06A4.5 4.5 0 0016.5 12z"/></svg>
 </div>
 
 <div id="playlist-overlay">
@@ -302,7 +327,9 @@ const SCOPES = [
   'user-read-private',
   'user-modify-playback-state',
   'user-read-playback-state',
-  'user-read-currently-playing'
+  'user-read-currently-playing',
+  'playlist-read-private',
+  'playlist-read-collaborative'
 ].join(' ');
 
 const els = {
@@ -322,8 +349,8 @@ const els = {
   iconPause: document.getElementById('icon-pause'),
   btnPrev: document.getElementById('btn-prev'),
   btnNext: document.getElementById('btn-next'),
-  volBar: document.getElementById('vol-bar'),
-  volFill: document.getElementById('vol-fill'),
+  volSide: document.getElementById('volume-side'),
+  volSideFill: document.getElementById('vol-side-fill'),
   status: document.getElementById('status'),
 };
 
@@ -513,7 +540,7 @@ function updateFromState(state){
   els.iconPlay.style.display = isPaused ? 'block' : 'none';
   els.iconPause.style.display = isPaused ? 'none' : 'block';
 
-  els.volFill.style.width = Math.round((state.device?.volume_percent ?? 60)) + '%';
+  els.volSideFill.style.height = Math.round((state.device?.volume_percent ?? 60)) + '%';
 
   updateProgressUI();
   restartTicker();
@@ -564,12 +591,29 @@ els.bar.addEventListener('click', e => {
     updateProgressUI();
   });
 });
-els.volBar.addEventListener('click', e => {
-  seekFromEvent(e, els.volBar, ratio => {
-    els.volFill.style.width = (ratio * 100) + '%';
-    spotifyPlayer && spotifyPlayer.setVolume(ratio);
-  });
+els.volSide.addEventListener('click', e => { if (e.__fromDrag) return; });
+
+function setVolumeFromClientY(clientY){
+  const rect = els.volSide.getBoundingClientRect();
+  const ratio = Math.min(1, Math.max(0, (rect.bottom - clientY) / rect.height));
+  els.volSideFill.style.height = (ratio * 100) + '%';
+  spotifyPlayer && spotifyPlayer.setVolume(ratio);
+  return ratio;
+}
+
+let draggingVolume = false;
+els.volSide.addEventListener('pointerdown', e => {
+  draggingVolume = true;
+  els.volSide.setPointerCapture(e.pointerId);
+  setVolumeFromClientY(e.clientY);
+  showControls();
 });
+els.volSide.addEventListener('pointermove', e => {
+  if (!draggingVolume) return;
+  setVolumeFromClientY(e.clientY);
+});
+els.volSide.addEventListener('pointerup', () => { draggingVolume = false; });
+els.volSide.addEventListener('pointercancel', () => { draggingVolume = false; });
 
 /* ---------------- Playlists ---------------- */
 const playlistOverlay = document.getElementById('playlist-overlay');
@@ -595,6 +639,14 @@ async function loadPlaylists(){
     const res = await fetch('https://api.spotify.com/v1/me/playlists?limit=50', {
       headers: { 'Authorization': 'Bearer ' + token },
     });
+    if (res.status === 401 || res.status === 403) {
+      // Gamle tilladelser matcher ikke længere — log ind igen for at opdatere dem
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('expires_at');
+      localStorage.removeItem('refresh_token');
+      redirectToSpotifyLogin();
+      return;
+    }
     const data = await res.json();
     renderPlaylists(data.items || []);
     playlistsLoaded = true;
