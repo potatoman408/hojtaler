@@ -11,10 +11,13 @@
   :root{
     --accent: #6b6f76;
     --accent-dim: #35373b;
-    --bg: #060606;
-    --fg: #f2f0eb;
-    --fg-dim: rgba(242,240,235,0.55);
+    --bg: #0a0a0a;
+    --fg: #f5f3ee;
+    --fg-dim: rgba(245,243,238,0.58);
     --control-alpha: 1;
+    --glass-bg: rgba(255,255,255,0.07);
+    --glass-border: rgba(255,255,255,0.10);
+    --ease: cubic-bezier(0.25, 0.1, 0.25, 1);
   }
   *{ box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html,body{
@@ -26,17 +29,17 @@
     user-select: none;
   }
   #bg{
-    position:fixed; inset:-10%;
+    position:fixed; inset:-15%;
     background-size: cover;
     background-position:center;
-    filter: blur(60px) saturate(1.6) brightness(0.55);
-    transform: scale(1.15);
-    transition: background-image 0.6s ease;
+    filter: blur(90px) saturate(1.5) brightness(0.5);
+    transform: scale(1.2);
+    transition: background-image 1.2s var(--ease);
     z-index:0;
   }
   #tint{
     position:fixed; inset:0;
-    background: radial-gradient(circle at 50% 30%, transparent 0%, var(--bg) 78%);
+    background: radial-gradient(circle at 50% 32%, transparent 0%, var(--bg) 82%);
     z-index:1;
   }
   #app{
@@ -68,8 +71,12 @@
   #player{ display:none; flex-direction:column; align-items:center; width:100%; max-width:520px; }
   #art-wrap{
     position:relative; width:min(58vw, 56vh); height:min(58vw,56vh);
-    border-radius: 18px; overflow:hidden;
-    box-shadow: 0 30px 80px -20px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.06);
+    border-radius: 32px; overflow:hidden;
+    box-shadow:
+      0 40px 100px -30px rgba(0,0,0,0.65),
+      0 10px 40px -10px rgba(0,0,0,0.4),
+      0 0 0 1px rgba(255,255,255,0.07);
+    transition: box-shadow 0.6s var(--ease);
   }
   #art{ width:100%; height:100%; object-fit:cover; display:block; background:#111; }
 
@@ -85,10 +92,20 @@
     white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
   }
 
+  #glass-panel{
+    width:100%; margin-top:30px;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 28px;
+    padding: 22px 26px 18px;
+    backdrop-filter: blur(24px) saturate(1.4);
+    -webkit-backdrop-filter: blur(24px) saturate(1.4);
+    opacity: var(--control-alpha);
+    transition: opacity 0.7s var(--ease), transform 0.7s var(--ease);
+    transform: translateY(calc((1 - var(--control-alpha)) * 6px));
+  }
   #progress-row{
     width:100%; display:flex; align-items:center; gap:12px;
-    margin-top:28px; opacity:var(--control-alpha);
-    transition:opacity 0.4s ease;
   }
   #time-cur, #time-dur{
     font-family:'Space Mono', monospace; font-size:12px; color:var(--fg-dim);
@@ -96,36 +113,103 @@
   }
   #time-dur{ text-align:right; }
   #bar{
-    flex:1; height:4px; background:rgba(255,255,255,0.16);
-    border-radius:4px; position:relative; cursor:pointer;
+    flex:1; height:5px; background:rgba(255,255,255,0.14);
+    border-radius:8px; position:relative; cursor:pointer;
   }
   #bar-fill{
     position:absolute; left:0; top:0; height:100%;
-    background: var(--fg); border-radius:4px; width:0%;
+    background: var(--fg); border-radius:8px; width:0%;
+    transition: width 0.2s linear;
   }
 
   #controls{
-    display:flex; align-items:center; justify-content:center; gap:30px;
-    margin-top: 26px;
-    opacity:var(--control-alpha);
-    transition:opacity 0.4s ease;
+    display:flex; align-items:center; justify-content:center; gap:34px;
+    margin-top: 22px;
   }
   .ctrl-btn{
     background:none; border:none; color:var(--fg); cursor:pointer;
     display:flex; align-items:center; justify-content:center;
     padding:10px; opacity:0.9;
+    border-radius: 999px;
+    transition: opacity 0.25s var(--ease), transform 0.25s var(--ease), background 0.25s var(--ease);
   }
-  .ctrl-btn:active{ opacity:0.5; }
+  .ctrl-btn:active{ opacity:0.5; transform: scale(0.9); background: rgba(255,255,255,0.08); }
   #play-pause{ transform: scale(1.35); }
+  #play-pause:active{ transform: scale(1.2); }
 
   #volume-row{
-    display:flex; align-items:center; gap:10px; margin-top:22px; width:70%;
-    opacity:var(--control-alpha); transition:opacity 0.4s ease;
+    display:flex; align-items:center; gap:10px; margin-top:20px; width:100%;
   }
   #vol-bar{
-    flex:1; height:3px; background:rgba(255,255,255,0.16); border-radius:3px; position:relative; cursor:pointer;
+    flex:1; height:4px; background:rgba(255,255,255,0.14); border-radius:8px; position:relative; cursor:pointer;
   }
-  #vol-fill{ position:absolute; left:0; top:0; height:100%; background:var(--fg-dim); border-radius:3px; width:50%; }
+  #vol-fill{ position:absolute; left:0; top:0; height:100%; background:var(--fg-dim); border-radius:8px; width:50%; transition: width 0.2s linear; }
+
+  #panel-footer{
+    display:flex; align-items:center; justify-content:center;
+    margin-top:18px; padding-top:16px;
+    border-top: 1px solid var(--glass-border);
+  }
+  #btn-playlists{
+    display:flex; align-items:center; gap:8px;
+    background:none; border:none; color:var(--fg-dim); cursor:pointer;
+    font-family:'Space Grotesk', sans-serif; font-size:13px; font-weight:500;
+    padding:8px 16px; border-radius:999px;
+    transition: background 0.25s var(--ease), color 0.25s var(--ease);
+  }
+  #btn-playlists:active{ background: rgba(255,255,255,0.08); color:var(--fg); }
+
+  /* ---- Playlist overlay ---- */
+  #playlist-overlay{
+    position:fixed; inset:0; z-index:10;
+    background: rgba(6,6,6,0.55);
+    backdrop-filter: blur(30px) saturate(1.3);
+    -webkit-backdrop-filter: blur(30px) saturate(1.3);
+    display:flex; align-items:flex-end; justify-content:center;
+    opacity:0; pointer-events:none;
+    transition: opacity 0.4s var(--ease);
+  }
+  #playlist-overlay.open{ opacity:1; pointer-events:auto; }
+  #playlist-panel{
+    width:100%; max-width:640px; max-height:78vh;
+    background: rgba(20,20,20,0.9);
+    border: 1px solid var(--glass-border);
+    border-radius: 32px 32px 0 0;
+    padding: 22px 22px 34px;
+    transform: translateY(24px);
+    transition: transform 0.45s var(--ease);
+    overflow-y:auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  #playlist-overlay.open #playlist-panel{ transform: translateY(0); }
+  #playlist-header{
+    display:flex; align-items:center; justify-content:space-between;
+    margin-bottom:18px;
+  }
+  #playlist-header h2{ font-size:18px; font-weight:600; margin:0; }
+  #close-playlists{
+    background: rgba(255,255,255,0.08); border:none; color:var(--fg);
+    width:34px; height:34px; border-radius:50%; cursor:pointer;
+    font-size:16px; display:flex; align-items:center; justify-content:center;
+  }
+  #playlist-grid{
+    display:grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap:16px;
+  }
+  .pl-item{
+    cursor:pointer; display:flex; flex-direction:column; gap:8px;
+    border-radius:18px; transition: transform 0.2s var(--ease);
+  }
+  .pl-item:active{ transform: scale(0.95); }
+  .pl-item img{
+    width:100%; aspect-ratio:1; object-fit:cover; border-radius:16px;
+    box-shadow: 0 10px 24px -10px rgba(0,0,0,0.5);
+  }
+  .pl-item span{
+    font-size:13px; font-weight:500; color:var(--fg-dim);
+    display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  }
+  .pl-item.playing span{ color:var(--fg); }
 
   #status{
     position:fixed; bottom:18px; left:0; width:100%; text-align:center;
@@ -155,29 +239,48 @@
       <div id="artist">—</div>
     </div>
 
-    <div id="progress-row">
-      <span id="time-cur">0:00</span>
-      <div id="bar"><div id="bar-fill"></div></div>
-      <span id="time-dur">0:00</span>
-    </div>
+    <div id="glass-panel">
+      <div id="progress-row">
+        <span id="time-cur">0:00</span>
+        <div id="bar"><div id="bar-fill"></div></div>
+        <span id="time-dur">0:00</span>
+      </div>
 
-    <div id="controls">
-      <button class="ctrl-btn" id="btn-prev" aria-label="Forrige">
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6l10-6v12z"/></svg>
-      </button>
-      <button class="ctrl-btn" id="play-pause" aria-label="Afspil/pause">
-        <svg id="icon-play" width="30" height="30" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-        <svg id="icon-pause" width="30" height="30" viewBox="0 0 24 24" fill="currentColor" style="display:none"><path d="M6 5h4v14H6zm8 0h4v14h-4z"/></svg>
-      </button>
-      <button class="ctrl-btn" id="btn-next" aria-label="Næste">
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><path d="M16 6h2v12h-2zM4.5 6l10 6-10 6z"/></svg>
-      </button>
-    </div>
+      <div id="controls">
+        <button class="ctrl-btn" id="btn-prev" aria-label="Forrige">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6l10-6v12z"/></svg>
+        </button>
+        <button class="ctrl-btn" id="play-pause" aria-label="Afspil/pause">
+          <svg id="icon-play" width="30" height="30" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+          <svg id="icon-pause" width="30" height="30" viewBox="0 0 24 24" fill="currentColor" style="display:none"><path d="M6 5h4v14H6zm8 0h4v14h-4z"/></svg>
+        </button>
+        <button class="ctrl-btn" id="btn-next" aria-label="Næste">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><path d="M16 6h2v12h-2zM4.5 6l10 6-10 6z"/></svg>
+        </button>
+      </div>
 
-    <div id="volume-row">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="var(--fg-dim)"><path d="M3 10v4h4l5 5V5L7 10H3zm13.5 2a4.5 4.5 0 00-2.5-4.03v8.06A4.5 4.5 0 0016.5 12z"/></svg>
-      <div id="vol-bar"><div id="vol-fill"></div></div>
+      <div id="volume-row">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="var(--fg-dim)"><path d="M3 10v4h4l5 5V5L7 10H3zm13.5 2a4.5 4.5 0 00-2.5-4.03v8.06A4.5 4.5 0 0016.5 12z"/></svg>
+        <div id="vol-bar"><div id="vol-fill"></div></div>
+      </div>
+
+      <div id="panel-footer">
+        <button id="btn-playlists">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M4 6h16v2H4zm0 5h16v2H4zm0 5h10v2H4z"/></svg>
+          Vælg playliste
+        </button>
+      </div>
     </div>
+  </div>
+</div>
+
+<div id="playlist-overlay">
+  <div id="playlist-panel">
+    <div id="playlist-header">
+      <h2>Dine playlister</h2>
+      <button id="close-playlists">✕</button>
+    </div>
+    <div id="playlist-grid"></div>
   </div>
 </div>
 
@@ -467,6 +570,66 @@ els.volBar.addEventListener('click', e => {
     spotifyPlayer && spotifyPlayer.setVolume(ratio);
   });
 });
+
+/* ---------------- Playlists ---------------- */
+const playlistOverlay = document.getElementById('playlist-overlay');
+const playlistGrid = document.getElementById('playlist-grid');
+document.getElementById('btn-playlists').addEventListener('click', openPlaylists);
+document.getElementById('close-playlists').addEventListener('click', closePlaylists);
+playlistOverlay.addEventListener('click', e => { if (e.target === playlistOverlay) closePlaylists(); });
+
+function openPlaylists(){
+  playlistOverlay.classList.add('open');
+  loadPlaylists();
+}
+function closePlaylists(){
+  playlistOverlay.classList.remove('open');
+}
+
+let playlistsLoaded = false;
+async function loadPlaylists(){
+  if (playlistsLoaded) return;
+  const token = await getValidAccessToken();
+  playlistGrid.innerHTML = '<span style="color:var(--fg-dim); font-size:14px;">Henter…</span>';
+  try {
+    const res = await fetch('https://api.spotify.com/v1/me/playlists?limit=50', {
+      headers: { 'Authorization': 'Bearer ' + token },
+    });
+    const data = await res.json();
+    renderPlaylists(data.items || []);
+    playlistsLoaded = true;
+  } catch (e) {
+    playlistGrid.innerHTML = '<span style="color:var(--fg-dim); font-size:14px;">Kunne ikke hente playlister</span>';
+  }
+}
+
+function renderPlaylists(items){
+  playlistGrid.innerHTML = '';
+  items.forEach(pl => {
+    const img = pl.images?.[0]?.url || '';
+    const div = document.createElement('div');
+    div.className = 'pl-item';
+    div.innerHTML = `<img src="${img}" alt=""><span>${pl.name}</span>`;
+    div.addEventListener('click', () => playPlaylist(pl.uri, div));
+    playlistGrid.appendChild(div);
+  });
+}
+
+async function playPlaylist(uri, el){
+  document.querySelectorAll('.pl-item.playing').forEach(n => n.classList.remove('playing'));
+  el.classList.add('playing');
+  const token = await getValidAccessToken();
+  try {
+    await fetch('https://api.spotify.com/v1/me/player/play' + (currentDeviceId ? '?device_id=' + currentDeviceId : ''), {
+      method: 'PUT',
+      headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ context_uri: uri }),
+    });
+    closePlaylists();
+  } catch (e) {
+    els.status.textContent = 'Kunne ikke starte playliste';
+  }
+}
 
 /* ---------------- Auto-hide controls (ambient screen) ---------------- */
 let hideTimer = null;
