@@ -50,7 +50,10 @@
     align-items:center; justify-content:center;
     padding: 5vh 6vw;
     overflow-y: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
   }
+  #app::-webkit-scrollbar{ display:none; width:0; height:0; }
 
   /* ---- Login screen ---- */
   #login{
@@ -173,28 +176,36 @@
   #play-pause:active{ transform: scale(0.94); background: var(--spotify-green); }
 
   #volume-side{
-    position: fixed; right: 16px; top: 50%; transform: translateY(-50%);
-    width: 48px; height: 42vh; max-height: 320px; min-height: 180px;
-    border-radius: 999px;
-    background: var(--glass-bg);
-    border: 1px solid var(--glass-border);
-    backdrop-filter: blur(24px) saturate(1.4);
-    -webkit-backdrop-filter: blur(24px) saturate(1.4);
+    position: fixed; right: 6px; top: 50%; transform: translateY(-50%);
+    width: 44px; height: 36vh; max-height: 240px; min-height: 150px;
     display:flex; align-items:flex-end; justify-content:center;
-    padding: 14px 0;
     z-index:4; cursor:pointer;
     opacity: var(--control-alpha);
     transition: opacity 0.7s var(--ease);
     touch-action: none;
   }
+  #vol-track{
+    position:relative; width:6px; height:100%; border-radius:999px;
+    background: rgba(255,255,255,0.10);
+    pointer-events:none;
+  }
   #vol-side-fill{
-    position:absolute; left:6px; right:6px; bottom:6px;
+    position:absolute; left:0; right:0; bottom:0;
     height: 50%; border-radius: 999px;
-    background: linear-gradient(to top, var(--spotify-green), #7be89a);
+    background: var(--spotify-green);
     transition: height 0.12s linear;
   }
+  #vol-side-fill::after{
+    content:''; position:absolute; left:50%; top:-6px;
+    width:14px; height:14px; border-radius:50%;
+    background: var(--fg);
+    transform: translateX(-50%);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+  }
   #vol-side-icon{
-    position:relative; color: var(--fg); opacity:0.9; margin-bottom: 6px;
+    position:fixed; right: 14px; top:calc(50% - 18vh - 30px);
+    color: var(--fg-dim); opacity: var(--control-alpha);
+    transition: opacity 0.7s var(--ease);
     pointer-events:none;
   }
 
@@ -348,7 +359,7 @@
 </button>
 
 <div id="volume-side">
-  <div id="vol-side-fill"></div>
+  <div id="vol-track"><div id="vol-side-fill"></div></div>
   <svg id="vol-side-icon" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M3 10v4h4l5 5V5L7 10H3zm13.5 2a4.5 4.5 0 00-2.5-4.03v8.06A4.5 4.5 0 0016.5 12z"/></svg>
 </div>
 
