@@ -2299,6 +2299,89 @@ body.idle #now-playing-popup{
 }
 </style>
 
+
+<style id="speakerfy-v18-center-standby">
+/* ==========================================================
+   Standby: smooth slide FROM player position INTO the center
+   ========================================================== */
+
+#album-wrap{
+  transition:
+    transform .88s cubic-bezier(.20,.75,.24,1),
+    filter .55s ease,
+    box-shadow .55s ease !important;
+  will-change:transform;
+}
+
+/*
+  Keep the album in its normal layout position.
+  calculateIdleCoverPosition() already calculates the exact
+  x/y distance from its player position to the viewport center.
+*/
+body.idle #album-wrap{
+  position:relative !important;
+  left:auto !important;
+  top:auto !important;
+
+  width:min(43vw,58vh) !important;
+  height:min(43vw,58vh) !important;
+  max-width:500px !important;
+  max-height:500px !important;
+
+  transform:
+    translate3d(
+      var(--idle-shift-x,0px),
+      var(--idle-shift-y,0px),
+      0
+    )
+    scale(1.08) !important;
+
+  filter:saturate(1.06) brightness(1.02) !important;
+  box-shadow:0 38px 95px rgba(0,0,0,.58) !important;
+  z-index:65 !important;
+}
+
+/* Song title sits centered below the cover */
+#standby-title{
+  left:50% !important;
+  top:calc(50% + min(21.5vw,29vh) + 34px) !important;
+  width:min(680px,82vw) !important;
+  transform:translateX(-50%) !important;
+  transition:
+    opacity .34s ease .26s,
+    transform .55s ease !important;
+}
+
+body.idle #standby-title{
+  opacity:1 !important;
+}
+
+/* As soon as standby wakes, title disappears quickly while cover slides home */
+body:not(.idle) #standby-title{
+  transition:
+    opacity .16s ease,
+    transform .35s ease !important;
+}
+
+/* Keep the colorful standby background from v17 */
+body.idle #player-color-glow{
+  opacity:.50 !important;
+  filter:blur(115px) saturate(1.6) brightness(.34) !important;
+}
+
+@media(max-width:760px){
+  body.idle #album-wrap{
+    width:min(64vw,52vh) !important;
+    height:min(64vw,52vh) !important;
+  }
+
+  #standby-title{
+    top:calc(50% + min(32vw,26vh) + 28px) !important;
+    width:86vw !important;
+  }
+}
+</style>
+
 </head>
 
 <body>
@@ -4252,6 +4335,34 @@ if ("serviceWorker" in navigator) {
 
   syncPlayerView();
   syncAlbumGlow();
+})();
+</script>
+
+
+<script id="speakerfy-v18-script">
+(() => {
+  function recalcStandbyCenter(){
+    try{
+      calculateIdleCoverPosition();
+    }catch{}
+  }
+
+  window.addEventListener("resize",recalcStandbyCenter,{passive:true});
+  window.addEventListener("orientationchange",recalcStandbyCenter,{passive:true});
+
+  /*
+   * Recalculate shortly before the idle timeout can trigger,
+   * useful if player layout changed after a new song/cover.
+   */
+  ["pointerdown","pointermove","touchstart","keydown","wheel"].forEach(name => {
+    window.addEventListener(name,() => {
+      if(!document.body.classList.contains("idle")){
+        setTimeout(recalcStandbyCenter,40);
+      }
+    },{passive:true});
+  });
+
+  setTimeout(recalcStandbyCenter,250);
 })();
 </script>
 
