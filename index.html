@@ -2481,6 +2481,217 @@ body.idle #player-color-glow{
 }
 </style>
 
+
+<style id="speakerfy-v20-style">
+/* ===== Shuffle ===== */
+.mode-btn{
+  position:relative;
+}
+
+.mode-btn.active-control{
+  color:var(--accent) !important;
+}
+
+.mode-btn.active-control::after{
+  content:"";
+  position:absolute;
+  left:50%;
+  bottom:1px;
+  width:4px;
+  height:4px;
+  border-radius:50%;
+  background:var(--accent);
+  transform:translateX(-50%);
+}
+
+/* ===== Player secondary actions ===== */
+#player-secondary-actions{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  margin-top:16px;
+}
+
+#player-secondary-actions #playlist-button,
+#player-secondary-actions #queue-button{
+  margin:0;
+  min-height:38px;
+  padding:9px 15px;
+  border:0;
+  border-radius:999px;
+  background:transparent;
+  color:rgba(255,255,255,.82);
+  cursor:pointer;
+  font-weight:700;
+}
+
+#player-secondary-actions #playlist-button:hover,
+#player-secondary-actions #queue-button:hover{
+  background:rgba(255,255,255,.07);
+}
+
+/* ===== Queue screen ===== */
+#screen-queue{
+  position:fixed;
+  inset:0;
+  z-index:19;
+  display:none;
+  overflow:auto;
+  padding:
+    calc(76px + env(safe-area-inset-top))
+    clamp(18px,4vw,48px)
+    calc(36px + env(safe-area-inset-bottom));
+  background:
+    radial-gradient(circle at 24% 0%,color-mix(in srgb,var(--accent) 12%,transparent),transparent 34%),
+    linear-gradient(180deg,#171717,#080808 520px);
+  scrollbar-width:none;
+  -ms-overflow-style:none;
+}
+
+#screen-queue::-webkit-scrollbar{
+  display:none;
+}
+
+#screen-queue.active{
+  display:block;
+}
+
+.queue-shell{
+  width:min(900px,100%);
+  margin:0 auto;
+}
+
+#queue-refresh{
+  margin-left:auto;
+  min-height:38px;
+  padding:0 14px;
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:999px;
+  background:rgba(255,255,255,.055);
+  color:#fff;
+  cursor:pointer;
+  font-weight:700;
+}
+
+.queue-section{
+  margin-top:22px;
+}
+
+.queue-label{
+  margin-bottom:10px;
+  color:var(--muted);
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+
+.queue-row{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  min-height:66px;
+  padding:8px 10px;
+  border-radius:12px;
+  background:rgba(255,255,255,.035);
+}
+
+.queue-row + .queue-row{
+  margin-top:6px;
+}
+
+.queue-row img{
+  width:50px;
+  height:50px;
+  flex:none;
+  object-fit:cover;
+  border-radius:8px;
+  background:#202020;
+}
+
+.queue-row-number{
+  width:22px;
+  flex:none;
+  color:var(--muted);
+  text-align:right;
+  font:11px "Space Mono",monospace;
+}
+
+.queue-row-meta{
+  min-width:0;
+  flex:1;
+}
+
+.queue-row-title,
+.queue-row-artist{
+  display:block;
+  overflow:hidden;
+  white-space:nowrap;
+  text-overflow:ellipsis;
+}
+
+.queue-row-title{
+  color:#fff;
+  font-weight:800;
+  font-size:14px;
+}
+
+.queue-row-artist{
+  margin-top:4px;
+  color:var(--muted);
+  font-size:11px;
+  font-weight:500;
+}
+
+.queue-empty{
+  padding:16px;
+  border-radius:12px;
+  background:rgba(255,255,255,.035);
+  color:var(--muted);
+}
+
+/* ===== Add to queue button on search/playlist rows ===== */
+.queue-add-button{
+  width:38px;
+  height:38px;
+  flex:none;
+  display:grid;
+  place-items:center;
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:50%;
+  background:rgba(255,255,255,.045);
+  color:#fff;
+  cursor:pointer;
+}
+
+.queue-add-button:hover,
+.queue-add-button:active{
+  background:rgba(255,255,255,.10);
+  border-color:rgba(255,255,255,.25);
+}
+
+.queue-add-button svg{
+  width:18px;
+  height:18px;
+  fill:currentColor;
+}
+
+.track .queue-add-button{
+  margin-left:auto;
+}
+
+@media(max-width:760px){
+  #player-secondary-actions{
+    flex-wrap:wrap;
+  }
+
+  .queue-row{
+    min-height:62px;
+  }
+}
+</style>
+
 </head>
 
 <body>
@@ -2548,6 +2759,10 @@ body.idle #player-color-glow{
         </div>
 
         <div id="controls">
+          <button class="ctrl mode-btn" id="shuffle-button" aria-label="Shuffle" title="Shuffle">
+            <svg viewBox="0 0 24 24"><path d="M16 3h5v5h-2V6.41l-4.29 4.3-1.42-1.42L17.59 5H16V3ZM3 7h4.17l8.54 8.54L19 12.25V11h2v5h-5v-2h1.59l-1.88 1.88L6.34 9H3V7Zm0 10h3.34l2.95-2.95 1.42 1.42L7.17 19H3v-2Z"/></svg>
+          </button>
+
           <button class="ctrl" id="previous" aria-label="Forrige sang">
             <svg viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l10-6v12z"/></svg>
           </button>
@@ -2562,7 +2777,10 @@ body.idle #player-color-glow{
           </button>
         </div>
 
-        <button id="playlist-button">☰ &nbsp; Vælg playliste</button>
+        <div id="player-secondary-actions">
+          <button id="playlist-button">☰ &nbsp; Vælg playliste</button>
+          <button id="queue-button" type="button">☷ &nbsp; Kø</button>
+        </div>
       </div>
     </div>
   </div>
@@ -2703,6 +2921,31 @@ body.idle #player-color-glow{
 
     <div id="liked-tracks">
       <p style="color:var(--muted)">Henter dine sange…</p>
+    </div>
+  </div>
+</div>
+
+
+<div id="screen-queue">
+  <div class="queue-shell">
+    <div class="screen-heading">
+      <button class="screen-back" id="queue-back" aria-label="Tilbage">‹</button>
+      <h2>Kø</h2>
+      <button id="queue-refresh" type="button">Opdater</button>
+    </div>
+
+    <div class="queue-section">
+      <div class="queue-label">Spiller nu</div>
+      <div id="queue-current">
+        <div class="queue-empty">Henter…</div>
+      </div>
+    </div>
+
+    <div class="queue-section">
+      <div class="queue-label">Næste i køen</div>
+      <div id="queue-list">
+        <div class="queue-empty">Henter…</div>
+      </div>
     </div>
   </div>
 </div>
@@ -4993,6 +5236,512 @@ if ("serviceWorker" in navigator) {
       });
     }catch{}
   },1600);
+})();
+</script>
+
+
+<script id="speakerfy-v20-script">
+(() => {
+  const byId = id => document.getElementById(id);
+
+  let shuffleEnabled = false;
+
+  function closeQueue(){
+    byId("screen-queue")?.classList.remove("active");
+  }
+
+  /*
+    Make the existing navigation close Queue too.
+  */
+  const oldHome = window.speakerfyHome;
+  const oldSettings = window.speakerfySettings;
+  const oldPlayer = window.speakerfyPlayer;
+
+  window.speakerfyHome = function(){
+    closeQueue();
+    if(typeof oldHome === "function") return oldHome();
+  };
+
+  window.speakerfySettings = function(){
+    closeQueue();
+    if(typeof oldSettings === "function") return oldSettings();
+  };
+
+  window.speakerfyPlayer = function(){
+    closeQueue();
+    if(typeof oldPlayer === "function") return oldPlayer();
+  };
+
+  function openQueue(){
+    try{ closeAppScreens(); }catch{}
+
+    ["screen-home","screen-settings","screen-search","screen-liked"].forEach(id => {
+      byId(id)?.classList.remove("active");
+    });
+
+    try{ el.overlay.classList.remove("open"); }catch{}
+
+    document.body.classList.remove("idle");
+    byId("screen-queue")?.classList.add("active");
+    loadQueue();
+  }
+
+  byId("queue-button")?.addEventListener("click",event => {
+    event.preventDefault();
+    event.stopPropagation();
+    openQueue();
+  });
+
+  byId("queue-refresh")?.addEventListener("click",event => {
+    event.preventDefault();
+    loadQueue();
+  });
+
+  /*
+    Spotify Add Item to Queue.
+  */
+  async function addToQueue(trackUri){
+    if(!trackUri) return false;
+
+    let targetId = deviceId || "";
+
+    /*
+      If the Speakerfy Web Playback device is not ready, allow Spotify
+      to use the currently active device by simply omitting device_id.
+    */
+    const params = new URLSearchParams({uri:trackUri});
+    if(targetId){
+      params.set("device_id",targetId);
+    }
+
+    try{
+      const response = await spotifyFetch(
+        "https://api.spotify.com/v1/me/player/queue?" + params.toString(),
+        {method:"POST"}
+      );
+
+      if(response.ok){
+        speakerfyToast?.("Tilføjet til kø","Sangen er lagt i kø.",1800);
+        return true;
+      }
+
+      if(response.status === 403){
+        speakerfyToast?.(
+          "Kunne ikke tilføje til kø",
+          "Kø-funktionen kræver Spotify Premium på den indloggede konto.",
+          5500
+        );
+        return false;
+      }
+
+      if(response.status === 404){
+        speakerfyToast?.(
+          "Ingen aktiv afspiller",
+          "Start en sang først, og prøv derefter at lægge sangen i kø.",
+          5000
+        );
+        return false;
+      }
+
+      speakerfyToast?.(
+        "Kunne ikke tilføje til kø",
+        `Spotify svarede med fejl ${response.status}.`,
+        4500
+      );
+      return false;
+
+    }catch(error){
+      console.error("Queue add error:",error);
+      speakerfyToast?.(
+        "Kunne ikke tilføje til kø",
+        "Prøv igen om et øjeblik.",
+        4000
+      );
+      return false;
+    }
+  }
+
+  window.speakerfyAddToQueue = addToQueue;
+
+  function makeQueueButton(trackUri){
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "queue-add-button";
+    button.setAttribute("aria-label","Tilføj til kø");
+    button.title = "Tilføj til kø";
+    button.innerHTML = `
+      <svg viewBox="0 0 24 24">
+        <path d="M4 6h10v2H4V6Zm0 5h10v2H4v-2Zm0 5h7v2H4v-2Zm14-5V8h2v3h3v2h-3v3h-2v-3h-3v-2h3Z"/>
+      </svg>
+    `;
+
+    button.addEventListener("click",async event => {
+      event.preventDefault();
+      event.stopPropagation();
+
+      button.disabled = true;
+      await addToQueue(trackUri);
+      button.disabled = false;
+    });
+
+    return button;
+  }
+
+  /*
+    Override Search row renderer so every search result has:
+    - row click = play
+    - plus button = add to queue
+  */
+  try{
+    songRow = function(track,onClick){
+      const row = document.createElement("div");
+      row.className = "search-track";
+
+      const image =
+        track.album?.images?.[track.album.images.length - 1]?.url ||
+        track.album?.images?.[0]?.url ||
+        "";
+
+      row.innerHTML = `
+        <img src="${image}" alt="">
+        <div class="search-track-meta">
+          <span class="search-track-title">${escapeHtml(track.name || "Ukendt sang")}</span>
+          <span class="search-track-artist">${escapeHtml((track.artists || []).map(a => a.name).join(", "))}</span>
+        </div>
+        <button class="track-play-circle" aria-label="Afspil" title="Afspil">
+          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        </button>
+      `;
+
+      row.appendChild(makeQueueButton(track.uri));
+
+      row.addEventListener("click",onClick);
+
+      return row;
+    };
+  }catch(error){
+    console.error("Could not override songRow:",error);
+  }
+
+  /*
+    Queue screen.
+  */
+  function queueTrackRow(track,index=null){
+    const row = document.createElement("div");
+    row.className = "queue-row";
+
+    const image =
+      track?.album?.images?.[track.album.images.length - 1]?.url ||
+      track?.album?.images?.[0]?.url ||
+      "";
+
+    row.innerHTML = `
+      ${index === null ? "" : `<span class="queue-row-number">${index}</span>`}
+      <img src="${image}" alt="">
+      <div class="queue-row-meta">
+        <span class="queue-row-title">${escapeHtml(track?.name || "Ukendt sang")}</span>
+        <span class="queue-row-artist">${escapeHtml((track?.artists || []).map(a => a.name).join(", "))}</span>
+      </div>
+    `;
+
+    return row;
+  }
+
+  async function loadQueue(){
+    const current = byId("queue-current");
+    const list = byId("queue-list");
+
+    if(!current || !list) return;
+
+    current.innerHTML = '<div class="queue-empty">Henter…</div>';
+    list.innerHTML = '<div class="queue-empty">Henter…</div>';
+
+    try{
+      const response = await spotifyFetch(
+        "https://api.spotify.com/v1/me/player/queue"
+      );
+
+      if(response.status === 403){
+        current.innerHTML =
+          '<div class="queue-empty">Kø kræver Spotify Premium.</div>';
+        list.innerHTML = "";
+        return;
+      }
+
+      if(!response.ok){
+        current.innerHTML =
+          '<div class="queue-empty">Kunne ikke hente køen.</div>';
+        list.innerHTML = "";
+        return;
+      }
+
+      const data = await response.json();
+
+      current.innerHTML = "";
+      if(data.currently_playing){
+        current.appendChild(queueTrackRow(data.currently_playing));
+      }else{
+        current.innerHTML =
+          '<div class="queue-empty">Intet afspilles lige nu.</div>';
+      }
+
+      list.innerHTML = "";
+      const queue = data.queue || [];
+
+      if(!queue.length){
+        list.innerHTML =
+          '<div class="queue-empty">Der er ikke lagt noget i kø endnu.</div>';
+        return;
+      }
+
+      queue.slice(0,50).forEach((track,index) => {
+        list.appendChild(queueTrackRow(track,index + 1));
+      });
+
+    }catch(error){
+      console.error("Queue load error:",error);
+      current.innerHTML =
+        '<div class="queue-empty">Kunne ikke hente køen.</div>';
+      list.innerHTML = "";
+    }
+  }
+
+  window.speakerfyLoadQueue = loadQueue;
+
+  /*
+    Patch playlist track rows to include a queue button.
+    v19 already replaces openPlaylist, so v20 replaces it once more
+    while retaining its robust pagination/playback behavior.
+  */
+  try{
+    openPlaylist = async function(playlist){
+      el.panelTitle.textContent = playlist.name;
+      el.back.style.display = "block";
+      el.grid.style.display = "none";
+      el.tracks.style.display = "flex";
+      el.tracks.innerHTML = "<p>Henter sange…</p>";
+
+      let allItems = [];
+      let nextUrl =
+        `https://api.spotify.com/v1/playlists/${playlist.id}/items` +
+        "?limit=50&additional_types=track";
+
+      try{
+        let pages = 0;
+
+        while(nextUrl && pages < 20){
+          const response = await spotifyFetch(nextUrl);
+
+          if(response.status === 403){
+            el.tracks.innerHTML = "";
+
+            const info = document.createElement("div");
+            info.className = "playlist-info-box";
+            info.innerHTML =
+              "<strong>Spotify begrænser denne playliste</strong>" +
+              "Speakerfy kan ikke hente sanglisten fra denne playliste med den nuværende konto.";
+
+            el.tracks.appendChild(info);
+
+            const playAll = document.createElement("button");
+            playAll.className = "play-all";
+            playAll.textContent = "▶ Prøv at afspille playlisten";
+            playAll.addEventListener("click",async () => {
+              await playContext(playlist.uri);
+            });
+
+            el.tracks.appendChild(playAll);
+            return;
+          }
+
+          if(!response.ok){
+            throw new Error("playlist items failed " + response.status);
+          }
+
+          const data = await response.json();
+          allItems.push(...(data.items || []));
+          nextUrl = data.next || null;
+          pages++;
+        }
+
+        el.tracks.innerHTML = "";
+
+        const playAll = document.createElement("button");
+        playAll.className = "play-all";
+        playAll.textContent = "▶ Afspil hele playlisten";
+        playAll.addEventListener("click",async () => {
+          playAll.disabled = true;
+          await playContext(playlist.uri);
+          playAll.disabled = false;
+        });
+        el.tracks.appendChild(playAll);
+
+        const trackItems = allItems
+          .map(item => item?.item || item?.track)
+          .filter(track =>
+            track &&
+            track.type === "track" &&
+            track.uri &&
+            !track.is_local
+          );
+
+        if(!trackItems.length){
+          const message = document.createElement("div");
+          message.className = "playlist-info-box";
+          message.textContent = "Ingen afspillelige sange fundet i den playliste.";
+          el.tracks.appendChild(message);
+          return;
+        }
+
+        trackItems.forEach((track,index) => {
+          const row = document.createElement("div");
+          row.className = "track";
+          row.tabIndex = 0;
+
+          row.innerHTML = `
+            <span class="track-number">${index + 1}</span>
+            <img src="${
+              track.album?.images?.slice(-1)[0]?.url ||
+              track.album?.images?.[0]?.url ||
+              ""
+            }" alt="">
+            <div class="track-meta">
+              <span class="track-title">${escapeHtml(track.name)}</span>
+              <span class="track-artist">${
+                escapeHtml((track.artists || []).map(a => a.name).join(", "))
+              }</span>
+            </div>
+          `;
+
+          row.appendChild(makeQueueButton(track.uri));
+
+          const chooseTrack = async () => {
+            if(row.classList.contains("playing-request")) return;
+
+            row.classList.add("playing-request");
+            await playContext(playlist.uri,track.uri);
+            row.classList.remove("playing-request");
+          };
+
+          row.addEventListener("click",chooseTrack);
+
+          row.addEventListener("keydown",event => {
+            if(event.key === "Enter" || event.key === " "){
+              event.preventDefault();
+              chooseTrack();
+            }
+          });
+
+          el.tracks.appendChild(row);
+        });
+
+      }catch(error){
+        console.error("Playlist load error:",error);
+        el.tracks.innerHTML =
+          '<div class="playlist-info-box">Kunne ikke hente sangene fra Spotify.</div>';
+      }
+    };
+  }catch(error){
+    console.error("Could not override openPlaylist:",error);
+  }
+
+  /*
+    Shuffle
+  */
+  async function syncShuffleState(){
+    const button = byId("shuffle-button");
+    if(!button) return;
+
+    try{
+      const response = await spotifyFetch(
+        "https://api.spotify.com/v1/me/player"
+      );
+
+      if(!response.ok) return;
+
+      const data = await response.json();
+      shuffleEnabled = Boolean(data.shuffle_state);
+
+      button.classList.toggle("active-control",shuffleEnabled);
+      button.setAttribute(
+        "aria-label",
+        shuffleEnabled ? "Slå shuffle fra" : "Slå shuffle til"
+      );
+      button.title = shuffleEnabled ? "Shuffle er slået til" : "Shuffle";
+    }catch{}
+  }
+
+  byId("shuffle-button")?.addEventListener("click",async event => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    const button = byId("shuffle-button");
+    const next = !shuffleEnabled;
+
+    button.disabled = true;
+
+    try{
+      const params = new URLSearchParams({
+        state:String(next)
+      });
+
+      if(deviceId){
+        params.set("device_id",deviceId);
+      }
+
+      const response = await spotifyFetch(
+        "https://api.spotify.com/v1/me/player/shuffle?" + params.toString(),
+        {method:"PUT"}
+      );
+
+      if(response.ok){
+        shuffleEnabled = next;
+        button.classList.toggle("active-control",shuffleEnabled);
+
+        speakerfyToast?.(
+          shuffleEnabled ? "Shuffle slået til" : "Shuffle slået fra",
+          shuffleEnabled
+            ? "Spotify blander rækkefølgen."
+            : "Spotify spiller i normal rækkefølge.",
+          1800
+        );
+      }else if(response.status === 403){
+        speakerfyToast?.(
+          "Shuffle kunne ikke ændres",
+          "Shuffle-kontrol kræver Spotify Premium.",
+          4500
+        );
+      }else if(response.status === 404){
+        speakerfyToast?.(
+          "Start en sang først",
+          "Spotify har ingen aktiv afspiller at ændre shuffle på.",
+          4500
+        );
+      }else{
+        speakerfyToast?.(
+          "Shuffle kunne ikke ændres",
+          `Spotify svarede med fejl ${response.status}.`,
+          4000
+        );
+      }
+    }catch(error){
+      console.error("Shuffle error:",error);
+      speakerfyToast?.(
+        "Shuffle kunne ikke ændres",
+        "Prøv igen om et øjeblik.",
+        4000
+      );
+    }
+
+    button.disabled = false;
+  });
+
+  setTimeout(syncShuffleState,1800);
+  setInterval(() => {
+    if(!document.hidden){
+      syncShuffleState();
+    }
+  },12000);
 })();
 </script>
 
