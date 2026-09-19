@@ -1833,6 +1833,162 @@ body.idle::after{
 }
 </style>
 
+
+<style id="speakerfy-v15-style">
+/* ===== Small improvements, same original Speakerfy look ===== */
+
+/* Hide scrollbars everywhere but keep scrolling working */
+html,
+body,
+#screen-home,
+#screen-settings,
+#screen-search,
+#screen-liked,
+#sheet,
+.home-shell,
+.settings-shell,
+.search-shell,
+.liked-shell{
+  scrollbar-width:none !important;
+  -ms-overflow-style:none !important;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar,
+#screen-home::-webkit-scrollbar,
+#screen-settings::-webkit-scrollbar,
+#screen-search::-webkit-scrollbar,
+#screen-liked::-webkit-scrollbar,
+#sheet::-webkit-scrollbar,
+.home-shell::-webkit-scrollbar,
+.settings-shell::-webkit-scrollbar,
+.search-shell::-webkit-scrollbar,
+.liked-shell::-webkit-scrollbar{
+  display:none !important;
+  width:0 !important;
+  height:0 !important;
+}
+
+/* Search more button */
+#search-more{
+  display:none;
+  width:max-content;
+  margin:18px auto 34px;
+  min-height:42px;
+  padding:0 18px;
+  border:1px solid rgba(255,255,255,.18);
+  border-radius:999px;
+  background:rgba(255,255,255,.05);
+  color:#fff;
+  font:600 13px "Space Grotesk",sans-serif;
+  cursor:pointer;
+}
+
+#search-more.visible{
+  display:block;
+}
+
+#search-more:hover,
+#search-more:active{
+  background:rgba(255,255,255,.10);
+  border-color:rgba(255,255,255,.34);
+}
+
+/* Small Now Playing popup */
+#now-playing-popup{
+  position:fixed;
+  right:18px;
+  bottom:18px;
+  z-index:85;
+  width:min(320px,calc(100vw - 36px));
+  min-height:74px;
+  padding:9px;
+  display:flex;
+  align-items:center;
+  gap:11px;
+  border:1px solid rgba(255,255,255,.10);
+  border-radius:16px;
+  background:rgba(13,13,13,.88);
+  backdrop-filter:blur(20px) saturate(1.15);
+  -webkit-backdrop-filter:blur(20px) saturate(1.15);
+  box-shadow:0 18px 45px rgba(0,0,0,.38);
+  opacity:0;
+  transform:translate3d(0,14px,0) scale(.98);
+  pointer-events:none;
+  transition:
+    opacity .28s ease,
+    transform .32s cubic-bezier(.22,.72,.25,1);
+}
+
+#now-playing-popup.show{
+  opacity:1;
+  transform:translate3d(0,0,0) scale(1);
+}
+
+#now-playing-popup-art{
+  width:54px;
+  height:54px;
+  flex:none;
+  border-radius:9px;
+  object-fit:cover;
+  background:#202020;
+}
+
+#now-playing-popup-copy{
+  min-width:0;
+  flex:1;
+}
+
+#now-playing-popup-copy span{
+  display:block;
+  margin-bottom:4px;
+  color:var(--accent);
+  font:700 9px "Space Mono",monospace;
+  letter-spacing:.10em;
+}
+
+#now-playing-popup-title,
+#now-playing-popup-artist{
+  display:block;
+  overflow:hidden;
+  white-space:nowrap;
+  text-overflow:ellipsis;
+}
+
+#now-playing-popup-title{
+  color:#fff;
+  font-size:14px;
+  line-height:1.2;
+}
+
+#now-playing-popup-artist{
+  margin-top:4px;
+  color:var(--muted);
+  font-size:11px;
+}
+
+/* Never show popup on standby: standby remains only cover + title */
+body.idle #now-playing-popup{
+  opacity:0 !important;
+}
+
+/* Keep it out of the way on Home/Search/Settings/Liked */
+#screen-home.active ~ #now-playing-popup,
+#screen-search.active ~ #now-playing-popup,
+#screen-settings.active ~ #now-playing-popup,
+#screen-liked.active ~ #now-playing-popup{
+  opacity:0;
+}
+
+@media(max-width:760px){
+  #now-playing-popup{
+    right:12px;
+    bottom:12px;
+    width:min(290px,calc(100vw - 24px));
+  }
+}
+</style>
+
 </head>
 
 <body>
@@ -2025,6 +2181,7 @@ body.idle::after{
 
     <div id="search-status">Søg efter en sang eller artist.</div>
     <div id="search-results"></div>
+    <button id="search-more" type="button">Vis flere sange</button>
   </div>
 </div>
 
@@ -3042,46 +3199,116 @@ async function playSingleTrack(trackUri){
 
 $("song-search-input").addEventListener("input", () => {
   clearTimeout(searchTimer);
+
   const query = $("song-search-input").value.trim();
+  spotifySearchQuery = query;
+  spotifySearchOffset = 0;
+
+  $("search-more").classList.remove("visible");
 
   if(!query){
-    $("search-status").textContent = "Søg efter en sang eller artist.";
+    $("search-status").textContent = "Søg i hele Spotify efter en sang eller artist.";
     $("search-results").innerHTML = "";
     return;
   }
 
-  $("search-status").textContent = "Søger…";
+  $("search-status").textContent = "Søger i Spotify…";
 
   searchTimer = setTimeout(() => {
-    searchSongs(query);
-  }, 350);
+    searchSpotifyCatalog(query, false);
+  }, 320);
 });
 
-async function searchSongs(query){
-  try{
-    const response = await spotifyFetch(
-      "https://api.spotify.com/v1/search?type=track&limit=25&q=" +
-      encodeURIComponent(query)
-    );
+let spotifySearchQuery = "";
+let spotifySearchOffset = 0;
+let spotifySearchTotal = 0;
+const SPOTIFY_SEARCH_LIMIT = 10;
 
-    if(!response.ok) throw new Error();
+async function searchSpotifyCatalog(query, append = false){
+  const cleanQuery = String(query || "").trim();
+  if(!cleanQuery) return;
+
+  const requestedOffset = append ? spotifySearchOffset : 0;
+
+  try{
+    const url =
+      "https://api.spotify.com/v1/search" +
+      "?type=track" +
+      "&limit=" + SPOTIFY_SEARCH_LIMIT +
+      "&offset=" + requestedOffset +
+      "&q=" + encodeURIComponent(cleanQuery);
+
+    const response = await spotifyFetch(url);
+
+    if(response.status === 401){
+      $("search-status").textContent = "Spotify-login er udløbet. Log ind igen.";
+      $("search-more").classList.remove("visible");
+      return;
+    }
+
+    if(!response.ok){
+      let detail = "";
+      try{
+        const errorData = await response.json();
+        detail = errorData?.error?.message || "";
+      }catch{}
+
+      throw new Error(detail || "Spotify search failed");
+    }
 
     const data = await response.json();
-    const results = data.tracks?.items || [];
+    const tracks = data.tracks;
+    const results = tracks?.items || [];
 
-    $("search-results").innerHTML = "";
+    if(!append){
+      $("search-results").innerHTML = "";
+    }
+
+    results
+      .filter(track => track && track.uri && !track.is_local)
+      .forEach(track => {
+        $("search-results").appendChild(
+          songRow(track, () => playSingleTrack(track.uri))
+        );
+      });
+
+    spotifySearchTotal = tracks?.total || results.length;
+    spotifySearchOffset = requestedOffset + results.length;
+
+    const shown = $("search-results").children.length;
+
+    $("search-status").textContent = shown
+      ? `${shown} af ${spotifySearchTotal} resultater i Spotify`
+      : "Ingen sange fundet i Spotify.";
+
+    const hasMore =
+      results.length > 0 &&
+      spotifySearchOffset < spotifySearchTotal &&
+      spotifySearchOffset < 1000;
+
+    $("search-more").classList.toggle("visible", hasMore);
+
+  }catch(error){
+    console.error("Spotify search error:", error);
     $("search-status").textContent =
-      results.length ? `${results.length} resultater` : "Ingen sange fundet.";
-
-    results.forEach(track => {
-      $("search-results").appendChild(
-        songRow(track, () => playSingleTrack(track.uri))
-      );
-    });
-  }catch{
-    $("search-status").textContent = "Kunne ikke søge lige nu.";
+      "Kunne ikke søge i Spotify lige nu.";
+    $("search-more").classList.remove("visible");
   }
 }
+
+/* Keep old calls compatible */
+async function searchSongs(query){
+  spotifySearchQuery = query;
+  spotifySearchOffset = 0;
+  return searchSpotifyCatalog(query, false);
+}
+
+$("search-more").addEventListener("click", () => {
+  if(!spotifySearchQuery) return;
+  $("search-more").classList.remove("visible");
+  $("search-status").textContent = "Henter flere sange…";
+  searchSpotifyCatalog(spotifySearchQuery, true);
+});
 
 async function loadLikedSongs(force = false){
   if(likedTracksCache.length && !force){
@@ -3443,6 +3670,81 @@ if ("serviceWorker" in navigator) {
     openSettings = speakerfySettings;
     openPlayerScreen = speakerfyPlayer;
   }catch{}
+})();
+</script>
+
+
+<div id="now-playing-popup" aria-live="polite">
+  <img id="now-playing-popup-art" alt="">
+  <div id="now-playing-popup-copy">
+    <span>SPILLER NU</span>
+    <strong id="now-playing-popup-title">—</strong>
+    <small id="now-playing-popup-artist">—</small>
+  </div>
+</div>
+
+
+<script id="speakerfy-v15-popup">
+(() => {
+  const popup = document.getElementById("now-playing-popup");
+  const popupArt = document.getElementById("now-playing-popup-art");
+  const popupTitle = document.getElementById("now-playing-popup-title");
+  const popupArtist = document.getElementById("now-playing-popup-artist");
+  const titleNode = document.getElementById("title");
+  const artistNode = document.getElementById("artist");
+  const albumNode = document.getElementById("album");
+
+  let lastSignature = "";
+  let hideTimer = null;
+
+  function updateNowPlayingPopup(force = false){
+    if(!popup || !titleNode || !artistNode) return;
+
+    const title = titleNode.textContent?.trim() || "";
+    const artist = artistNode.textContent?.trim() || "";
+    const art = albumNode?.currentSrc || albumNode?.src || "";
+    const signature = `${title}|${artist}|${art}`;
+
+    if(!title || title === "—") return;
+    if(!force && signature === lastSignature) return;
+
+    lastSignature = signature;
+
+    popupTitle.textContent = title;
+    popupArtist.textContent = artist || "Spotify";
+    if(art) popupArt.src = art;
+
+    if(
+      !document.body.classList.contains("idle") &&
+      !document.getElementById("screen-home")?.classList.contains("active") &&
+      !document.getElementById("screen-search")?.classList.contains("active") &&
+      !document.getElementById("screen-settings")?.classList.contains("active") &&
+      !document.getElementById("screen-liked")?.classList.contains("active")
+    ){
+      popup.classList.add("show");
+
+      clearTimeout(hideTimer);
+      hideTimer = setTimeout(() => {
+        popup.classList.remove("show");
+      }, 5200);
+    }
+  }
+
+  [titleNode,artistNode,albumNode].forEach(node => {
+    if(!node) return;
+    new MutationObserver(() => updateNowPlayingPopup(false)).observe(node,{
+      childList:true,
+      subtree:true,
+      characterData:true,
+      attributes:true,
+      attributeFilter:["src"]
+    });
+  });
+
+  albumNode?.addEventListener("load", () => updateNowPlayingPopup(false));
+
+  /* Also catch Spotify state changes that do not mutate all nodes at once. */
+  setInterval(() => updateNowPlayingPopup(false),700);
 })();
 </script>
 
