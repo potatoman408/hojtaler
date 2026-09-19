@@ -2382,6 +2382,105 @@ body.idle #player-color-glow{
 }
 </style>
 
+
+<style id="speakerfy-v19-style">
+/* Clear feedback instead of silent failed clicks */
+#speakerfy-toast{
+  position:fixed;
+  left:50%;
+  bottom:24px;
+  z-index:140;
+  width:min(520px,calc(100vw - 30px));
+  transform:translate(-50%,18px);
+  padding:14px 16px;
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:14px;
+  background:rgba(12,12,12,.94);
+  color:#fff;
+  box-shadow:0 18px 50px rgba(0,0,0,.45);
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .22s ease,transform .28s ease;
+}
+
+#speakerfy-toast.show{
+  opacity:1;
+  transform:translate(-50%,0);
+}
+
+#speakerfy-toast strong,
+#speakerfy-toast span{
+  display:block;
+}
+
+#speakerfy-toast strong{
+  margin-bottom:4px;
+  font-size:13px;
+  font-weight:800;
+}
+
+#speakerfy-toast span{
+  color:rgba(255,255,255,.72);
+  font-size:12px;
+  line-height:1.45;
+}
+
+/* Make track rows clearly clickable */
+.search-track,
+.track{
+  cursor:pointer !important;
+  user-select:none;
+  -webkit-user-select:none;
+}
+
+.search-track:active,
+.track:active{
+  transform:scale(.992);
+  background:rgba(255,255,255,.08) !important;
+}
+
+.search-track.playing-request,
+.track.playing-request{
+  opacity:.66;
+  pointer-events:none;
+}
+
+.search-track.playing-request::after,
+.track.playing-request::after{
+  content:"Starter…";
+  margin-left:auto;
+  padding-left:10px;
+  color:var(--accent);
+  font-size:11px;
+  font-weight:700;
+}
+
+/* Playlist error/message card */
+.playlist-info-box{
+  padding:14px 16px;
+  margin:10px 0;
+  border:1px solid rgba(255,255,255,.10);
+  border-radius:14px;
+  background:rgba(255,255,255,.045);
+  color:var(--muted);
+  line-height:1.45;
+}
+
+.playlist-info-box strong{
+  display:block;
+  margin-bottom:5px;
+  color:#fff;
+}
+
+@media(max-width:760px){
+  #speakerfy-toast{
+    bottom:16px;
+  }
+}
+</style>
+
 </head>
 
 <body>
@@ -4363,6 +4462,537 @@ if ("serviceWorker" in navigator) {
   });
 
   setTimeout(recalcStandbyCenter,250);
+})();
+</script>
+
+
+<div id="speakerfy-toast" role="status" aria-live="polite">
+  <strong id="speakerfy-toast-title">Speakerfy</strong>
+  <span id="speakerfy-toast-text"></span>
+</div>
+
+<script id="speakerfy-v19-fixes">
+(() => {
+  const byId = id => document.getElementById(id);
+
+  let toastTimer = null;
+
+  window.speakerfyToast = function(title,text,duration=4800){
+    const box = byId("speakerfy-toast");
+    if(!box) return;
+
+    byId("speakerfy-toast-title").textContent = title || "Speakerfy";
+    byId("speakerfy-toast-text").textContent = text || "";
+
+    box.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => box.classList.remove("show"),duration);
+  };
+
+  async function readSpotifyError(response){
+    try{
+      const data = await response.clone().json();
+      return data?.error?.message || data?.error?.reason || "";
+    }catch{
+      return "";
+    }
+  }
+
+  async function explainSpotifyResponse(response,action="Spotify"){
+    if(response.ok) return true;
+
+    const detail = await readSpotifyError(response);
+
+    if(response.status === 401){
+      speakerfyToast(
+        "Login udløbet",
+        "Log ud og ind med Spotify igen."
+      );
+      return false;
+    }
+
+    if(response.status === 403){
+      speakerfyToast(
+        "Spotify afviste adgangen",
+        detail ||
+        "Kontoen har ikke adgang til denne funktion. Hvis det er en anden Spotify-konto, skal den være tilføjet under Users Management i din Spotify Developer-app. Afspilning kræver også Spotify Premium."
+      ,7000);
+      return false;
+    }
+
+    if(response.status === 404){
+      speakerfyToast(
+        "Ingen aktiv afspiller",
+        "Åbn Spotify på telefonen eller computeren én gang, eller vent et øjeblik på at Speakerfy-playeren bliver klar."
+      );
+      return false;
+    }
+
+    if(response.status === 429){
+      speakerfyToast(
+        "Spotify-grænse nået",
+        "Spotify har midlertidigt begrænset API-kald. Prøv igen lidt senere."
+      );
+      return false;
+    }
+
+    speakerfyToast(
+      action,
+      detail || `Spotify svarede med fejl ${response.status}.`
+    );
+
+    return false;
+  }
+
+  async function waitForSpeakerfyDevice(timeout=2600){
+    if(deviceId) return deviceId;
+
+    try{
+      if(spotifyPlayer){
+        /*
+          activateElement is especially important on mobile browsers.
+          This is intentionally called directly from the user's click path.
+        */
+        try{
+          await spotifyPlayer.activateElement();
+        }catch{}
+
+        try{
+          await spotifyPlayer.connect();
+        }catch{}
+      }
+    }catch{}
+
+    const start = Date.now();
+    while(!deviceId && Date.now() - start < timeout){
+      await new Promise(resolve => setTimeout(resolve,120));
+    }
+
+    return deviceId || null;
+  }
+
+  async function getFallbackDevice(){
+    try{
+      const response = await spotifyFetch(
+        "https://api.spotify.com/v1/me/player/devices"
+      );
+
+      if(!response.ok){
+        await explainSpotifyResponse(response,"Kunne ikke hente Spotify-enheder");
+        return null;
+      }
+
+      const data = await response.json();
+      const devices = (data.devices || []).filter(
+        device => device?.id && !device.is_restricted
+      );
+
+      return (
+        devices.find(device => device.is_active) ||
+        devices.find(device => device.name === "Speakerfy") ||
+        devices[0] ||
+        null
+      );
+    }catch{
+      return null;
+    }
+  }
+
+  async function preparePlaybackTarget(){
+    /*
+      First preference: the Web Playback SDK Speakerfy device.
+    */
+    let target = await waitForSpeakerfyDevice();
+
+    if(target){
+      try{
+        const transfer = await spotifyFetch(
+          "https://api.spotify.com/v1/me/player",
+          {
+            method:"PUT",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({
+              device_ids:[target],
+              play:false
+            })
+          }
+        );
+
+        /*
+          A failed transfer is not fatal: /play may still work.
+        */
+        if(transfer.ok){
+          await new Promise(resolve => setTimeout(resolve,140));
+        }
+      }catch{}
+
+      return target;
+    }
+
+    /*
+      If the browser SDK isn't ready, use an already active Spotify
+      Connect device instead of making the song click appear dead.
+    */
+    const fallback = await getFallbackDevice();
+    return fallback?.id || null;
+  }
+
+  window.speakerfyStartPlayback = async function(body){
+    /*
+      activateElement must happen as close to the actual user click
+      as possible on mobile browsers.
+    */
+    try{
+      if(spotifyPlayer){
+        await spotifyPlayer.activateElement();
+      }
+    }catch{}
+
+    const targetId = await preparePlaybackTarget();
+
+    if(!targetId){
+      speakerfyToast(
+        "Ingen Spotify-afspiller fundet",
+        "Vent et par sekunder på Speakerfy, eller åbn Spotify på telefon/computer så der findes en aktiv enhed."
+      ,6500);
+      return false;
+    }
+
+    try{
+      let response = await spotifyFetch(
+        "https://api.spotify.com/v1/me/player/play?device_id=" +
+        encodeURIComponent(targetId),
+        {
+          method:"PUT",
+          headers:{"Content-Type":"application/json"},
+          body:JSON.stringify(body)
+        }
+      );
+
+      if(response.ok) return true;
+
+      /*
+        Device IDs can expire. Retry once against the current active device.
+      */
+      if(response.status === 404){
+        const fallback = await getFallbackDevice();
+
+        if(fallback?.id && fallback.id !== targetId){
+          response = await spotifyFetch(
+            "https://api.spotify.com/v1/me/player/play?device_id=" +
+            encodeURIComponent(fallback.id),
+            {
+              method:"PUT",
+              headers:{"Content-Type":"application/json"},
+              body:JSON.stringify(body)
+            }
+          );
+
+          if(response.ok) return true;
+        }
+      }
+
+      await explainSpotifyResponse(response,"Kunne ikke starte sangen");
+      return false;
+
+    }catch(error){
+      console.error("Playback error:",error);
+      speakerfyToast(
+        "Kunne ikke starte sangen",
+        "Der kom en fejl mellem Speakerfy og Spotify. Prøv igen."
+      );
+      return false;
+    }
+  };
+
+  /*
+    Override the old playback functions with a more reliable version.
+  */
+  try{
+    playUris = async function(uris,offsetUri=null){
+      const body = {uris};
+
+      if(offsetUri){
+        const index = uris.indexOf(offsetUri);
+        if(index >= 0){
+          body.offset = {position:index};
+        }
+      }
+
+      return speakerfyStartPlayback(body);
+    };
+
+    playSingleTrack = async function(trackUri){
+      const ok = await speakerfyStartPlayback({uris:[trackUri]});
+
+      if(ok){
+        try{ closeAppScreens(); }catch{}
+        try{ el.overlay.classList.remove("open"); }catch{}
+        try{ wakeScreen(); }catch{}
+        speakerfyToast("Afspiller","Sangen starter nu.",1800);
+      }
+
+      return ok;
+    };
+
+    playContext = async function(contextUri,trackUri){
+      const body = {context_uri:contextUri};
+      if(trackUri){
+        body.offset = {uri:trackUri};
+      }
+
+      const ok = await speakerfyStartPlayback(body);
+
+      if(ok){
+        try{ el.overlay.classList.remove("open"); }catch{}
+        try{ wakeScreen(); }catch{}
+      }
+
+      return ok;
+    };
+  }catch(error){
+    console.error("Could not override playback helpers:",error);
+  }
+
+  /*
+    Current Spotify playlist-items endpoint:
+    - max 50 per request
+    - use pagination
+    - development-mode API can return 403 for playlists that the
+      authenticated user does not own/collaborate on.
+  */
+  try{
+    openPlaylist = async function(playlist){
+      el.panelTitle.textContent = playlist.name;
+      el.back.style.display = "block";
+      el.grid.style.display = "none";
+      el.tracks.style.display = "flex";
+      el.tracks.innerHTML = "<p>Henter sange…</p>";
+
+      let allItems = [];
+      let nextUrl =
+        `https://api.spotify.com/v1/playlists/${playlist.id}/items` +
+        "?limit=50&additional_types=track";
+
+      try{
+        let pages = 0;
+
+        while(nextUrl && pages < 20){
+          const response = await spotifyFetch(nextUrl);
+
+          if(response.status === 403){
+            el.tracks.innerHTML = "";
+
+            const info = document.createElement("div");
+            info.className = "playlist-info-box";
+            info.innerHTML =
+              "<strong>Spotify begrænser denne playliste</strong>" +
+              "Speakerfy kan i den nuværende Spotify API kun læse sangene fra playlister, som denne konto selv ejer eller samarbejder på.";
+
+            el.tracks.appendChild(info);
+
+            const playAll = document.createElement("button");
+            playAll.className = "play-all";
+            playAll.textContent = "▶ Prøv at afspille playlisten";
+            playAll.addEventListener("click",async () => {
+              await playContext(playlist.uri);
+            });
+
+            el.tracks.appendChild(playAll);
+            return;
+          }
+
+          if(!response.ok){
+            await explainSpotifyResponse(response,"Kunne ikke hente playlisten");
+            throw new Error("playlist items failed");
+          }
+
+          const data = await response.json();
+          allItems.push(...(data.items || []));
+          nextUrl = data.next || null;
+          pages++;
+        }
+
+        el.tracks.innerHTML = "";
+
+        const playAll = document.createElement("button");
+        playAll.className = "play-all";
+        playAll.textContent = "▶ Afspil hele playlisten";
+        playAll.addEventListener("click",async () => {
+          playAll.disabled = true;
+          await playContext(playlist.uri);
+          playAll.disabled = false;
+        });
+        el.tracks.appendChild(playAll);
+
+        const trackItems = allItems
+          .map(item => item?.item || item?.track)
+          .filter(track =>
+            track &&
+            track.type === "track" &&
+            track.uri &&
+            !track.is_local
+          );
+
+        if(!trackItems.length){
+          const message = document.createElement("div");
+          message.className = "playlist-info-box";
+          message.textContent = "Ingen afspillelige sange fundet i den playliste.";
+          el.tracks.appendChild(message);
+          return;
+        }
+
+        trackItems.forEach((track,index) => {
+          const row = document.createElement("div");
+          row.className = "track";
+          row.tabIndex = 0;
+
+          row.innerHTML = `
+            <span class="track-number">${index + 1}</span>
+            <img src="${
+              track.album?.images?.slice(-1)[0]?.url ||
+              track.album?.images?.[0]?.url ||
+              ""
+            }" alt="">
+            <div class="track-meta">
+              <span class="track-title">${escapeHtml(track.name)}</span>
+              <span class="track-artist">${
+                escapeHtml((track.artists || []).map(a => a.name).join(", "))
+              }</span>
+            </div>
+          `;
+
+          const chooseTrack = async () => {
+            if(row.classList.contains("playing-request")) return;
+
+            row.classList.add("playing-request");
+
+            /*
+              Starting a playlist with URI offset is preferred because
+              Next/Previous then stay inside the playlist context.
+            */
+            await playContext(playlist.uri,track.uri);
+
+            row.classList.remove("playing-request");
+          };
+
+          row.addEventListener("click",chooseTrack);
+
+          row.addEventListener("keydown",event => {
+            if(event.key === "Enter" || event.key === " "){
+              event.preventDefault();
+              chooseTrack();
+            }
+          });
+
+          el.tracks.appendChild(row);
+        });
+
+      }catch(error){
+        console.error("Playlist load error:",error);
+
+        if(!el.tracks.children.length){
+          el.tracks.innerHTML =
+            '<div class="playlist-info-box">Kunne ikke hente sangene fra Spotify.</div>';
+        }
+      }
+    };
+  }catch(error){
+    console.error("Could not override openPlaylist:",error);
+  }
+
+  /*
+    Make every search row give visible feedback immediately.
+    Existing row click handlers still perform the actual playback.
+  */
+  document.addEventListener("pointerdown",event => {
+    const row = event.target.closest(".search-track,.track");
+    if(!row) return;
+
+    try{
+      /*
+        Synchronously activate media from the physical user gesture.
+        Don't await this here.
+      */
+      spotifyPlayer?.activateElement?.();
+    }catch{}
+  },true);
+
+  /*
+    Validate the account after login.
+    A Development Mode user can sometimes complete OAuth but still
+    be blocked by the Web API if they aren't on the app allowlist.
+  */
+  async function checkCurrentAccountAccess(){
+    try{
+      const token = await getToken();
+      if(!token) return;
+
+      const response = await spotifyFetch("https://api.spotify.com/v1/me");
+
+      if(response.ok) return;
+
+      if(response.status === 403){
+        speakerfyToast(
+          "Denne Spotify-konto mangler adgang",
+          "Tilføj kontoen i Spotify Developer Dashboard → din Speakerfy-app → Settings → Users Management. Log derefter ud og ind igen."
+        ,10000);
+        return;
+      }
+
+      if(response.status === 429){
+        speakerfyToast(
+          "Spotify API-grænse",
+          "Spotify har midlertidigt begrænset API-kald. Prøv igen senere."
+        ,7000);
+      }
+    }catch(error){
+      console.log("Account access check:",error);
+    }
+  }
+
+  /*
+    Improve playlist/home failures so a friend doesn't just see
+    an empty page with no explanation.
+  */
+  async function checkLibraryAccess(){
+    try{
+      const response = await spotifyFetch(
+        "https://api.spotify.com/v1/me/playlists?limit=1"
+      );
+
+      if(response.status === 403){
+        speakerfyToast(
+          "Playlister kan ikke læses",
+          "Denne Spotify-konto er sandsynligvis ikke godkendt til din Development Mode-app. Tilføj den under Users Management og log ind igen."
+        ,9000);
+      }
+    }catch{}
+  }
+
+  setTimeout(checkCurrentAccountAccess,1200);
+  setTimeout(checkLibraryAccess,1800);
+
+  /*
+    Spotify SDK feedback
+  */
+  setTimeout(() => {
+    try{
+      spotifyPlayer?.addListener("autoplay_failed",() => {
+        speakerfyToast(
+          "Tryk igen for at afspille",
+          "Browseren blokerede autoplay. Tryk på sangen én gang mere."
+        ,4500);
+      });
+
+      spotifyPlayer?.addListener("playback_error",({message}) => {
+        speakerfyToast(
+          "Spotify playback-fejl",
+          message || "Spotify kunne ikke starte nummeret."
+        ,6000);
+      });
+    }catch{}
+  },1600);
 })();
 </script>
 
