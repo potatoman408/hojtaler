@@ -2170,6 +2170,135 @@ body.idle #now-playing-popup{
 }
 </style>
 
+
+<style id="speakerfy-v17-style">
+/* ==========================================================
+   v17 - standby slide + richer Player background
+   ========================================================== */
+
+/* Rich album-color wash behind the player */
+#player-color-glow{
+  position:fixed;
+  inset:-14%;
+  z-index:1;
+  pointer-events:none;
+  opacity:.0;
+  background-position:center;
+  background-size:cover;
+  background-repeat:no-repeat;
+  filter:blur(105px) saturate(1.75) brightness(.48);
+  transform:scale(1.22);
+  transition:
+    opacity .55s ease,
+    background-image .65s ease,
+    filter .55s ease;
+}
+
+/*
+  Show the colorful cover wash only when no app overlay/screen
+  is active, i.e. on the main player.
+*/
+body.player-view #player-color-glow{
+  opacity:.72;
+}
+
+body.player-view #shade{
+  background:
+    radial-gradient(circle at 48% 35%,rgba(255,255,255,.055),transparent 36%),
+    linear-gradient(180deg,rgba(0,0,0,.20),rgba(0,0,0,.62) 62%,rgba(0,0,0,.86)) !important;
+}
+
+/* Make the player card a little more transparent so album colors breathe through */
+body.player-view #card{
+  background:rgba(10,10,10,.58) !important;
+  backdrop-filter:blur(28px) saturate(1.18);
+  -webkit-backdrop-filter:blur(28px) saturate(1.18);
+}
+
+/* Bottom Now Playing popup remains the ONLY Now Playing item on Home */
+#now-playing-popup{
+  bottom:18px !important;
+}
+
+/* Hide any leftover home-card styling or DOM remnants */
+#quick-now-playing,
+#quick-now-playing-art,
+#quick-now-playing-title,
+#quick-now-playing-artist{
+  display:none !important;
+}
+
+/* ----------------------------------------------------------
+   STANDBY
+   Cover slides sideways instead of jumping to dead-center.
+   ---------------------------------------------------------- */
+
+/* Give album movement a smooth physical feel */
+#album-wrap{
+  transition:
+    transform .72s cubic-bezier(.22,.72,.25,1),
+    left .72s cubic-bezier(.22,.72,.25,1),
+    top .72s cubic-bezier(.22,.72,.25,1),
+    width .72s cubic-bezier(.22,.72,.25,1),
+    height .72s cubic-bezier(.22,.72,.25,1),
+    filter .45s ease,
+    box-shadow .45s ease !important;
+}
+
+/*
+  On standby it moves to the LEFT side.
+  The title follows under the cover.
+*/
+body.idle #album-wrap{
+  position:fixed !important;
+  left:30% !important;
+  top:47% !important;
+  width:min(46vw,54vh) !important;
+  height:min(46vw,54vh) !important;
+  max-width:480px !important;
+  max-height:480px !important;
+  transform:translate(-50%,-50%) scale(1.02) !important;
+  z-index:65 !important;
+  border-radius:28px !important;
+  box-shadow:0 32px 82px rgba(0,0,0,.54) !important;
+}
+
+/* Standby title sits with the moved cover */
+body.idle #standby-title{
+  left:30% !important;
+  top:calc(47% + min(23vw,27vh) + 32px) !important;
+  width:min(520px,48vw) !important;
+  transform:translateX(-50%) !important;
+}
+
+/* More colorful but soft standby ambience */
+body.idle #player-color-glow{
+  opacity:.50 !important;
+  filter:blur(115px) saturate(1.6) brightness(.34) !important;
+}
+
+/* Don't show popup in standby */
+body.idle #now-playing-popup{
+  opacity:0 !important;
+  pointer-events:none !important;
+}
+
+/* Mobile/tablet standby: move slightly less far */
+@media(max-width:760px){
+  body.idle #album-wrap{
+    left:36% !important;
+    width:min(66vw,50vh) !important;
+    height:min(66vw,50vh) !important;
+  }
+
+  body.idle #standby-title{
+    left:36% !important;
+    top:calc(47% + min(33vw,25vh) + 26px) !important;
+    width:64vw !important;
+  }
+}
+</style>
+
 </head>
 
 <body>
@@ -2197,6 +2326,7 @@ body.idle #now-playing-popup{
 
 <div id="background"></div>
 <div id="shade"></div>
+<div id="player-color-glow"></div>
 
 <div id="topbar">
   <div id="brand"><span id="brand-dot"></span>Speakerfy</div>
@@ -2291,15 +2421,6 @@ body.idle #now-playing-popup{
     </div>
 
     <div class="quick-grid" id="home-quick-grid">
-      <div class="quick-card" id="quick-now-playing">
-        <img id="quick-now-playing-art" alt="">
-        <div class="quick-card-copy">
-          <small>SPILLER NU</small>
-          <div class="quick-card-title" id="quick-now-playing-title">Åbn afspilleren</div>
-          <div class="quick-card-sub" id="quick-now-playing-artist">Speakerfy</div>
-        </div>
-      </div>
-
       <div class="quick-card" id="quick-liked">
         <div class="quick-icon-box">
           <svg viewBox="0 0 24 24"><path d="M12 21.35 10.55 20C5.4 15.36 2 12.28 2 8.5A5.5 5.5 0 0 1 7.5 3 5.98 5.98 0 0 1 12 5.09 5.98 5.98 0 0 1 16.5 3 5.5 5.5 0 0 1 22 8.5c0 3.78-3.4 6.86-8.55 11.51L12 21.35Z"/></svg>
@@ -4047,6 +4168,90 @@ if ("serviceWorker" in navigator) {
   }
 
   setInterval(keepPopupAvailable,1200);
+})();
+</script>
+
+
+<script id="speakerfy-v17-script">
+(() => {
+  const byId = id => document.getElementById(id);
+  const glow = byId("player-color-glow");
+  const album = byId("album");
+
+  function internalScreenOpen(){
+    return Boolean(
+      byId("screen-home")?.classList.contains("active") ||
+      byId("screen-settings")?.classList.contains("active") ||
+      byId("screen-search")?.classList.contains("active") ||
+      byId("screen-liked")?.classList.contains("active") ||
+      byId("overlay")?.classList.contains("open")
+    );
+  }
+
+  function syncPlayerView(){
+    const isPlayer = !internalScreenOpen();
+    document.body.classList.toggle("player-view",isPlayer);
+  }
+
+  function syncAlbumGlow(){
+    const src = album?.currentSrc || album?.src || "";
+    if(glow && src){
+      glow.style.backgroundImage = `url("${src.replace(/"/g,'\\"')}")`;
+    }
+  }
+
+  album?.addEventListener("load",syncAlbumGlow);
+
+  if(album){
+    new MutationObserver(syncAlbumGlow).observe(album,{
+      attributes:true,
+      attributeFilter:["src"]
+    });
+  }
+
+  /*
+   * Old v16 script may still try to update Home Now Playing nodes.
+   * They no longer exist, but optional chaining/null checks keep it harmless.
+   */
+
+  document.addEventListener("click",() => {
+    setTimeout(syncPlayerView,25);
+  });
+
+  window.addEventListener("popstate",() => {
+    setTimeout(syncPlayerView,25);
+  });
+
+  /*
+   * Wake/movement:
+   * existing wakeScreen removes body.idle, and CSS transitions
+   * slide the cover smoothly back into its normal player position.
+   */
+  ["pointerdown","touchstart","keydown","wheel"].forEach(name => {
+    window.addEventListener(name,() => {
+      if(document.body.classList.contains("idle")){
+        try{ wakeScreen(); }catch{
+          document.body.classList.remove("idle");
+        }
+      }
+    },{passive:true});
+  });
+
+  window.addEventListener("pointermove",() => {
+    if(document.body.classList.contains("idle")){
+      try{ wakeScreen(); }catch{
+        document.body.classList.remove("idle");
+      }
+    }
+  },{passive:true});
+
+  setInterval(() => {
+    syncPlayerView();
+    syncAlbumGlow();
+  },700);
+
+  syncPlayerView();
+  syncAlbumGlow();
 })();
 </script>
 
