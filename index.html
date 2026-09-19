@@ -11,7 +11,7 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 
 <style>
 :root{
@@ -1989,6 +1989,187 @@ body.idle #now-playing-popup{
 }
 </style>
 
+
+<style id="speakerfy-v16-style">
+/* ===== Spotify-like stronger typography ===== */
+html,body,
+button,
+input,
+textarea,
+select{
+  font-family:"Inter",Arial,Helvetica,sans-serif !important;
+}
+
+body{
+  font-weight:500 !important;
+}
+
+/* Main headings */
+#title,
+.home-greeting,
+.home-section h2,
+.screen-heading h2,
+.search-heading h2,
+.liked-hero h1,
+.settings-card h3,
+.spotify-card-title,
+.quick-card-title,
+#now-playing-popup-title{
+  font-family:"Inter",Arial,Helvetica,sans-serif !important;
+  font-weight:800 !important;
+  letter-spacing:-.035em !important;
+}
+
+/* Player */
+#title{
+  font-weight:800 !important;
+}
+
+#artist{
+  font-weight:500 !important;
+}
+
+.time,
+#clock{
+  font-family:"Space Mono",monospace !important;
+}
+
+/* Buttons feel more like Spotify */
+button,
+.home-pill,
+.home-see-all,
+.settings-button,
+.primary{
+  font-weight:700 !important;
+}
+
+.spotify-card-sub,
+#search-status,
+.settings-card p,
+.liked-hero-copy p,
+.quick-card-sub{
+  font-weight:500 !important;
+}
+
+/* Home now-playing quick card */
+#quick-now-playing{
+  position:relative;
+  background:
+    linear-gradient(135deg,rgba(29,185,84,.18),rgba(255,255,255,.08)) !important;
+  border:1px solid rgba(29,185,84,.18);
+}
+
+#quick-now-playing:hover,
+#quick-now-playing:active{
+  background:
+    linear-gradient(135deg,rgba(29,185,84,.26),rgba(255,255,255,.13)) !important;
+}
+
+#quick-now-playing-art{
+  width:72px;
+  height:72px;
+  flex:none;
+  object-fit:cover;
+  background:#242424;
+}
+
+.quick-card-copy{
+  min-width:0;
+  flex:1;
+  padding:0 14px;
+}
+
+.quick-card-copy small{
+  display:block;
+  margin-bottom:4px;
+  color:var(--accent);
+  font:700 9px "Space Mono",monospace;
+  letter-spacing:.08em;
+}
+
+.quick-card-copy .quick-card-title{
+  padding:0 !important;
+  font-size:14px !important;
+  line-height:1.15;
+}
+
+.quick-card-sub{
+  margin-top:4px;
+  color:var(--muted);
+  font-size:11px;
+  overflow:hidden;
+  white-space:nowrap;
+  text-overflow:ellipsis;
+}
+
+/* Popup now stays usable on Home and is clickable */
+#now-playing-popup{
+  cursor:pointer;
+  pointer-events:auto !important;
+}
+
+#now-playing-popup:hover{
+  border-color:rgba(255,255,255,.20);
+  background:rgba(18,18,18,.94);
+}
+
+#now-playing-popup:active{
+  transform:translate3d(0,0,0) scale(.97);
+}
+
+/* Don't hide it just because Home/Search/Settings is open */
+#screen-home.active ~ #now-playing-popup,
+#screen-search.active ~ #now-playing-popup,
+#screen-settings.active ~ #now-playing-popup,
+#screen-liked.active ~ #now-playing-popup{
+  opacity:1;
+}
+
+/* But standby stays clean */
+body.idle #now-playing-popup{
+  opacity:0 !important;
+  pointer-events:none !important;
+}
+
+/* Stronger text across cards */
+.quick-card-title{
+  font-weight:800 !important;
+}
+
+.spotify-card-title{
+  font-weight:750 !important;
+}
+
+.home-see-all{
+  letter-spacing:.04em;
+}
+
+/* Search result typography */
+.search-track-title{
+  font-weight:700 !important;
+}
+
+.search-track-artist{
+  font-weight:500 !important;
+}
+
+/* Settings typography */
+.settings-card h3{
+  font-size:16px !important;
+}
+
+.settings-card p{
+  line-height:1.5;
+}
+
+/* Responsive */
+@media(max-width:760px){
+  #now-playing-popup{
+    bottom:12px;
+  }
+}
+</style>
+
 </head>
 
 <body>
@@ -2110,6 +2291,15 @@ body.idle #now-playing-popup{
     </div>
 
     <div class="quick-grid" id="home-quick-grid">
+      <div class="quick-card" id="quick-now-playing">
+        <img id="quick-now-playing-art" alt="">
+        <div class="quick-card-copy">
+          <small>SPILLER NU</small>
+          <div class="quick-card-title" id="quick-now-playing-title">Åbn afspilleren</div>
+          <div class="quick-card-sub" id="quick-now-playing-artist">Speakerfy</div>
+        </div>
+      </div>
+
       <div class="quick-card" id="quick-liked">
         <div class="quick-icon-box">
           <svg viewBox="0 0 24 24"><path d="M12 21.35 10.55 20C5.4 15.36 2 12.28 2 8.5A5.5 5.5 0 0 1 7.5 3 5.98 5.98 0 0 1 12 5.09 5.98 5.98 0 0 1 16.5 3 5.5 5.5 0 0 1 22 8.5c0 3.78-3.4 6.86-8.55 11.51L12 21.35Z"/></svg>
@@ -3674,7 +3864,7 @@ if ("serviceWorker" in navigator) {
 </script>
 
 
-<div id="now-playing-popup" aria-live="polite">
+<div id="now-playing-popup" aria-live="polite" role="button" tabindex="0" aria-label="Åbn Spiller nu">
   <img id="now-playing-popup-art" alt="">
   <div id="now-playing-popup-copy">
     <span>SPILLER NU</span>
@@ -3745,6 +3935,118 @@ if ("serviceWorker" in navigator) {
 
   /* Also catch Spotify state changes that do not mutate all nodes at once. */
   setInterval(() => updateNowPlayingPopup(false),700);
+})();
+</script>
+
+
+<script id="speakerfy-v16-script">
+(() => {
+  const byId = id => document.getElementById(id);
+
+  function goToPlayer(){
+    document.body.classList.remove("idle");
+
+    try{
+      if(typeof speakerfyPlayer === "function"){
+        speakerfyPlayer();
+        return;
+      }
+    }catch{}
+
+    try{
+      if(typeof openPlayerScreen === "function"){
+        openPlayerScreen();
+        return;
+      }
+    }catch{}
+
+    ["screen-home","screen-settings","screen-search","screen-liked"].forEach(id => {
+      byId(id)?.classList.remove("active");
+    });
+
+    byId("overlay")?.classList.remove("open");
+    try{ wakeScreen(); }catch{}
+  }
+
+  /* Home card -> Player */
+  byId("quick-now-playing")?.addEventListener("click", event => {
+    event.preventDefault();
+    event.stopPropagation();
+    goToPlayer();
+  });
+
+  /* Corner popup -> Player */
+  const popup = byId("now-playing-popup");
+
+  popup?.addEventListener("click", event => {
+    event.preventDefault();
+    event.stopPropagation();
+    goToPlayer();
+  });
+
+  popup?.addEventListener("keydown", event => {
+    if(event.key === "Enter" || event.key === " "){
+      event.preventDefault();
+      goToPlayer();
+    }
+  });
+
+  /* Keep Home Now Playing card synced with the real player */
+  function syncNowPlayingHome(){
+    const title = byId("title")?.textContent?.trim();
+    const artist = byId("artist")?.textContent?.trim();
+    const art = byId("album")?.currentSrc || byId("album")?.src || "";
+
+    const qTitle = byId("quick-now-playing-title");
+    const qArtist = byId("quick-now-playing-artist");
+    const qArt = byId("quick-now-playing-art");
+
+    if(qTitle){
+      qTitle.textContent = title && title !== "—" ? title : "Åbn afspilleren";
+    }
+
+    if(qArtist){
+      qArtist.textContent = artist && artist !== "—" ? artist : "Speakerfy";
+    }
+
+    if(qArt && art){
+      qArt.src = art;
+    }
+  }
+
+  syncNowPlayingHome();
+
+  ["title","artist","album"].forEach(id => {
+    const node = byId(id);
+    if(!node) return;
+
+    new MutationObserver(syncNowPlayingHome).observe(node,{
+      childList:true,
+      subtree:true,
+      characterData:true,
+      attributes:true,
+      attributeFilter:["src"]
+    });
+  });
+
+  byId("album")?.addEventListener("load",syncNowPlayingHome);
+
+  setInterval(syncNowPlayingHome,900);
+
+  /*
+   * v15 only showed the popup when not on Home/Search/Settings.
+   * Force it to remain available whenever music exists and standby is off.
+   */
+  function keepPopupAvailable(){
+    if(!popup || document.body.classList.contains("idle")) return;
+
+    const title = byId("title")?.textContent?.trim();
+    if(title && title !== "—"){
+      popup.classList.add("show");
+    }
+  }
+
+  setInterval(keepPopupAvailable,1200);
 })();
 </script>
 
